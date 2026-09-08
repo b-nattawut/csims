@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>บันทึกการรับแจ้งของกลางเพื่อตรวจพิสูจน์</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');
+
+        * { box-sizing: border-box; }
+        body {
+            margin: 0;
+            font-family: 'Sarabun', sans-serif;
+            font-size: 13px;
+            line-height: 1.35;
+            background: #d9d9d9;
+        }
+        .no-print { text-align: center; padding: 12px; background: #fff; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+        .no-print button { padding: 8px 24px; font-size: 14px; margin: 0 6px; border: none; border-radius: 6px; cursor: pointer; font-family: 'Sarabun', sans-serif; font-weight: 600; }
+        .no-print button:first-child { background: #0d6efd; color: #fff; }
+        .no-print button.secondary { background: #6c757d; color: #fff; }
+
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 12px auto;
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+            padding: 12mm 12mm 8mm 12mm;
+            position: relative;
+        }
+
+        .title {
+            text-align: center;
+            font-size: 16px;
+            font-weight: 700;
+            text-decoration: underline;
+            line-height: 1.2;
+            width: calc(100% - 190px);
+            margin: 2px auto 10px 0;
+        }
+
+        .doc-box {
+            position: absolute;
+            right: 12mm;
+            top: 12mm;
+            border: 1px solid #666;
+            padding: 8px 18px;
+            min-width: 200px;
+            text-align: center;
+            font-size: 14px;
+        }
+        .doc-box .dh {
+            border-bottom: 1px dotted #666;
+            display: inline-block;
+            text-align: center;
+            vertical-align: baseline;
+            min-width: 28px;
+            line-height: 1;
+        }
+
+        .row {
+            display: flex;
+            align-items: baseline;
+            flex-wrap: wrap;
+            margin-bottom: 6px;
+            gap: 2px;
+        }
+        .text { white-space: nowrap; }
+        .line {
+            flex: 1;
+            min-width: 140px;
+            min-height: 17px;
+            line-height: 17px;
+            text-align: center;
+            overflow-wrap: break-word;
+            word-break: break-word;
+            border-bottom: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='6' height='17'%3E%3Cline x1='0' y1='16' x2='3' y2='16' stroke='%23666' stroke-width='1'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+        }
+        .line-s { flex: 0 1 46px; max-width: 58px; }
+        .line-m { flex: 0 1 130px; max-width: 170px; }
+        .indent { padding-left: 24px; }
+
+        .cb {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 16px;
+            white-space: nowrap;
+        }
+        .box {
+            width: 14px;
+            height: 14px;
+            border: 1px solid #555;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 6px;
+            font-size: 11px;
+            line-height: 1;
+        }
+
+        .section-title {
+            margin-top: 8px;
+            font-weight: 600;
+        }
+
+        .table-wrap {
+            border: 1px solid #777;
+            margin-top: 6px;
+        }
+        table.tbl {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        .tbl td, .tbl th {
+            border: 1px solid #777;
+            padding: 2px 4px;
+            height: 24px;
+            vertical-align: middle;
+        }
+        .tbl th { font-weight: 600; }
+
+        .method-box {
+            border: 1px solid #777;
+            margin-top: 4px;
+            padding: 0;
+        }
+        .method-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+        }
+        .method-col {
+            border-right: 1px solid #777;
+            padding: 4px 6px;
+        }
+        .method-col:last-child { border-right: 0; }
+        .method-item {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin: 2px 0;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        .method-item .line {
+            min-width: 28px;
+            height: 14px;
+        }
+
+        .sign-box {
+            border: 1px solid #777;
+            margin-top: 8px;
+            padding: 4px;
+        }
+        .sign-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            border: 1px solid #777;
+            margin-top: 4px;
+        }
+        .sign-cell {
+            min-height: 120px;
+            border-right: 1px solid #777;
+            padding: 4px;
+        }
+        .sign-cell:last-child { border-right: 0; }
+
+        .foot-note {
+            margin-top: 10px;
+            font-size: 12px;
+        }
+
+        @page { margin: 0; size: A4 portrait; }
+        @media print {
+            .line { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            html, body { margin: 0; padding: 0; background: #fff; width: 210mm; }
+            .no-print { display: none !important; }
+            .page {
+                margin: 0; box-shadow: none;
+                padding: 12mm 12mm 8mm 12mm;
+                width: 210mm; min-height: 297mm;
+                page-break-after: always;
+            }
+            .page:last-child { page-break-after: auto; }
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print">
+        <button onclick="window.print()">พิมพ์ / ดาวน์โหลด PDF</button>
+        <button class="secondary" onclick="window.close()">ปิดหน้าต่าง</button>
+    </div>
+
+    <div class="page">
+        <div class="doc-box">รายงานที่ <span class="dh" style="min-width:112px;">{{receiveNoti_No}}</span> / 25 <span class="dh" style="min-width:22px;">{{reportYear2}}</span></div>
+        <div class="title">บันทึกการรับแจ้งของกลางเพื่อตรวจพิสูจน์</div>
+
+        <div class="row" style="margin-top: 26px;">
+            <span class="text">1. เขียนที่ กสก.กพฐ.10 เมื่อวันที่</span>
+            <span class="line line-s">{{create_day}}</span>
+            <span class="text">เดือน</span>
+            <span class="line line-m">{{create_month}}</span>
+            <span class="text">พ.ศ.</span>
+            <span class="line line-s">{{create_year}}</span>
+            <span class="text">เวลา</span>
+            <span class="line line-m">{{create_time}}</span>
+            <span class="text">น. ปจว.ข้อที่</span>
+            <span class="line line-m">{{case_no}}</span>
+        </div>
+
+        <div class="row">
+            <span class="text">2. รับแจ้งจากหนังสือ สน. สภ.</span>
+            <span class="line">{{complaints_from}}</span>
+            <span class="text">ที่</span>
+            <span class="line line-m">{{letter_no}}</span>
+            <span class="text">ลง</span>
+            <span class="line line-m">{{letter_date}}</span>
+        </div>
+
+        <div class="row indent">
+            <span class="text">ผู้ส่งของกลาง</span>
+            <span class="line">{{suffer_full_name}}</span>
+            <span class="text">ตำแหน่ง</span>
+            <span class="line line-m">{{sender_position}}</span>
+            <span class="text">โทร</span>
+            <span class="line line-m">{{suffer_phone}}</span>
+        </div>
+
+        <div class="row indent">
+            <span class="text">รับวัตถุพยานตามหนังสือ</span>
+            <span class="line">{{evidence_letter_no}}</span>
+            <span class="text">ที่</span>
+            <span class="line line-m">{{evidence_doc_no}}</span>
+            <span class="text">ลง</span>
+            <span class="line line-m">{{evidence_doc_date}}</span>
+        </div>
+
+        <div class="row">
+            <span class="text">3. พนักงานสอบสวน</span>
+            <span class="line">{{inquiry_official_full_name}}</span>
+            <span class="text">โทร</span>
+            <span class="line line-m">{{inquiry_official_phone}}</span>
+        </div>
+
+        <div class="row section-title">
+            <span class="text">4. จุดประสงค์ในการตรวจพิสูจน์</span>
+        </div>
+        <div class="row indent">
+            <span class="cb"><span class="box">{{chk_purpose_fp}}</span>เพื่อตรวจเก็บรอยลายนิ้วมือแฝง</span>
+            <span class="cb"><span class="box">{{chk_purpose_other}}</span>อื่นๆ</span>
+            <span class="line">{{purpose_other_text}}</span>
+        </div>
+
+        <div class="row section-title">
+            <span class="text">5. วัตถุพยานที่ส่งตรวจพิสูจน์</span>
+        </div>
+        <div class="table-wrap">
+            <table class="tbl">
+                <thead>
+                    <tr>
+                        <th style="width:70%; text-align:left;">รายการ</th>
+                        <th style="width:30%; text-align:center;">จำนวน</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td>1. {{ev1}}</td><td style="text-align:center;">{{qty1}}</td></tr>
+                    <tr><td>2. {{ev2}}</td><td style="text-align:center;">{{qty2}}</td></tr>
+                    <tr><td>3. {{ev3}}</td><td style="text-align:center;">{{qty3}}</td></tr>
+                    <tr><td>4. {{ev4}}</td><td style="text-align:center;">{{qty4}}</td></tr>
+                    <tr><td>5. {{ev5}}</td><td style="text-align:center;">{{qty5}}</td></tr>
+                    <tr><td>6. {{ev6}}</td><td style="text-align:center;">{{qty6}}</td></tr>
+                    <tr><td>7. {{ev7}}</td><td style="text-align:center;">{{qty7}}</td></tr>
+                    <tr><td>8. {{ev8}}</td><td style="text-align:center;">{{qty8}}</td></tr>
+                    <tr><td>9. {{ev9}}</td><td style="text-align:center;">{{qty9}}</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="row section-title">
+            <span class="text">6. วิธีการดำเนินการ</span>
+        </div>
+        <div class="method-box">
+            <div class="method-grid">
+                <div class="method-col">
+                    <div class="method-item"><span class="box">{{chk_m1}}</span><span>Forensic Light Sources</span><span class="line">{{detail_m1}}</span></div>
+                    <div class="method-item"><span class="box">{{chk_m2}}</span><span>Super Glue</span><span class="line">{{detail_m2}}</span></div>
+                    <div class="method-item"><span class="box">{{chk_m3}}</span><span>Rhodamine 6G</span><span class="line">{{detail_m3}}</span></div>
+                    <div class="method-item"><span class="box">{{chk_m4}}</span><span>Basic Yellow 40</span><span class="line">{{detail_m4}}</span></div>
+                </div>
+                <div class="method-col">
+                    <div class="method-item"><span class="box">{{chk_m5}}</span><span>Forensic Light Sources</span><span class="line">{{detail_m5}}</span></div>
+                    <div class="method-item"><span class="box">{{chk_m6}}</span><span>Indanedione-Zine</span><span class="line">{{detail_m6}}</span></div>
+                    <div class="method-item"><span class="box">{{chk_m7}}</span><span>Ninhydrin</span><span class="line">{{detail_m7}}</span></div>
+                    <div class="method-item"><span class="box">{{chk_m8}}</span><span>อื่นๆ</span><span class="line">{{detail_m8}}</span></div>
+                </div>
+                <div class="method-col">
+                    <div class="method-item"><span class="box">{{chk_m9}}</span><span>Forensic Light Sources</span><span class="line">{{detail_m9}}</span></div>
+                    <div class="method-item"><span class="box">{{chk_m10}}</span><span>Amido Black</span><span class="line">{{detail_m10}}</span></div>
+                    <div class="method-item"><span class="box">{{chk_m11}}</span><span>Acid Yellow 7</span><span class="line">{{detail_m11}}</span></div>
+                </div>
+                <div class="method-col">
+                    <div class="method-item"><span class="box">{{chk_m13}}</span><span>Powder</span><span class="line">{{detail_m13}}</span></div>
+                    <div class="method-item"><span class="box">{{chk_m14}}</span><span>Sticky Side</span><span class="line">{{detail_m14}}</span></div>
+                    <div class="method-item"><span class="box">{{chk_m15}}</span><span>SPR</span><span class="line">{{detail_m15}}</span></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row section-title">
+            <span class="text">7. การดำเนินการ</span>
+        </div>
+        <div class="sign-box">
+            <div class="row">
+                <span class="text">วัตถุพยานแผ่นเก็บรอยลายนิ้วมือแฝง/ภาพถ่ายรอยลายนิ้วมือแฝง</span>
+                <span class="cb" style="margin-left:14px;"><span class="box">{{chk_send_gnf}}</span>กนฝ.</span>
+                <span class="cb"><span class="box">{{chk_send_other}}</span>อื่นๆ</span>
+                <span class="line">{{send_other_text}}</span>
+            </div>
+            <div class="row">
+                <span class="text" style="display:inline-block; min-width:62px; margin-right:10px;">ของกลาง</span>
+                <span class="cb"><span class="box">{{chk_return_inquiry}}</span>ส่งคืนพนักงานสอบสวน สภ.</span>
+                <span class="line">{{return_station}}</span>
+            </div>
+            <div class="row">
+                <span class="text" style="display:inline-block; min-width:62px; margin-right:10px;"></span>
+                <span class="cb"><span class="box">{{chk_forward_group}}</span>ส่งต่อกลุ่มงาน</span>
+                <span class="cb"><span class="box">{{chk_dept_kcw}}</span>กชว.</span>
+                <span class="cb"><span class="box">{{chk_dept_kop}}</span>กอป.</span>
+                <span class="cb"><span class="box">{{chk_dept_kos}}</span>กอส.</span>
+                <span class="cb"><span class="box">{{chk_dept_kkm}}</span>กคม.</span>
+                <span class="cb"><span class="box">{{chk_dept_kkp}}</span>กคพ.</span>
+                <span class="cb"><span class="box">{{chk_dept_other}}</span>อื่นๆ</span>
+                <span class="line">{{forward_other_text}}</span>
+            </div>
+        </div>
+
+        <div class="sign-grid">
+            <div class="sign-cell">
+                <div>เรียน ร้อยเวรตรวจพิสูจน์</div>
+                <div class="row" style="margin-top:22px;"><span class="text">ลงชื่อ</span><span class="line">{{sig1_name}}</span><span class="text">ผู้บันทึก</span></div>
+                <div class="row" style="margin-top:10px; justify-content:center;"><span class="text">(</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text">)</span></div>
+                <div class="row"><span class="text">ตำแหน่ง</span><span class="line">{{sig1_position}}</span></div>
+            </div>
+            <div class="sign-cell">
+                <div>ทราบ เสนอ นวท.(สบ 4) กสก.พฐ.10 เพื่อโปรดทราบ</div>
+                <div class="row" style="margin-top:22px;"><span class="text">ลงชื่อ</span><span class="line">{{sig2_name}}</span><span class="text">ร้อยเวร</span></div>
+                <div class="row" style="margin-top:10px; justify-content:center;"><span class="text">(</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text">)</span></div>
+                <div class="row"><span class="text">ตำแหน่ง</span><span class="line">{{sig2_position}}</span></div>
+            </div>
+        </div>
+
+        <div class="sign-box" style="margin-top:0; border-top:0;">
+            <div>- ทราบ</div>
+            <div>- ดำเนินการในส่วนที่เกี่ยวข้อง</div>
+            <div class="row" style="margin-top:24px; justify-content:center;"><span class="text">ลงชื่อ</span><span class="line" style="max-width:260px;">{{sig3_name}}</span></div>
+            <div class="row" style="margin-top:10px; justify-content:center;"><span class="text">(</span>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="text">)</span></div>
+            <div class="row" style="justify-content:center;"><span class="text">ตำแหน่ง</span><span class="line" style="max-width:260px;">{{sig3_position}}</span></div>
+        </div>
+
+    </div>
+</body>
+</html>

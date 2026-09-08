@@ -1,0 +1,1737 @@
+﻿<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบตรวจสอบการปฏิบัติงาน (Check list) - คดีชีวิต</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            font-size: 13px;
+            line-height: 1.35;
+            color: #000;
+            background: #ccc;
+        }
+
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 10px auto;
+            padding: 10mm 12mm 6mm 12mm;
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+            position: relative;
+            overflow: visible;
+            page-break-after: always;
+        }
+
+        /* ===== HEADER ===== */
+        .form-header {
+            position: relative;
+            margin-bottom: 6px;
+            height: 70px;
+        }
+
+        .header-logo {
+            position: absolute;
+            left: 0;
+            top: -5px;
+            width: 70px;
+            height: 70px;
+        }
+
+        .header-logo img {
+            width: 70px;
+            height: 70px;
+            object-fit: contain;
+        }
+
+        .header-center {
+            position: absolute;
+            left: 80px;
+            right: 340px;
+            top: 8px;
+            text-align: center;
+        }
+
+        .header-center .title-main {
+            font-size: 14px;
+            font-weight: 700;
+            letter-spacing: 0.3px;
+        }
+
+        .header-center .title-sub {
+            font-size: 11.5px;
+            font-weight: 600;
+            margin-top: 1px;
+        }
+
+        .header-right {
+            position: absolute;
+            right: 0;
+            top: 7px;
+        }
+
+        .header-right .doc-box {
+            border: 1.5px solid #000;
+            padding: 3px 8px;
+            font-size: 11px;
+            white-space: nowrap;
+        }
+
+        .header-right .doc-box .doc-line {
+            line-height: 1.5;
+        }
+        .header-qr { position: absolute; right: 90px; top: 7px; }
+        .header-qr .doc-box { border: 1.5px solid #000; padding: 3px 8px; font-size: 11px; white-space: nowrap; }
+        .header-qr .doc-box .doc-line { line-height: 1.5; }
+        .header-qr-code { position: absolute; right: 0; top: 0; width: 56px; height: 56px; }
+        .header-qr-code canvas, .header-qr-code img { width: 56px !important; height: 56px !important; }
+
+        /* ===== BODY TABLE ===== */
+        .form-body {
+            display: flex;
+            border: 1.5px solid #000;
+            align-items: stretch;
+        }
+
+        .col-left {
+            width: 50%;
+            max-width: 50%;
+            border-right: 1.5px solid #000;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .col-right {
+            width: 50%;
+            max-width: 50%;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* ===== ROW HEADER (ลำดับ | ข้อมูล) ===== */
+        .row-header {
+            display: flex;
+            border-bottom: 1px solid #000;
+            font-weight: 700;
+            font-size: 11px;
+            text-align: center;
+            background: transparent;
+        }
+
+        .row-header .lbl-seq {
+            min-width: 48px;
+            max-width: 48px;
+            border-right: 1px solid #000;
+            padding: 1px 2px;
+        }
+
+        .row-header .lbl-data {
+            flex: 1;
+            padding: 1px 2px;
+        }
+
+        /* ===== SECTION ROW ===== */
+        .sec-row {
+            display: flex;
+            border-bottom: 1px solid #000;
+        }
+
+        .sec-row:last-child {
+            border-bottom: none;
+        }
+
+        .sec-label {
+            min-width: 48px;
+            max-width: 48px;
+            border-right: 1px solid #000;
+            padding: 3px 3px;
+            font-weight: 700;
+            font-size: 11px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .sec-label .sec-num {
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 1.2;
+        }
+
+        .sec-label .sec-txt {
+            font-size: 10px;
+            font-weight: 600;
+            line-height: 1.15;
+            text-align: center;
+            margin-top: 1px;
+        }
+
+        .sec-body {
+            flex: 1;
+            padding: 3px 5px;
+            font-size: 11.5px;
+            overflow: hidden;
+            max-width: 100%;
+        }
+
+        /* ===== FIELD ROW ===== */
+        .fr {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            margin-bottom: 0px;
+            line-height: 1.5;
+        }
+
+        .fl {
+            font-size: 11.5px;
+            white-space: nowrap;
+        }
+
+        .fl-b {
+            font-size: 11.5px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+
+        .fd {
+            flex: 1;
+            min-width: 20px;
+            margin: 0 2px;
+            min-height: 18px;
+            line-height: 18px;
+            overflow-wrap: break-word !important;
+            word-break: keep-all !important;
+            max-width: 100% !important;
+            overflow: hidden;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='1'%3E%3Ccircle cx='0.5' cy='0.5' r='0.4' fill='%23888'/%3E%3C/svg%3E");
+            background-repeat: repeat-x;
+            background-position: 0 bottom;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .fd-s {
+            min-width: 15px;
+            max-width: 50px;
+            margin: 0 2px;
+            min-height: 18px;
+            line-height: 18px;
+            flex: 0 1 40px;
+            text-align: center;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='1'%3E%3Ccircle cx='0.5' cy='0.5' r='0.4' fill='%23888'/%3E%3C/svg%3E");
+            background-repeat: repeat-x;
+            background-position: 0 bottom;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .fd-m {
+            min-width: 60px;
+            margin: 0 2px;
+            min-height: 18px;
+            line-height: 18px;
+            flex: 1;
+            text-align: center;
+            overflow-wrap: break-word;
+            word-break: keep-all;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='1'%3E%3Ccircle cx='0.5' cy='0.5' r='0.4' fill='%23888'/%3E%3C/svg%3E");
+            background-repeat: repeat-x;
+            background-position: 0 bottom;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .fd-full {
+            width: 100%;
+            min-height: 18px;
+            overflow-wrap: break-word !important;
+            word-break: keep-all !important;
+            max-width: 100% !important;
+            overflow: hidden;
+            font-size: inherit;
+            line-height: 18px;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='18'%3E%3Ccircle cx='0.5' cy='17.5' r='0.4' fill='%23888'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        
+        /* Long text auto-shrink classes */
+        .fd-full.text-xs { font-size: 8px !important; line-height: 14px !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='14'%3E%3Ccircle cx='0.5' cy='13.5' r='0.4' fill='%23888'/%3E%3C/svg%3E"); }
+        .fd-full.text-sm { font-size: 9px !important; line-height: 15px !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='15'%3E%3Ccircle cx='0.5' cy='14.5' r='0.4' fill='%23888'/%3E%3C/svg%3E"); }
+        .fd-full.text-md { font-size: 10px !important; line-height: 16px !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='16'%3E%3Ccircle cx='0.5' cy='15.5' r='0.4' fill='%23888'/%3E%3C/svg%3E"); }
+        
+        /* Multiline text field with dotted lines */
+        .fd-multiline {
+            width: 100%;
+            height: auto;
+            min-height: 22px;
+            line-height: 22px;
+            white-space: normal;
+            overflow-wrap: break-word !important;
+            word-break: keep-all !important;
+            max-width: 100% !important;
+            overflow: hidden;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='22'%3E%3Ccircle cx='0.5' cy='21.5' r='0.4' fill='%23888'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .fd-multiline.text-xs { font-size: 8px !important; line-height: 14px !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='14'%3E%3Ccircle cx='0.5' cy='13.5' r='0.4' fill='%23888'/%3E%3C/svg%3E"); }
+        .fd-multiline.text-sm { font-size: 9px !important; line-height: 15px !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='15'%3E%3Ccircle cx='0.5' cy='14.5' r='0.4' fill='%23888'/%3E%3C/svg%3E"); }
+        .fd-multiline.text-md { font-size: 10px !important; line-height: 16px !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='16'%3E%3Ccircle cx='0.5' cy='15.5' r='0.4' fill='%23888'/%3E%3C/svg%3E"); }
+
+        /* ===== CHECKBOX ===== */
+        .ck {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 14px;
+            font-size: 11.5px;
+            white-space: nowrap;
+        }
+
+        .cb {
+            width: 12px;
+            height: 12px;
+            border: 1.5px solid #000;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 2px;
+            flex-shrink: 0;
+            position: relative;
+            top: 2px;
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 0;
+            text-align: center;
+            vertical-align: middle;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        /* Filled square bullet */
+        .bk {
+            width: 10px;
+            height: 10px;
+            background: #000;
+            display: inline-block;
+            margin-right: 3px;
+            flex-shrink: 0;
+            position: relative;
+            top: 1px;
+        }
+
+        /* ===== Bullet header ===== */
+        .bh {
+            display: flex;
+            align-items: center;
+            font-weight: 600;
+            font-size: 11.5px;
+            margin-top: 2px;
+            margin-bottom: 1px;
+        }
+
+        /* ===== Sub-items (5.1-5.8) ===== */
+        .si {
+            display: flex;
+            align-items: baseline;
+            font-size: 11.5px;
+            line-height: 1.5;
+        }
+
+        .si-no {
+            min-width: 25px;
+            padding-left: 8px;
+            font-size: 11.5px;
+        }
+
+        .si-dots {
+            flex: 1;
+            border-bottom: 1px dotted #888;
+            height: 15px;
+        }
+
+        /* ===== Checkbox group ===== */
+        .cg {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: baseline;
+            gap: 1px 3px;
+            margin-bottom: 1px;
+        }
+
+        /* ===== Indents ===== */
+        .i1 { padding-left: 15px; }
+        .i2 { padding-left: 28px; }
+        .i3 { padding-left: 40px; }
+
+        /* ===== FOOTER ===== */
+        .form-footer {
+            margin-top: 10px;
+            font-size: 9.5px;
+            color: #333;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-end;
+            flex-shrink: 0;
+        }
+
+        .form-footer-left {
+            flex: 1;
+        }
+
+        .form-footer-right {
+            text-align: right;
+            white-space: nowrap;
+            line-height: 1.3;
+        }
+
+        /* ===== PRINT TOOLBAR ===== */
+        .no-print { text-align: center; padding: 12px; background: #fff; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+        .no-print button { padding: 8px 24px; font-size: 14px; margin: 0 6px; border: none; border-radius: 6px; cursor: pointer; font-family: 'Sarabun', sans-serif; font-weight: 600; }
+        .no-print button:first-child { background: #0d6efd; color: #fff; }
+        .no-print button.secondary { background: #6c757d; color: #fff; }
+
+        /* ===== PHOTO GRID (5 cols × 7 rows = 35 per page) ===== */
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px 4px;
+            align-content: start;
+        }
+        .photo-cell-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+        .photo-cell {
+            border: 1.5px solid #333;
+            overflow: hidden;
+            background: #fff;
+        }
+        .photo-cell img {
+            width: 100%;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+            display: block;
+        }
+        .photo-fname {
+            font-size: 7.5px;
+            font-weight: 500;
+            font-family: 'Sarabun', sans-serif;
+            text-align: center;
+            padding: 2px 2px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            background: transparent;
+            color: #222;
+            line-height: 1.4;
+        }
+
+        @page { margin: 0; size: A4 portrait; }
+        /* ===== PRINT ===== */
+        @media print {
+            body { background: #fff; margin: 0; }
+            .no-print { display: none !important; }
+            .page {
+                margin: 0;
+                box-shadow: none;
+                padding: 8mm 10mm 5mm 10mm;
+                height: 297mm;
+                page-break-after: always;
+                overflow: hidden;
+            }
+            .page:last-child {
+                page-break-after: auto;
+            }
+            .photo-grid { gap: 2px !important; }
+            .photo-cell { page-break-inside: avoid; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="no-print">
+    <button onclick="window.print()">พิมพ์ / ดาวน์โหลด PDF</button>
+    <button class="secondary" onclick="window.close()">ปิดหน้าต่าง</button>
+</div>
+
+<div class="page">
+
+    <!-- ==================== HEADER ==================== -->
+    <div class="form-header">
+        <div class="header-logo">
+            <img src="../../images/office-of-police-forensic-icon.png" alt="ตราสำนักงานตำรวจแห่งชาติ">
+        </div>
+        <div class="header-center">
+            <div class="title-main">แบบตรวจสอบการปฏิบัติงาน (Check list)</div>
+            <div class="title-sub">การตรวจสถานที่เกิดเหตุคดีเกี่ยวกับชีวิต</div>
+        </div>
+        <div class="header-qr">
+            <div class="doc-box">
+                <div class="doc-line">เลขรับที่/เลขรายงาน <span style="display:inline-block;min-width:60px;border-bottom:1px dotted #888;text-align:center;">{{report_no}}</span> / <span style="display:inline-block;min-width:40px;border-bottom:1px dotted #888;text-align:center;">{{report_year}}</span></div>
+                <div class="doc-line">หน้าที่ 1 / {{total_pages}}</div>
+            </div>
+        </div>
+        <div class="header-qr-code" id="qr_page1"></div>
+    </div>
+
+    <!-- ==================== BODY ==================== -->
+    <div class="form-body">
+
+        <!-- ==================== LEFT COLUMN ==================== -->
+        <div class="col-left">
+
+            <!-- ROW HEADER -->
+            <div class="row-header">
+                <div class="lbl-seq">ลำดับ</div>
+                <div class="lbl-data">ข้อมูล</div>
+            </div>
+
+            <!-- ===== 1. การรับแจ้งเหตุ ===== -->
+            <div class="sec-row">
+                <div class="sec-label">
+                    <span class="sec-num">1.</span>
+                    <span class="sec-txt">การรับ<br>แจ้งเหตุ</span>
+                </div>
+                <div class="sec-body">
+                    <div class="fr">
+                        <span class="fl">คดี</span>
+                        <span class="fd" style="text-align:center;">{{case_doc_no}}</span>
+                    </div>
+                    <div class="fr">
+                        <span class="fl">วันที่</span>
+                        <span class="fd-m">{{case_date}}</span>
+                        <span class="fl">เวลาโดยประมาณ</span>
+                        <span class="fd" style="text-align:center;">{{case_time}}</span>
+                    </div>
+                    <div class="fr">
+                        <span class="fl" style="margin-right:10px;">การรับแจ้ง</span>
+                        <label class="ck"><span class="cb">{{chk_notify_phone}}</span>ทางโทรศัพท์</label>
+                        <label class="ck"><span class="cb">{{chk_notify_radio}}</span>ทางวิทยุสื่อสาร</label>
+                    </div>
+                    <div class="fr" style="padding-left:38px;">
+                        <label class="ck"><span class="cb">{{chk_notify_letter}}</span>ทางหนังสือ</label>
+                        <label class="ck"><span class="cb">{{chk_notify_other}}</span>อื่นๆ</label>
+                    </div>
+                    <div class="fr">
+                        <span class="fl">สน./สภ.</span>
+                        <span class="fd">{{police_station}}</span>
+                    </div>
+                    <div class="fr">
+                        <span class="fl">ที่</span>
+                        <span class="fd">{{location_at}}</span>
+                         <span class="fl">ลง</span>
+                        <span class="fd" style="text-align:center;">{{record_date}}</span>
+                    </div>
+                    <div class="fr">
+                        <span class="fl">พนักงานสอบสวน</span>
+                        <span class="fd">{{investigator_name}}</span>
+                    </div>
+                    <div class="fr">
+                        <span class="fl">หมายเลขโทรศัพท์</span>
+                        <span class="fd" style="text-align:left;">{{investigator_phone}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== 2. สถานที่เกิดเหตุ ===== -->
+            <div class="sec-row">
+                <div class="sec-label">
+                    <span class="sec-num">2.</span>
+                    <span class="sec-txt">สถานที่<br>เกิดเหตุ</span>
+                </div>
+                <div class="sec-body">
+                    <div class="fr" style="flex-wrap:wrap;">
+                        <span class="fl">สถานที่เกิดเหตุ</span>
+                        <span class="fd" style="flex:0 0 100%; height:auto; min-height:15px; line-height:15px; white-space:normal; overflow-wrap:break-word; word-break: keep-all; border-bottom:none; background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%272%27 height=%2715%27%3E%3Crect x=%270%27 y=%2714%27 width=%271%27 height=%271%27 fill=%27%23888%27/%3E%3C/svg%3E'); background-repeat:repeat; -webkit-print-color-adjust:exact; print-color-adjust:exact;">{{crime_location}}</span>
+                    </div>
+                    {{victim_rows}}
+                </div>
+            </div>
+
+            <!-- ===== 3. วันเวลาที่ทราบเหตุ/เกิดเหตุ ===== -->
+            <div class="sec-row">
+                <div class="sec-label">
+                    <span class="sec-num">3.</span>
+                    <span class="sec-txt">วันเวลา<br>ที่ทราบ<br>เหตุ/เกิด<br>เหตุ</span>
+                </div>
+                <div class="sec-body">
+                    <div class="fr">
+                        <span class="fl-b">วันเวลาที่ผู้เสียหาย ทราบเหตุ/เกิดเหตุ</span>
+                    </div>
+                    <div class="fr">
+                        <span class="fl">วันที่</span>
+                        <span class="fd-m">{{victim_know_date}}</span>
+                        <span class="fl">เวลาโดยประมาณ</span>
+                        <span class="fd" style="text-align:center;">{{victim_know_time}}</span>
+                    </div>
+                    <div class="fr" style="margin-top:2px;">
+                        <span class="fl-b">วันเวลาที่พนักงานสอบสวนทราบเหตุ</span>
+                    </div>
+                    <div class="fr">
+                        <span class="fl">วันที่</span>
+                        <span class="fd-m">{{officer_know_date}}</span>
+                        <span class="fl">เวลาโดยประมาณ</span>
+                        <span class="fd" style="text-align:center;">{{officer_know_time}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== 4. วันเวลาที่ตรวจเหตุ ===== -->
+            <div class="sec-row">
+                <div class="sec-label">
+                    <span class="sec-num">4.</span>
+                    <span class="sec-txt">วัน<br>เวลาที่<br>ตรวจ<br>เหตุ</span>
+                </div>
+                <div class="sec-body">
+                    <div class="fr">
+                        <span class="fl-b">วันเวลาที่ทำการตรวจสถานที่เกิดเหตุ</span>
+                    </div>
+                    <div class="fr">
+                        <span class="fl">วันที่</span>
+                        <span class="fd-m">{{inspect_date}}</span>
+                        <span class="fl">เวลาโดยประมาณ</span>
+                        <span class="fd" style="text-align:center;">{{inspect_time}}</span>
+                    </div>
+                    <div class="fr" style="margin-top:2px;">
+                        <span class="fl-b">วันเวลาที่ทำการตรวจสถานที่เกิดเหตุเพิ่มเติม</span>
+                    </div>
+                    <div class="fr">
+                        <span class="fl">วันที่</span>
+                        <span class="fd-m">{{inspect_additional_date}}</span>
+                        <span class="fl">เวลาโดยประมาณ</span>
+                        <span class="fd" style="text-align:center;">{{inspect_additional_time}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ===== 5. ผู้ตรวจสถานที่เกิดเหตุ ===== -->
+            <div class="sec-row" style="flex:1; border-bottom:none;">
+                <div class="sec-label">
+                    <span class="sec-num">5.</span>
+                    <span class="sec-txt">ผู้ตรวจ<br>สถานที่<br>เกิดเหตุ</span>
+                </div>
+                <div class="sec-body">
+                    <div class="bh" style="margin-top:0;">
+                        <span class="bk"></span>
+                        <span>ผู้ตรวจสถานที่เกิดเหตุ</span>
+                    </div>
+                    {{inspector_rows}}
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ==================== RIGHT COLUMN ==================== -->
+        <div class="col-right">
+
+            <!-- ROW HEADER -->
+            <div class="row-header">
+                <div class="lbl-seq">ลำดับ</div>
+                <div class="lbl-data">ข้อมูล</div>
+            </div>
+
+            <!-- ===== 6. ลักษณะสถานที่เกิดเหตุ ===== -->
+            <div class="sec-row">
+                <div class="sec-label">
+                    <span class="sec-num">6.</span>
+                    <span class="sec-txt">ลักษณะ<br>สถานที่<br>เกิดเหตุ</span>
+                </div>
+                <div class="sec-body">
+
+                    <!-- สภาพสถานที่เกิดเหตุเมื่อไปถึง -->
+                    <div class="bh" style="margin-top:0;">
+                        <span class="bk"></span>
+                        <span>สภาพสถานที่เกิดเหตุเมื่อไปถึง</span>
+                    </div>
+
+                    <!-- การรักษาสถานที่เกิดเหตุ -->
+                    <div class="bh i1">
+                        <span class="bk"></span>
+                        <span>การรักษาสถานที่เกิดเหตุ</span>
+                    </div>
+                    <div class="cg i2">
+                        <label class="ck"><span class="cb">{{chk_scene_preserved_yes}}</span>มี</label>
+                          <span class="fd" style="flex:1;"></span>
+                    </div>
+                    <div class="cg i2">
+                        <label class="ck"><span class="cb">{{chk_scene_preserved_no}}</span>ไม่มี</label>
+                          <span class="fd" style="flex:1;">{{scene_preserved_no_text}}</span>
+                    </div>
+
+                    <!-- แสงสว่าง -->
+                    <div class="bh i1">
+                        <span class="bk"></span>
+                        <span>แสงสว่าง(ที่สังเกตเห็น)</span>
+                    </div>
+                    <div class="cg i2">
+                        <label class="ck"><span class="cb">{{chk_lighting_bright}}</span>สว่าง</label>
+                        <label class="ck"><span class="cb">{{chk_lighting_dark}}</span>มืด</label>
+                        <label class="ck"><span class="cb">{{chk_lighting_dim}}</span>สลัว</label>
+                    </div>
+                    <div class="cg i2">
+                        <label class="ck"><span class="cb">{{chk_lighting_other}}</span>อื่นๆ</label>
+                        <span class="fd" style="flex:1;">{{lighting_other_text}}</span>
+                    </div>
+
+                    <!-- อุณหภูมิ -->
+                    <div class="bh i1">
+                        <span class="bk"></span>
+                        <span>อุณหภูมิ</span>
+                    </div>
+                    <div class="cg i2">
+                        <label class="ck"><span class="cb">{{chk_temperature_hot}}</span>ร้อน</label>
+                        <label class="ck"><span class="cb">{{chk_temperature_cold}}</span>เย็น</label>
+                        <label class="ck"><span class="cb">{{chk_temperature_ac}}</span>เครื่องปรับอากาศ</label>
+                    </div>
+                    <div class="cg i2">
+                        <label class="ck"><span class="cb">{{chk_temperature_other}}</span>อื่นๆ</label>
+                        <span class="fd" style="flex:1;">{{temperature_other_text}}</span>
+                    </div>
+
+                    <!-- กลิ่น -->
+                    <div class="bh i1">
+                        <span class="bk"></span>
+                        <span>กลิ่น</span>
+                    </div>
+                    <div class="cg i2">
+                        <label class="ck"><span class="cb">{{chk_smell_yes}}</span>มี</label>
+                          <span class="fd" style="flex:1;"></span>
+                    </div>
+                    <div class="cg i2">
+                        <label class="ck"><span class="cb">{{chk_smell_no}}</span>ไม่มี</label>
+                          <span class="fd" style="flex:1;"></span>
+                    </div>
+
+                    <!-- ลักษณะสถานที่เกิดเหตุ -->
+                    <div class="bh" style="margin-top:4px;">
+                        <span class="bk"></span>
+                        <span>ลักษณะสถานที่เกิดเหตุ</span>
+                    </div>
+
+                    <!-- กรณีเกิดเหตุภายนอกอาคาร -->
+                    <div class="i1" style="margin-top:1px;">
+                        <label class="ck"><span class="cb">{{chk_outdoor}}</span>กรณีเกิดเหตุภายนอกอาคาร</label>
+                    </div>
+                    <div class="cg i2">
+                        <label class="ck"><span class="cb">{{chk_outdoor_road}}</span>ถนน</label>
+                        <label class="ck"><span class="cb">{{chk_outdoor_lawn}}</span>สนามหญ้า</label>
+                        <label class="ck"><span class="cb">{{chk_outdoor_garden}}</span>ในสวน</label>
+                        <label class="ck"><span class="cb">{{chk_outdoor_empty}}</span>ที่ว่าง</label>
+                    </div>
+                    <div class="cg i2">
+                        <label class="ck"><span class="cb">{{chk_outdoor_other}}</span>อื่นๆ</label>
+                        <span class="fd" style="flex:1;">{{outdoor_type_other_text}}</span>
+                    </div>
+
+                    <!-- สภาพบริเวณโดยรอบ (ภายนอก) -->
+                    <div class="bh i1">
+                        <span class="bk"></span>
+                        <span>สภาพบริเวณโดยรอบ</span>
+                        <span class="fl" style="margin-left:3px;">เมื่อหันหน้าเข้า</span>
+                        <span class="fd" style="flex:1;">{{outdoor_entrance_condition}}</span>
+                    </div>
+                    <div class="i2">
+                        <div class="fr"><span class="fl">ด้านหน้าติด</span><span class="fd">{{outdoor_front_adjacent}}</span></div>
+                        <div class="fr"><span class="fl">ด้านขวาติด</span><span class="fd">{{outdoor_right_adjacent}}</span></div>
+                        <div class="fr"><span class="fl">ด้านซ้ายติด</span><span class="fd">{{outdoor_left_adjacent}}</span></div>
+                        <div class="fr"><span class="fl">ด้านหลังติด</span><span class="fd">{{outdoor_back_adjacent}}</span></div>
+                    </div>
+
+                    <!-- บริเวณที่เกิดเหตุ (ภายนอก) -->
+                    <div class="bh i1">
+                        <span class="bk"></span>
+                        <span>บริเวณที่เกิดเหตุ</span>
+                        <span class="fl" style="margin-left:3px;">เกิดเหตุที่</span>
+                        <span class="fd" style="flex:1;">{{outdoor_incident_area_detail}}</span>
+                    </div>
+
+                    <!-- กรณีเกิดเหตุภายในอาคาร -->
+                    <div class="bh i1">
+
+                       <label class="ck"><span class="cb">{{chk_indoor}}</span>กรณีเกิดเหตุภายในอาคาร</label>
+                    </div>
+
+                    <!-- ลักษณะภายนอก -->
+                    <div class="bh i2">
+                        <span class="bk"></span>
+                        <span>ลักษณะภายนอก</span>
+                    </div>
+                    <div class="cg i3">
+                        <label class="ck"><span class="cb">{{chk_building_commercial}}</span>อาคารพาณิชย์</label>
+                        <label class="ck"><span class="cb">{{chk_building_house}}</span>บ้านเดี่ยว</label>
+                        <label class="ck"><span class="cb">{{chk_building_townhouse}}</span>ทาวน์เฮาส์</label>
+                    </div>
+                    <div class="cg i3">
+                        <label class="ck"><span class="cb">{{chk_building_other}}</span>อื่นๆ</label>
+                        <span class="fd" style="flex:1;">{{building_type_other_text}}</span>
+                    </div>
+
+                    <!-- สภาพบริเวณโดยรอบ (ภายใน) -->
+                    <div class="bh i1">
+                        <span class="bk"></span>
+                        <span>สภาพบริเวณโดยรอบ</span>
+                        <label class="ck" style="margin-left:6px;"><span class="cb">{{chk_indoor_fence_yes}}</span>มีรั้ว</label>
+                        <label class="ck"><span class="cb">{{chk_indoor_fence_no}}</span>ไม่มีรั้ว</label>
+                    </div>
+                    <div class="i2">
+                        <div class="fr"><span class="fl">มีหันหน้าเข้า</span><span class="fd">{{entrance_condition}}</span></div>
+                        <div class="fr"><span class="fl">ด้านหน้าติด</span><span class="fd">{{front_adjacent}}</span></div>
+                        <div class="fr"><span class="fl">ด้านซ้ายติด</span><span class="fd">{{left_adjacent}}</span></div>
+                        <div class="fr"><span class="fl">ด้านขวาติด</span><span class="fd">{{right_adjacent}}</span></div>
+                        <div class="fr"><span class="fl">ด้านหลังติด</span><span class="fd">{{back_adjacent}}</span></div>
+                    </div>
+
+                    <!-- ลักษณะภายใน -->
+                    <div class="bh i1" style="margin-top:2px;">
+                        <span class="bk"></span>
+                        <span>ลักษณะภายใน</span>
+                    </div>
+                    <div class="i2">
+                        <div class="fd-full" style="height:auto; min-height:15px; line-height:15px; white-space:normal; overflow-wrap:break-word; word-break: keep-all; border-bottom:none; background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%272%27 height=%2715%27%3E%3Crect x=%270%27 y=%2714%27 width=%271%27 height=%271%27 fill=%27%23888%27/%3E%3C/svg%3E'); background-repeat:repeat; -webkit-print-color-adjust:exact; print-color-adjust:exact;">{{indoor_interior_detail}}</div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ==================== FOOTER ==================== -->
+    <div class="form-footer">
+        <div class="form-footer-left">
+            <strong>หมายเหตุ</strong> กรณีมีข้อมูลมากกว่าที่กำหนดไว้สามารถเขียนเพิ่มเติมได้ที่ด้านหลังกระดาษ
+        </div>
+        <div class="form-footer-right">
+            F-CS-09 แก้ไขครั้งที่ 2<br>
+            แก้ไขวันที่ 2 ก.ย. 63<br>
+            เริ่มใช้ 1 ต.ค. 63
+        </div>
+    </div>
+
+</div>
+
+<!-- ================================================================ -->
+<!-- ========================= PAGE 2 ============================== -->
+<!-- ================================================================ -->
+<div class="page">
+
+    <!-- ==================== HEADER ==================== -->
+    <div class="form-header">
+        <div class="header-logo">
+            <img src="../../images/office-of-police-forensic-icon.png" alt="ตราสำนักงานตำรวจแห่งชาติ">
+        </div>
+        <div class="header-center">
+            <div class="title-main">ตรวจสอบการปฏิบัติงาน (Check list)</div>
+            <div class="title-sub">การตรวจสถานที่เกิดเหตุคดีเกี่ยวกับชีวิต</div>
+        </div>
+        <div class="header-qr">
+            <div class="doc-box">
+                <div class="doc-line">เลขรับที่/เลขรายงาน <span style="display:inline-block;min-width:60px;border-bottom:1px dotted #888;text-align:center;">{{report_no}}</span> / <span style="display:inline-block;min-width:40px;border-bottom:1px dotted #888;text-align:center;">{{report_year}}</span></div>
+                <div class="doc-line">หน้าที่ 2 / {{total_pages}}</div>
+            </div>
+        </div>
+        <div class="header-qr-code" id="qr_page2"></div>
+    </div>
+
+    <!-- ==================== BODY ==================== -->
+    <div class="form-body">
+
+        <!-- ==================== LEFT COLUMN ==================== -->
+        <div class="col-left">
+
+            <!-- ROW HEADER -->
+            <div class="row-header">
+                <div class="lbl-seq">ลำดับ</div>
+                <div class="lbl-data">ข้อมูล</div>
+            </div>
+
+            <!-- ===== 6. (ต่อ) ลักษณะสถานที่เกิดเหตุ ===== -->
+            <div class="sec-row">
+                <div class="sec-label">
+                    <span class="sec-num">6.</span>
+                    <span class="sec-txt">(ต่อ)</span>
+                </div>
+                <div class="sec-body">
+
+                    <!-- บริเวณที่เกิดเหตุ -->
+                    <div class="bh" style="margin-top:0;">
+                        <span class="bk"></span>
+                        <span>บริเวณที่เกิดเหตุ เกิดเหตุที่</span>
+                        <span class="fd" style="flex:1;">{{incident_area_detail}}</span>
+                    </div>
+
+                    <!-- โครงสร้างบริเวณที่เกิดเหตุ -->
+                    <div class="bh">
+                        <span class="bk"></span>
+                        <span>โครงสร้างบริเวณที่เกิดเหตุ</span>
+                    </div>
+                    <div class="fr i1">
+                        <label class="ck"><span class="cb">{{chk_structure_size}}</span>ขนาดกว้าง x ยาว ประมาณ</label>
+                        <span class="fd">{{structure_size}}</span>
+                    </div>
+                    <div class="fr i1">
+                        <label class="ck"><span class="cb">{{chk_structure_type}}</span>ลักษณะโครงสร้าง</label>
+                        <span class="fd">{{structure_type}}</span>
+                    </div>
+
+                    <div class="fr i1">
+                        <label class="ck"><span class="cb">{{chk_structure_wall}}</span>ผนัง</label> <span class="fd">{{structure_wall}}</span>
+
+                    </div>
+
+                    <div class="fr i2">
+                        <span class="fl">ด้านหน้า</span>
+                        <span class="fd">{{structure_front}}</span>
+                    </div>
+                    <div class="fr i2">
+                        <span class="fl">ด้านขวา</span>
+                        <span class="fd">{{structure_right}}</span>
+                    </div>
+                    <div class="fr i2">
+                        <span class="fl">ด้านซ้าย</span>
+                        <span class="fd">{{structure_left}}</span>
+                    </div>
+                     <div class="fr i2">
+                        <span class="fl">ด้านหลัง</span>
+                        <span class="fd">{{structure_back}}</span>
+                    </div>
+                    <div class="fr i1">
+                        <label class="ck"><span class="cb">{{chk_structure_floor}}</span>พื้น</label>
+                        <span class="fd">{{structure_floor}}</span>
+                    </div>
+                    <div class="fr i1">
+                        <label class="ck"><span class="cb">{{chk_structure_roof}}</span>หลังคา</label>
+                        <span class="fd">{{structure_roof}}</span>
+                    </div>
+                    <div class="fr i1">
+                        <label class="ck"><span class="cb">{{chk_structure_arrangement}}</span>การจัดวางสิ่งของ</label>
+                        <span class="fd">{{structure_arrangement}}</span>
+                    </div>
+                    <div class="fd-full i1"></div>
+
+                </div>
+            </div>
+
+            <!-- ===== 7. ผลการตรวจสถานที่เกิดเหตุ ===== -->
+            <div class="sec-row" style="flex:1; border-bottom:none;">
+                <div class="sec-label">
+                    <span class="sec-num">7.</span>
+                    <span class="sec-txt">ผลการ<br>ตรวจ<br>สถานที่<br>เกิดเหตุ</span>
+                </div>
+                <div class="sec-body">
+
+                    <!-- พฤติการณ์คดี -->
+                    <div class="bh" style="margin-top:0; flex-wrap:wrap;">
+                        <span class="bk"></span>
+                        <span>พฤติการณ์คดี</span>
+                        <span class="fd" style="flex:0 0 100%; height:auto; min-height:15px; line-height:15px; white-space:normal; overflow-wrap:break-word; word-break: keep-all; border-bottom:none; background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%272%27 height=%2715%27%3E%3Crect x=%270%27 y=%2714%27 width=%271%27 height=%271%27 fill=%27%23888%27/%3E%3C/svg%3E'); background-repeat:repeat; -webkit-print-color-adjust:exact; print-color-adjust:exact;">{{case_behavior}}</span>
+                    </div>
+
+                    <!-- ทางเข้า - ทางออก -->
+                    <div class="fr" style="margin-top:2px; flex-wrap:wrap;">
+                        <label class="ck"><span class="cb">{{chk_entrance_exit}}</span>ทางเข้า – ทางออก</label>
+                        <span class="fd" style="flex:0 0 100%; height:auto; min-height:15px; line-height:15px; white-space:normal; overflow-wrap:break-word; word-break: keep-all; border-bottom:none; background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%272%27 height=%2715%27%3E%3Crect x=%270%27 y=%2714%27 width=%271%27 height=%271%27 fill=%27%23888%27/%3E%3C/svg%3E'); background-repeat:repeat; -webkit-print-color-adjust:exact; print-color-adjust:exact;">{{entrance_exit}}</span>
+                    </div>
+
+                    <!-- ร่องรอยการต่อสู้ -->
+                    <div class="fr" style="margin-top:2px;">
+                        <span class="bk"></span>ร่องรอยการต่อสู้
+                        <label class="ck" style="margin-left:6px;"><span class="cb">{{chk_fight_trace_yes}}</span>มี</label>
+                        <label class="ck"><span class="cb">{{chk_fight_trace_no}}</span>ไม่มี</label>
+                         <span class="fd"></span>
+                         <div class="fd-full"></div>
+                    </div>
+
+                    <!-- ร่องรอยการค้น -->
+                    <div class="fr">
+                        <span class="bk"></span>ร่องรอยการรื้อค้น
+                        <label class="ck" style="margin-left:6px;"><span class="cb">{{chk_search_trace_yes}}</span>มี</label>
+                        <label class="ck"><span class="cb">{{chk_search_trace_no}}</span>ไม่มี</label>
+                         <span class="fd"></span>
+                         <div class="fd-full"></div>
+                    </div>
+
+                    <!-- ศพ -->
+                    <div class="bh" style="margin-top:4px;">
+                        <span class="bk"></span>
+                        <span>ศพ</span>
+                    </div>
+                    <div class="cg i1">
+                        <label class="ck"><span class="cb">{{chk_body_found}}</span>พบศพ</label>
+                    </div>
+                    <div class="cg i1">
+                        <label class="ck"><span class="cb">{{chk_body_not_found}}</span>ไม่พบศพ</label>
+                    </div>
+                    <div class="fr i1" style="flex-wrap:wrap;">
+                        <label class="ck"><span class="cb">{{chk_body_location}}</span>ตำแหน่งที่พบศพ</label>
+                        <span class="fd" style="flex:0 0 100%; height:auto; min-height:15px; line-height:15px; white-space:normal; overflow-wrap:break-word; word-break: keep-all; border-bottom:none; background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%272%27 height=%2715%27%3E%3Crect x=%270%27 y=%2714%27 width=%271%27 height=%271%27 fill=%27%23888%27/%3E%3C/svg%3E'); background-repeat:repeat; -webkit-print-color-adjust:exact; print-color-adjust:exact;">{{body_location}}</span>
+                        <div class="fd-full" style="height:auto; min-height:15px; line-height:15px; white-space:normal; overflow-wrap:break-word; word-break: keep-all; border-bottom:none; background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%272%27 height=%2715%27%3E%3Crect x=%270%27 y=%2714%27 width=%271%27 height=%271%27 fill=%27%23888%27/%3E%3C/svg%3E'); background-repeat:repeat; -webkit-print-color-adjust:exact; print-color-adjust:exact;">{{body_condition}}</div>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ==================== RIGHT COLUMN ==================== -->
+        <div class="col-right">
+
+            <!-- ROW HEADER -->
+            <div class="row-header">
+                <div class="lbl-seq">ลำดับ</div>
+                <div class="lbl-data">ข้อมูล</div>
+            </div>
+
+            <!-- ===== 7. (ต่อ) ===== -->
+            <div class="sec-row" style="flex:1; border-bottom:none;">
+                <div class="sec-label">
+                    <span class="sec-num">7.</span>
+                    <span class="sec-txt">(ต่อ)</span>
+                </div>
+                <div class="sec-body">
+
+                    <!-- สภาพศพ -->
+                    <div class="bh" style="margin-top:0;">
+                        <span class="bk"></span>
+                        <span>สภาพศพ</span>
+                    </div>
+                    <div class="fd-full" style="height:auto; min-height:15px; line-height:15px; white-space:normal; overflow-wrap:break-word; word-break: keep-all; border-bottom:none; background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%272%27 height=%2715%27%3E%3Crect x=%270%27 y=%2714%27 width=%271%27 height=%271%27 fill=%27%23888%27/%3E%3C/svg%3E'); background-repeat:repeat; -webkit-print-color-adjust:exact; print-color-adjust:exact;">{{body_condition}}</div>
+
+                    <!-- การแต่งกายและทรัพย์สิน -->
+                    <div class="bh" style="margin-top:4px;">
+                        <span class="bk"></span>
+                        <span>การแต่งกายและทรัพย์สิน</span>
+                    </div>
+                    <div class="fr i1">
+                        <label class="ck"><span class="cb">{{chk_clothing_shirt}}</span>เสื้อ</label>
+                        <span class="fd">{{clothing_shirt}}</span>
+                    </div>
+                    <div class="fr i1">
+                        <label class="ck"><span class="cb">{{chk_clothing_pants}}</span>กางเกง</label>
+                        <span class="fd">{{clothing_pants}}</span>
+                    </div>
+                    <div class="fr i1">
+                        <label class="ck"><span class="cb">{{chk_clothing_shoes}}</span>รองเท้า/ถุงเท้า</label>
+                        <span class="fd">{{clothing_shoes}}</span>
+                    </div>
+                    <div class="fr i1">
+                        <label class="ck"><span class="cb">{{chk_clothing_accessories}}</span>เครื่องประดับ</label>
+                        <span class="fd">{{clothing_accessories}}</span>
+                    </div>
+                    <div class="fr i1">
+                        <label class="ck"><span class="cb">{{chk_clothing_tattoo}}</span>รอยสักหรือรอยแผลเป็น</label>
+                        <span class="fd">{{clothing_tattoo}}</span>
+                    </div>
+                    <div class="fr i1" style="flex-wrap:wrap;">
+                        <label class="ck"><span class="cb">{{chk_clothing_other}}</span>อื่นๆ</label>
+                        <span class="fd" style="flex:0 0 100%; height:auto; min-height:15px; line-height:15px; white-space:normal; overflow-wrap:break-word; word-break: keep-all; border-bottom:none; background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%272%27 height=%2715%27%3E%3Crect x=%270%27 y=%2714%27 width=%271%27 height=%271%27 fill=%27%23888%27/%3E%3C/svg%3E'); background-repeat:repeat; -webkit-print-color-adjust:exact; print-color-adjust:exact;">{{clothing_other}}</span>
+                    </div>
+
+                    <!-- สภาพรอยบาดแผลเบื้องต้น -->
+                    <div class="bh" style="margin-top:4px;">
+                        <span class="bk"></span>
+                        <span>สภาพรอยบาดแผลเบื้องต้น</span>
+                    </div>
+                    <div class="cg i1">
+                        <label class="ck"><span class="cb">{{chk_wound_none}}</span>ไม่พบรอยบาดแผล</label>
+                    </div>
+                    <div class="fr i1">
+                        <label class="ck"><span class="cb">{{chk_wound_found}}</span>พบรอยบาดแผลจำนวน</label>
+                        <span class="fd-s">{{wound_count}}</span>
+                        <span class="fl">รอย</span>
+                    </div>
+                    <div class="fr i1" style="flex-wrap:wrap;">
+                        <span class="fl">ลักษณะบาดแผลคือ</span>
+                        <span class="fd" style="flex:0 0 100%; height:auto; min-height:15px; line-height:15px; white-space:normal; overflow-wrap:break-word; word-break: keep-all; border-bottom:none; background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%272%27 height=%2715%27%3E%3Crect x=%270%27 y=%2714%27 width=%271%27 height=%271%27 fill=%27%23888%27/%3E%3C/svg%3E'); background-repeat:repeat; -webkit-print-color-adjust:exact; print-color-adjust:exact;">{{wound_description}}</span>
+                    </div>
+                    <div class="fd-full i1" style="height:auto; min-height:15px; line-height:15px; white-space:normal; overflow-wrap:break-word; word-break: keep-all; border-bottom:none; background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%272%27 height=%2715%27%3E%3Crect x=%270%27 y=%2714%27 width=%271%27 height=%271%27 fill=%27%23888%27/%3E%3C/svg%3E'); background-repeat:repeat; -webkit-print-color-adjust:exact; print-color-adjust:exact;">{{wound_detail}}</div>         
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ==================== FOOTER (PAGE 2) ==================== -->
+    <div class="form-footer">
+        <div class="form-footer-left">
+            <strong>หมายเหตุ</strong> กรณีมีข้อมูลมากกว่าที่กำหนดไว้สามารถเขียนเพิ่มเติมได้ที่ด้านหลังกระดาษ
+        </div>
+        <div class="form-footer-right">
+            F-CS-09 แก้ไขครั้งที่ 2<br>
+            แก้ไขวันที่ 2 ก.ย. 63<br>
+            เริ่มใช้ 1 ต.ค. 63
+        </div>
+    </div>
+
+</div>
+
+<!-- ================================================================ -->
+<!-- ========================= PAGE 3 ============================== -->
+<!-- ================================================================ -->
+<div class="page">
+
+    <!-- ==================== HEADER ==================== -->
+    <div class="form-header">
+        <div class="header-logo">
+            <img src="../../images/office-of-police-forensic-icon.png" alt="ตราสำนักงานตำรวจแห่งชาติ">
+        </div>
+        <div class="header-center">
+            <div class="title-main">ตรวจสอบการปฏิบัติงาน (Check list)</div>
+            <div class="title-sub">การตรวจสถานที่เกิดเหตุคดีเกี่ยวกับชีวิต</div>
+        </div>
+        <div class="header-qr">
+            <div class="doc-box">
+                <div class="doc-line">เลขรับที่/เลขรายงาน <span style="display:inline-block;min-width:60px;border-bottom:1px dotted #888;text-align:center;">{{report_no}}</span> / <span style="display:inline-block;min-width:40px;border-bottom:1px dotted #888;text-align:center;">{{report_year}}</span></div>
+                <div class="doc-line">หน้าที่ 3 / {{total_pages}}</div>
+            </div>
+        </div>
+        <div class="header-qr-code" id="qr_page3"></div>
+    </div>
+
+    <!-- ==================== BODY ==================== -->
+    <div class="form-body">
+
+        <!-- ==================== LEFT COLUMN ==================== -->
+        <div class="col-left">
+
+            <!-- ROW HEADER -->
+            <div class="row-header">
+                <div class="lbl-seq">ลำดับ</div>
+                <div class="lbl-data">ข้อมูล</div>
+            </div>
+
+            <!-- ===== 7. (ต่อ) วัตถุพยานที่ตรวจพบ ===== -->
+            <div class="sec-row" style="flex:1; border-bottom:none;">
+                <div class="sec-label">
+                    <span class="sec-num">7.</span>
+                    <span class="sec-txt">(ต่อ)</span>
+                </div>
+                <div class="sec-body">
+
+                    <!-- วัตถุพยานที่ตรวจพบ -->
+                    <div class="bh" style="margin-top:0;">
+                        <span class="bk"></span>
+                        <span>วัตถุพยานที่ตรวจพบ</span>
+                    </div>
+                    <div class="fr i1" style="flex-wrap:wrap;">
+                        <label class="ck"><span class="cb">{{chk_evidence_blood_stain}}</span>คราบสีแดงคล้ายโลหิต</label>
+                        <span class="fd" style="flex:0 0 100%; height:auto; min-height:15px; line-height:15px; white-space:normal; overflow-wrap:break-word; word-break: keep-all; border-bottom:none; background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%272%27 height=%2715%27%3E%3Crect x=%270%27 y=%2714%27 width=%271%27 height=%271%27 fill=%27%23888%27/%3E%3C/svg%3E'); background-repeat:repeat; -webkit-print-color-adjust:exact; print-color-adjust:exact;">{{blood_stain_detail}}</span>
+                    </div>
+
+                    <!-- ทดสอบด้วยชุดทดสอบคราบโลหิตเบื้องต้น -->
+                    <div class="i1" style="margin-top:4px; margin-bottom:2px;">
+                        <span class="fl-b">ทดสอบด้วยชุดทดสอบคราบโลหิตเบื้องต้น</span>
+                    </div>
+                    <div class="i2">
+                        <div class="cg">
+                            <label class="ck"><span class="cb">{{chk_test_hemastix}}</span>Hemastix</label>
+                        </div>
+                        <div class="cg i1">
+                            <label class="ck"><span class="cb">{{chk_hemastix_positive}}</span>มีการเปลี่ยนแปลงเป็นสีเขียวแกมน้ำเงิน</label>
+                        </div>
+                        <div class="cg i1">
+                            <label class="ck"><span class="cb">{{chk_hemastix_negative}}</span>ไม่มีการเปลี่ยนแปลง</label>
+                        </div>
+                    </div>
+                    <div class="i2" style="margin-top:2px;">
+                        <div class="cg">
+                            <label class="ck"><span class="cb">{{chk_test_phenolphthalein}}</span>Phenolphthalein</label>
+                        </div>
+                        <div class="cg i1">
+                            <label class="ck"><span class="cb">{{chk_phenol_positive}}</span>มีการเปลี่ยนแปลงเป็นสีชมพูในทันที</label>
+                        </div>
+                        <div class="cg i1">
+                            <label class="ck"><span class="cb">{{chk_phenol_negative}}</span>ไม่มีการเปลี่ยนแปลง</label>
+                        </div>
+                    </div>
+
+                    <!-- วัตถุพยานอื่นๆ -->
+                    <div class="fr i1" style="margin-top:4px; flex-wrap:wrap;">
+                        <label class="ck"><span class="cb">{{chk_other_evidence}}</span>วัตถุพยานอื่นๆ</label>
+                        <span class="fd" style="flex:0 0 100%; height:auto; min-height:15px; line-height:15px; white-space:normal; overflow-wrap:break-word; word-break: keep-all; border-bottom:none; background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%272%27 height=%2715%27%3E%3Crect x=%270%27 y=%2714%27 width=%271%27 height=%271%27 fill=%27%23888%27/%3E%3C/svg%3E'); background-repeat:repeat; -webkit-print-color-adjust:exact; print-color-adjust:exact;">{{other_evidence}}</span>
+                    </div>
+
+                    <!-- วัตถุพยานที่ตรวจเก็บ -->
+                    <div class="bh" style="margin-top:6px;">
+                        <span class="bk"></span>
+                        <span>วัตถุพยานที่ตรวจเก็บ/การดำเนินการเกี่ยวกับวัตถุพยาน</span>
+                    </div>
+                    <div style="padding-left:15px; font-weight:600; font-size:11.5px;">
+                        เพื่อส่งตรวจพิสูจน์
+                    </div>
+
+                    <div class="fr i1" style="margin-top:2px;">
+                        <label class="ck"><span class="cb">{{chk_collected_gun}}</span>วัตถุพยานประเภทอาวุธปืนและเครื่องกระสุน</label>
+                    </div>
+                    <div class="fd-full i1" style="height:auto; min-height:15px; line-height:15px; white-space:normal; overflow-wrap:break-word; word-break: keep-all; border-bottom:none; background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%272%27 height=%2715%27%3E%3Crect x=%270%27 y=%2714%27 width=%271%27 height=%271%27 fill=%27%23888%27/%3E%3C/svg%3E'); background-repeat:repeat; -webkit-print-color-adjust:exact; print-color-adjust:exact;">{{collected_gun_detail}}</div>
+
+                    <div class="fr i1" style="margin-top:2px;">
+                        <label class="ck"><span class="cb">{{chk_collected_dna}}</span>วัตถุพยานประเภทสารพันธุกรรม</label>
+                    </div>
+                    <div class="fd-full i1" style="height:auto; min-height:15px; line-height:15px; white-space:normal; overflow-wrap:break-word; word-break: keep-all; border-bottom:none; background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%272%27 height=%2715%27%3E%3Crect x=%270%27 y=%2714%27 width=%271%27 height=%271%27 fill=%27%23888%27/%3E%3C/svg%3E'); background-repeat:repeat; -webkit-print-color-adjust:exact; print-color-adjust:exact;">{{collected_dna_detail}}</div>
+
+                </div>
+            </div>
+
+        </div>
+
+        <!-- ==================== RIGHT COLUMN ==================== -->
+        <div class="col-right">
+
+            <!-- ROW HEADER -->
+            <div class="row-header">
+                <div class="lbl-seq">ลำดับ</div>
+                <div class="lbl-data">ข้อมูล</div>
+            </div>
+
+            <!-- ===== 7. (ต่อ) ===== -->
+            <div class="sec-row">
+                <div class="sec-label">
+                    <span class="sec-num">7.</span>
+                    <span class="sec-txt">(ต่อ)</span>
+                </div>
+                <div class="sec-body">
+
+                    <!-- วัตถุพยานประเภทลายนิ้วมือ -->
+                    <div class="fr" style="margin-top:0;">
+                        <label class="ck"><span class="cb">{{chk_evidence_fingerprint}}</span>วัตถุพยานประเภทลายนิ้วมือ/ฝ่ามือ/ฝ่าเท้าแฝง</label>
+                    </div>
+                    <div class="fd-full" style="height:auto; min-height:15px; line-height:15px; white-space:normal; overflow-wrap:break-word; word-break: keep-all; border-bottom:none; background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%272%27 height=%2715%27%3E%3Crect x=%270%27 y=%2714%27 width=%271%27 height=%271%27 fill=%27%23888%27/%3E%3C/svg%3E'); background-repeat:repeat; -webkit-print-color-adjust:exact; print-color-adjust:exact;">{{fingerprint_detail}}</div>
+
+                    <!-- วัตถุพยานประเภทอื่นๆ -->
+                    <div class="fr" style="margin-top:2px;">
+                        <label class="ck"><span class="cb">{{chk_evidence_other_type}}</span>วัตถุพยานประเภทอื่น ๆ</label>
+                    </div>
+                    <div class="fd-full i1" style="height:auto; min-height:15px; line-height:15px; white-space:normal; overflow-wrap:break-word; word-break: keep-all; border-bottom:none; background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%272%27 height=%2715%27%3E%3Crect x=%270%27 y=%2714%27 width=%271%27 height=%271%27 fill=%27%23888%27/%3E%3C/svg%3E'); background-repeat:repeat; -webkit-print-color-adjust:exact; print-color-adjust:exact;">{{other_evidence_type}}</div>
+
+                    <!-- การตรวจสอบครั้งสุดท้าย -->
+                     <div class="fr" style="margin-top:4px;"></div>
+                     <div class="cg i1">
+                        <label class="ck"><span class="cb">{{chk_final_check_1}}</span>การตรวจสอบครั้งสุดท้าย</label>
+                    </div>
+                    <div class="cg i1">
+                        <label class="ck"><span class="cb">{{chk_final_check_2}}</span>ตรวจเก็บวัตถุพยานครบถ้วน</label>
+                    </div>
+                    <div class="cg i1">
+                        <label class="ck"><span class="cb">{{chk_final_check_3}}</span>ถ่ายภาพสถานที่เกิดเหตุ และดำเนินการส่งมอบสถานที่</label>
+                    </div>
+                    <div class="i2" style="font-size:11.5px;">
+                        เกิดเหตุให้แก่พนักงานสอบสวน
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- ===== 8. การส่งมอบสถานที่เกิดเหตุ ===== -->
+            <div class="sec-row" style="flex:1; border-bottom:none;">
+                <div class="sec-label">
+                    <span class="sec-num">8.</span>
+                    <span class="sec-txt">การส่ง<br>มอบคืน<br>สถานที่<br>เกิดเหตุ</span>
+                </div>
+                <div class="sec-body">
+
+                    <!-- วันเวลาที่ทำการตรวจเสร็จสิ้น -->
+                    <div class="bh" style="margin-top:0;">
+                        <span class="bk"></span>
+                        <span>วันเวลาที่ทำการตรวจสถานที่เกิดเหตุเสร็จสิ้น</span>
+                    </div>
+                    <div class="fr i1">
+                        <span class="fl">วันที่</span>
+                        <span class="fd" style="text-align:center;">{{inspection_end_date}}</span>
+                        <span class="fl">เวลาโดยประมาณ</span>
+                        <span class="fd" style="text-align:center;">{{inspection_end_time}}</span>
+                        <span class="fl">น.</span>
+                    </div>
+
+                    <!-- การส่งมอบสถานที่เกิดเหตุ -->
+                    <div class="bh" style="margin-top:6px;">
+                        <span class="bk"></span>
+                        <span>การส่งมอบสถานที่เกิดเหตุ</span>
+                    </div>
+
+                    <!-- ผู้รับมอบ -->
+                    <div class="fr" style="margin-top:6px; align-items:flex-end;">
+                        <span class="fl">ลงชื่อ</span>
+                        <span class="fd" style="height:auto; min-height:40px; display:flex; align-items:flex-end; justify-content:center;">{{receiver_signature_img}}</span>
+                        <span class="fl">ผู้รับมอบสถานที่เกิดเหตุ</span>
+                    </div>
+                    <div class="fr">
+                        <span class="fl" style="visibility:hidden;">ลงชื่อ</span>
+                        <span class="fl">(</span>
+                        <span style="border-bottom:1px dotted #888; padding:0 4px; text-align:center;">{{receiver_name}}</span>
+                        <span class="fl">)</span>
+                    </div>
+                    <div class="fr">
+                        <span class="fl">ตำแหน่ง</span>
+                        <span class="fd">{{receiver_position}}</span>
+                    </div>
+
+                    <!-- ผู้ส่งมอบ -->
+                    <div class="fr" style="margin-top:8px; align-items:flex-end;">
+                        <span class="fl">ลงชื่อ</span>
+                        <span class="fd" style="height:auto; min-height:40px; display:flex; align-items:flex-end; justify-content:center;">{{sender_signature_img}}</span>
+                        <span class="fl">ผู้ส่งมอบสถานที่เกิดเหตุ</span>
+                    </div>
+                    <div class="fr">
+                        <span class="fl" style="visibility:hidden;">ลงชื่อ</span>
+                        <span class="fl">(</span>
+                        <span style="border-bottom:1px dotted #888; padding:0 4px; text-align:center;">{{sender_name}}</span>
+                        <span class="fl">)</span>
+                    </div>
+                    <div class="fr">
+                        <span class="fl">ตำแหน่ง</span>
+                        <span class="fd">{{sender_position}}</span>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <!-- ==================== FOOTER (PAGE 3) ==================== -->
+    <div class="form-footer">
+        <div class="form-footer-left">
+            <strong>หมายเหตุ</strong> กรณีมีข้อมูลมากกว่าที่กำหนดไว้สามารถเขียนเพิ่มเติมได้ที่ด้านหลังกระดาษ
+        </div>
+        <div class="form-footer-right">
+            F-CS-09 แก้ไขครั้งที่ 2<br>
+            แก้ไขวันที่ 2 ก.ย. 63<br>
+            เริ่มใช้ 1 ต.ค. 63
+        </div>
+    </div>
+
+</div>
+
+<!-- ================================================================ -->
+<!-- ========================= PAGE 4 ============================== -->
+<!-- ================================================================ -->
+<div class="page">
+
+    <!-- ==================== HEADER ==================== -->
+    <div class="form-header">
+        <div class="header-logo">
+            <img src="../../images/office-of-police-forensic-icon.png" alt="ตราสำนักงานตำรวจแห่งชาติ">
+        </div>
+        <div class="header-center">
+            <div class="title-main">แบบตรวจสอบการปฏิบัติงาน (Check list)</div>
+            <div class="title-sub">การตรวจสถานที่เกิดเหตุคดีเกี่ยวกับชีวิต</div>
+        </div>
+        <div class="header-qr">
+            <div class="doc-box">
+                <div class="doc-line">เลขรับที่/เลขรายงาน <span style="display:inline-block;min-width:60px;border-bottom:1px dotted #888;text-align:center;">{{report_no}}</span> / <span style="display:inline-block;min-width:40px;border-bottom:1px dotted #888;text-align:center;">{{report_year}}</span></div>
+                <div class="doc-line">หน้าที่ 4 / {{total_pages}}</div>
+            </div>
+        </div>
+        <div class="header-qr-code" id="qr_page4"></div>
+    </div>
+
+    <!-- ==================== SKETCH TITLE ==================== -->
+    <div style="text-align:center; font-size:13px; font-weight:600; margin-bottom:6px;">
+        แผนผังสังเขป
+    </div>
+
+    <!-- ==================== SKETCH BOX ==================== -->
+    <div style="border:1.5px solid #000; min-height:560px; position:relative; margin-bottom:6px; display:flex; align-items:center; justify-content:center;">
+        {{scene_sketch_img}}
+        <!-- * NOT TO SCALE -->
+        <div style="position:absolute; bottom:8px; right:10px; font-size:10px; color:#555;">
+            * NOT TO SCALE
+        </div>
+    </div>
+
+    <!-- ==================== REMARK & RECORDER ==================== -->
+    <div style="margin-bottom:8px;">
+        <div class="fr">
+            <span class="fl">หมายเหตุ</span>
+            <span class="fd">{{sketch_remark}}</span>
+        </div>
+        <div class="fd-full"></div>
+         <div class="fd-full"></div>
+         <div class="fd-full"></div>
+         <div class="fd-full"></div>
+         <div class="fd-full"></div>
+          <div class="fd-full"></div>
+
+    </div>
+
+    <div style="margin-top:20px; display:flex; flex-direction:column; align-items:flex-end;">
+        <div class="fr" style="width:auto;">
+            <span class="fl">ผู้จดบันทึก</span>
+            <span class="fd" style="width:250px;">{{sketch_recorder}}</span>
+        </div>
+        <div class="fr" style="width:auto;">
+            <span class="fl">วัน เวลา</span>
+            <span class="fd" style="width:250px; text-align:center;">{{sketch_datetime}}</span>
+        </div>
+    </div>
+
+    <!-- ==================== FOOTER (PAGE 4) ==================== -->
+    <div class="form-footer" style="margin-top:auto;">
+        <div class="form-footer-left">
+            <strong>หมายเหตุ</strong> กรณีมีข้อมูลมากกว่าที่กำหนดไว้สามารถเขียนเพิ่มเติมได้ที่ด้านหลังกระดาษ
+        </div>
+        <div class="form-footer-right">
+            F-CS-09 แก้ไขครั้งที่ 2<br>
+            แก้ไขวันที่ 2 ก.ย. 63<br>
+            เริ่มใช้ 1 ต.ค. 63
+        </div>
+    </div>
+
+</div>
+
+<!-- ================================================================ -->
+<!-- ========================= PAGE 5 ============================== -->
+<!-- ================================================================ -->
+<div class="page" style="display:flex; flex-direction:column;">
+
+    <!-- ==================== HEADER ==================== -->
+    <div class="form-header">
+        <div class="header-logo">
+            <img src="../../images/office-of-police-forensic-icon.png" alt="ตราสำนักงานตำรวจแห่งชาติ">
+        </div>
+        <div class="header-center">
+            <div class="title-main">แบบตรวจสอบการปฏิบัติงาน (Check list)</div>
+            <div class="title-sub">การตรวจสถานที่เกิดเหตุคดีเกี่ยวกับชีวิต</div>
+        </div>
+        <div class="header-qr">
+            <div class="doc-box">
+                <div class="doc-line">เลขรับที่/เลขรายงาน <span style="display:inline-block;min-width:60px;border-bottom:1px dotted #888;text-align:center;">{{report_no}}</span> / <span style="display:inline-block;min-width:40px;border-bottom:1px dotted #888;text-align:center;">{{report_year}}</span></div>
+                <div class="doc-line">หน้าที่ 5 / {{total_pages}}</div>
+            </div>
+        </div>
+        <div class="header-qr-code" id="qr_page5"></div>
+    </div>
+
+    <!-- ==================== SECTION TITLE ==================== -->
+    <div style="margin-bottom:6px;">
+        <span class="bk"></span>
+        <span style="font-size:12px; font-weight:600;">วัตถุพยานและตำแหน่งที่ตรวจพบ</span>
+    </div>
+
+    <!-- ==================== EVIDENCE TABLE ==================== -->
+    <table class="ev-table" style="width:100%; border-collapse:collapse; font-size:11px; flex:1;">
+        <thead>
+            <tr>
+                <th rowspan="2" style="border:1.5px solid #000; width:40px; padding:2px; text-align:center; vertical-align:middle;">ป้าย<br>หมายเลข</th>
+                <th rowspan="2" style="border:1.5px solid #000; padding:2px; text-align:center; vertical-align:middle;">วัตถุพยาน</th>
+                <th colspan="4" style="border:1.5px solid #000; padding:2px; text-align:center;">ระยะห่าง (m) จากจุดอ้างอิง</th>
+                <th rowspan="2" style="border:1.5px solid #000; width:80px; padding:2px; text-align:center; vertical-align:middle;">Azimuth<br>พิกัด/องศา/ระยะ</th>
+                <th rowspan="2" style="border:1.5px solid #000; width:60px; padding:2px; text-align:center; vertical-align:middle;">หมายเหตุ</th>
+            </tr>
+            <tr>
+                <th style="border:1.5px solid #000; width:30px; padding:2px; text-align:center;">1</th>
+                <th style="border:1.5px solid #000; width:30px; padding:2px; text-align:center;">2</th>
+                <th style="border:1.5px solid #000; width:30px; padding:2px; text-align:center;">3</th>
+                <th style="border:1.5px solid #000; width:30px; padding:2px; text-align:center;">4</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{evidence_table_rows}}
+        </tbody>
+    </table>
+
+    <!-- ==================== REFERENCE POINTS ==================== -->
+    <div style="margin-top:8px; font-size:11.5px;">
+        <div class="fr" style="margin-bottom:2px;">
+            <span class="fl">จุดอ้างอิงที่ 1 คือ</span>
+            <span class="fd">{{reference_point_1}}</span>
+        </div>
+        <div class="fr" style="margin-bottom:2px;">
+            <span class="fl">จุดอ้างอิงที่ 2 คือ</span>
+            <span class="fd">{{reference_point_2}}</span>
+        </div>
+        <div class="fr" style="margin-bottom:2px;">
+            <span class="fl">จุดอ้างอิงที่ 3 คือ</span>
+            <span class="fd">{{reference_point_3}}</span>
+        </div>
+        <div class="fr" style="margin-bottom:2px;">
+            <span class="fl">จุดอ้างอิงที่ 4 คือ</span>
+            <span class="fd">{{reference_point_4}}</span>
+        </div>
+    </div>
+
+    <!-- ==================== RECORDER ==================== -->
+    <div style="margin-top:12px; display:flex; flex-direction:column; align-items:flex-end;">
+        <div class="fr" style="width:auto;">
+            <span class="fl">ผู้จดบันทึก</span>
+            <span class="fd" style="width:250px;">{{ev_recorder}}</span>
+        </div>
+        <div class="fr" style="width:auto;">
+            <span class="fl">วัน/เวลา</span>
+            <span class="fd" style="width:250px; text-align:center;">{{ev_datetime}}</span>
+        </div>
+    </div>
+
+    <!-- ==================== FOOTER (PAGE 5) ==================== -->
+    <div class="form-footer" style="margin-top:auto;">
+        <div class="form-footer-left">
+            <strong>หมายเหตุ</strong> กรณีมีข้อมูลมากกว่าที่กำหนดไว้สามารถเขียนเพิ่มเติมได้ที่ด้านหลังกระดาษ
+        </div>
+        <div class="form-footer-right">
+            F-CS-09 แก้ไขครั้งที่ 2<br>
+            แก้ไขวันที่ 2 ก.ย. 63<br>
+            เริ่มใช้ 1 ต.ค. 63
+        </div>
+    </div>
+
+</div>
+
+<!-- ================================================================ -->
+<!-- ========================= PAGE 6 ============================== -->
+<!-- ================================================================ -->
+<div class="page" style="display:flex; flex-direction:column;">
+
+    <!-- ==================== HEADER ==================== -->
+    <div class="form-header">
+        <div class="header-logo">
+            <img src="../../images/office-of-police-forensic-icon.png" alt="ตราสำนักงานตำรวจแห่งชาติ">
+        </div>
+        <div class="header-center">
+            <div class="title-main">แบบตรวจสอบการปฏิบัติงาน (Check list)</div>
+            <div class="title-sub">การตรวจสถานที่เกิดเหตุคดีเกี่ยวกับชีวิต</div>
+            <div style="font-size:11px; font-weight:600;">แผนผังภาพแสดงตำแหน่งบาดแผล</div>
+        </div>
+        <div class="header-qr">
+            <div class="doc-box">
+                <div class="doc-line">เลขรับที่/เลขรายงาน <span style="display:inline-block;min-width:60px;border-bottom:1px dotted #888;text-align:center;">{{report_no}}</span> / <span style="display:inline-block;min-width:40px;border-bottom:1px dotted #888;text-align:center;">{{report_year}}</span></div>
+                <div class="doc-line">หน้าที่ 6 / {{total_pages}}</div>
+            </div>
+        </div>
+        <div class="header-qr-code" id="qr_page6"></div>
+    </div>
+
+    <!-- ==================== VICTIM INFO ==================== -->
+    <div style="margin-bottom:4px;">
+        <div class="fr">
+            <span class="fl">ชื่อ-สกุลผู้เสียชีวิต/บาดเจ็บ</span>
+            <span class="fd">{{body_diagram_victim_name}}</span>
+            <span class="fl">อายุ</span>
+            <span class="fd-s" style="width:40px;">{{body_diagram_victim_age}}</span>
+            <span class="fl">ปี</span>
+            <span class="fl" style="margin-left:10px;">แพทย์ผู้ชันสูตร</span>
+            <span class="fd">{{body_diagram_doctor}}</span>
+        </div>
+    </div>
+
+    <!-- ==================== BODY DIAGRAM ==================== -->
+    <div style="flex:1; display:flex; align-items:center; justify-content:center; border:1.5px solid #000; padding:5px; overflow:hidden; min-height:0;">
+        {{body_diagram_img}}
+    </div>
+
+    <!-- ==================== FOOTER (PAGE 6) ==================== -->
+    <div class="form-footer" style="margin-top:auto;">
+        <div class="form-footer-left">
+            <strong>หมายเหตุ</strong> กรณีมีข้อมูลมากกว่าที่กำหนดไว้สามารถเขียนเพิ่มเติมได้ที่ด้านหลังกระดาษ
+        </div>
+        <div class="form-footer-right">
+            F-CS-09 แก้ไขครั้งที่ 2<br>
+            แก้ไขวันที่ 2 ก.ย. 63<br>
+            เริ่มใช้ 1 ต.ค. 63
+        </div>
+    </div>
+
+</div>
+
+<!-- ================================================================ -->
+<!-- ========================= PAGE 7 ============================== -->
+<!-- ================================================================ -->
+<div class="page" style="display:flex; flex-direction:column;">
+
+    <!-- ==================== HEADER ==================== -->
+    <div class="form-header">
+        <div class="header-logo">
+            <img src="../../images/office-of-police-forensic-icon.png" alt="ตราสำนักงานตำรวจแห่งชาติ">
+        </div>
+        <div class="header-center">
+            <div class="title-main">แบบตรวจสอบการปฏิบัติงาน (Check list)</div>
+            <div class="title-sub">การตรวจสถานที่เกิดเหตุคดีเกี่ยวกับชีวิต</div>
+            <div style="font-size:11px; font-weight:600;">บันทึกการตรวจเก็บวัตถุพยาน</div>
+        </div>
+        <div class="header-qr">
+            <div class="doc-box">
+                <div class="doc-line">เลขรับที่/เลขรายงาน <span style="display:inline-block;min-width:60px;border-bottom:1px dotted #888;text-align:center;">{{report_no}}</span> / <span style="display:inline-block;min-width:40px;border-bottom:1px dotted #888;text-align:center;">{{report_year}}</span></div>
+                <div class="doc-line">หน้าที่ 7 / {{total_pages}}</div>
+            </div>
+        </div>
+        <div class="header-qr-code" id="qr_page7"></div>
+    </div>
+
+    <!-- ==================== DATE/TIME INFO ==================== -->
+    <div style="margin-bottom:6px;">
+        <div class="fr">
+            <span class="fl">วันที่ตรวจสถานที่เกิดเหตุ</span>
+            <span class="fd" style="text-align:center;">{{ec_inspect_date}}</span>
+            <span class="fl">เวลาประมาณ</span>
+            <span class="fd" style="text-align:center;">{{ec_inspect_time}}</span>
+            <span class="fl">น.</span>
+        </div>
+    </div>
+
+    <!-- ==================== EVIDENCE COLLECTION TABLE ==================== -->
+    <table style="width:100%; border-collapse:collapse; font-size:10.5px; flex:1;">
+        <thead>
+            <tr>
+                <th rowspan="2" style="border:1.5px solid #000; width:40px; padding:2px; text-align:center; vertical-align:middle;">ลำดับ</th>
+                <th rowspan="2" style="border:1.5px solid #000; padding:2px; text-align:center; vertical-align:middle;">รายการวัตถุพยาน</th>
+                <th rowspan="2" style="border:1.5px solid #000; width:45px; padding:2px; text-align:center; vertical-align:middle;">จำนวน</th>
+                <th rowspan="2" style="border:1.5px solid #000; padding:2px; text-align:center; vertical-align:middle;">บริเวณที่ตรวจพบ</th>
+                <th rowspan="2" style="border:1.5px solid #000; width:45px; padding:2px; text-align:center; vertical-align:middle;">ป้าย<br>หมายเลข</th>
+                <th colspan="3" style="border:1.5px solid #000; padding:2px; text-align:center;">การบรรจุหีบห่อ</th>
+                <th colspan="2" style="border:1.5px solid #000; padding:2px; text-align:center;">การดำเนินการ<br>เกี่ยวกับวัตถุพยาน</th>
+                <th rowspan="2" style="border:1.5px solid #000; width:55px; padding:2px; text-align:center; vertical-align:middle;">หมายเหตุ</th>
+            </tr>
+            <tr>
+                <th style="border:1.5px solid #000; width:45px; padding:2px; text-align:center;">พลาสติก</th>
+                <th style="border:1.5px solid #000; width:45px; padding:2px; text-align:center;">กระดาษ</th>
+                <th style="border:1.5px solid #000; width:35px; padding:2px; text-align:center;">อื่นๆ</th>
+                <th style="border:1.5px solid #000; width:50px; padding:2px; text-align:center;">ส่งคืนพงส.</th>
+                <th style="border:1.5px solid #000; width:35px; padding:2px; text-align:center;">อื่นๆ</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{evidence_collection_rows}}
+        </tbody>
+    </table>
+
+    <!-- ==================== RECORDER ==================== -->
+    <div style="margin-top:12px; display:flex; flex-direction:column; align-items:flex-end;">
+        <div class="fr" style="width:auto;">
+            <span class="fl">ผู้จดบันทึก</span>
+            <span class="fd" style="width:250px;">{{ec_recorder}}</span>
+        </div>
+        <div class="fr" style="width:auto;">
+            <span class="fl">วัน /เวลา</span>
+            <span class="fd" style="width:250px; text-align:center;">{{ec_datetime}}</span>
+        </div>
+    </div>
+
+    <!-- ==================== FOOTER (PAGE 7) ==================== -->
+    <div class="form-footer" style="margin-top:auto;">
+        <div class="form-footer-left">
+            <strong>หมายเหตุ</strong> กรณีมีข้อมูลมากกว่าที่กำหนดไว้สามารถเขียนเพิ่มเติมได้ที่ด้านหลังกระดาษ
+        </div>
+        <div class="form-footer-right">
+            F-CS-09 แก้ไขครั้งที่ 2<br>
+            แก้ไขวันที่ 2 ก.ย. 63<br>
+            เริ่มใช้ 1 ต.ค. 63
+        </div>
+    </div>
+
+</div>
+
+<!-- ================================================================ -->
+<!-- ========================= PAGE 8 ============================== -->
+<!-- ================================================================ -->
+<div class="page" style="display:flex; flex-direction:column;">
+
+    <!-- ==================== HEADER ==================== -->
+    <div class="form-header">
+        <div class="header-logo">
+            <img src="../../images/office-of-police-forensic-icon.png" alt="ตราสำนักงานตำรวจแห่งชาติ">
+        </div>
+        <div class="header-center">
+            <div class="title-main">แบบตรวจสอบการปฏิบัติงาน (Check list)</div>
+            <div class="title-sub">การตรวจสถานที่เกิดเหตุคดีเกี่ยวกับชีวิต</div>
+            <div style="font-size:11px; font-weight:600;">บันทึกการถ่ายภาพ</div>
+        </div>
+        <div class="header-qr">
+            <div class="doc-box">
+                <div class="doc-line">เลขรับที่/เลขรายงาน <span style="display:inline-block;min-width:60px;border-bottom:1px dotted #888;text-align:center;">{{report_no}}</span> / <span style="display:inline-block;min-width:40px;border-bottom:1px dotted #888;text-align:center;">{{report_year}}</span></div>
+                <div class="doc-line">หน้าที่ 8 / {{total_pages}}</div>
+            </div>
+        </div>
+        <div class="header-qr-code" id="qr_page8"></div>
+    </div>
+
+    <!-- ==================== DATE/TIME & CAMERA INFO ==================== -->
+    <div style="margin-bottom:4px;">
+        <div class="fr">
+            <span class="fl">วันที่ตรวจสถานที่เกิดเหตุ</span>
+            <span class="fd" style="text-align:center;">{{photo_inspect_date}}</span>
+            <span class="fl">เวลาประมาณ</span>
+            <span class="fd" style="text-align:center;">{{photo_inspect_time}}</span>
+            <span class="fl">น.</span>
+        </div>
+        <div class="fr" style="flex-wrap:nowrap;">
+            <span class="fl">รหัสภาพถ่ายที่</span>
+            <span class="fd" style="flex:1; min-width:40px;">{{photo_id_start}}</span>
+            <span class="fl">ถึง</span>
+            <span class="fd" style="flex:1; min-width:40px;">{{photo_id_end}}</span>
+            <span class="fl">จำนวน</span>
+            <span class="fd" style="flex:0 0 40px; min-width:30px; text-align:center;">{{photo_amount}}</span>
+            <span class="fl">ภาพ</span>
+        </div>
+        <div style="font-size:10.5px; font-style:italic; margin-top:1px;">
+            (ตามภาพถ่ายรวมที่แนบ)
+        </div>
+    </div>
+
+    <!-- ==================== PHOTO GRID ==================== -->
+    {{photo_images}}
+
+    <!-- ==================== RECORDER (pushed to bottom) ==================== -->
+    <div style="margin-top:auto;">
+        <div style="display:flex; flex-direction:column; align-items:flex-end; margin-bottom:6px;">
+            <div class="fr" style="width:auto;">
+                <span class="fl">ผู้จดบันทึก</span>
+                <span class="fd" style="width:250px;"></span>
+            </div>
+            <div class="fr" style="width:auto;">
+                <span class="fl">วัน /เวลา</span>
+                <span class="fd" style="width:250px;"></span>
+            </div>
+        </div>
+        <div class="form-footer">
+            <div class="form-footer-left">
+                <strong>หมายเหตุ</strong> กรณีมีข้อมูลมากกว่าที่กำหนดไว้สามารถเขียนเพิ่มเติมได้ที่ด้านหลังกระดาษ
+            </div>
+            <div class="form-footer-right">
+                F-CS-09 แก้ไขครั้งที่ 2<br>
+                แก้ไขวันที่ 2 ก.ย. 63<br>
+                เริ่มใช้ 1 ต.ค. 63
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<!-- QR Code Library -->
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var qrText = '{{qr_data}}';
+    if (qrText && qrText !== '' && typeof QRCode !== 'undefined') {
+        for (var i = 1; i <= 8; i++) {
+            var el = document.getElementById('qr_page' + i);
+            if (el) {
+                new QRCode(el, { text: qrText, width: 56, height: 56, colorDark: '#000000', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+            }
+        }
+    }
+});
+</script>
+</body>
+</html>

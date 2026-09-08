@@ -1,0 +1,26 @@
+<?php
+
+use Mpdf\Tag\P;
+
+session_start();
+ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);
+
+require '../../db_config.php';
+header("Content-Type: application/json; charset=UTF-8");
+
+$id = $_GET["id"];
+$stmt = $pdo->prepare("SELECT id,chemical_name,remark,description,ready_for_use,prep_date,exp_date FROM master_latent_fingerprint_chemical WHERE statusDelete = 0 AND id = ? ");
+
+$stmt->execute([
+    $id
+]);
+$data = $stmt->fetch(PDO::FETCH_ASSOC);
+
+echo json_encode([
+    'status' => 'success',
+    'data' => $data
+], JSON_UNESCAPED_UNICODE);
+
+?>

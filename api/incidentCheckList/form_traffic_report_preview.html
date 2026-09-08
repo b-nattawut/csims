@@ -1,0 +1,357 @@
+﻿<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/csims/api/incidentCheckList/form_footer.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายงานการตรวจพิสูจน์คดีจราจร</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Sarabun', sans-serif; font-size: 14px; line-height: 1.6; color: #000; background: #ccc; }
+        .page {
+            width: 210mm; min-height: 297mm; margin: 10px auto; padding: 12mm 15mm 10mm 15mm;
+            background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.25); position: relative;
+            overflow: visible; page-break-after: always; display: flex; flex-direction: column;
+        }
+        .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 2px; padding-bottom: 4px; }
+        .page-header-left { font-size: 13px; line-height: 1.6; }
+        .page-header-right { font-size: 13px; text-align: right; }
+        .form-title { text-decoration: underline; text-decoration-style: solid; text-align: center; font-size: 15px; font-weight: 700; margin: 6px 0 4px 0; }
+        .fl { font-size: 14px; white-space: nowrap; flex-shrink: 0; margin-right: 2px; }
+        .fl-b { font-size: 14px; font-weight: 700; white-space: nowrap; flex-shrink: 0; }
+        .fd { flex: 1; border-bottom: 1px dotted #888; min-width: 20px; margin: 0 2px; padding: 0 3px; height: 22px; }
+        .fd-s { border-bottom: 1px dotted #888; min-width: 30px; max-width: none; flex: 0 0 auto; width: auto; margin: 0 2px; padding: 0 3px; height: 22px; text-align: center; white-space: nowrap; }
+        .fd-m { border-bottom: 1px dotted #888; min-width: 90px; margin: 0 2px; padding: 0 3px; height: 22px; flex: 0 0 auto; width: auto; text-align: center; white-space: nowrap; }
+        .fd-l { border-bottom: 1px dotted #888; text-align: center; min-width: 30px; margin: 0 2px; padding: 0 3px; height: 22px; flex: 1; }
+        .fd-full { width: 100%; border-bottom: 1px dotted #888; height: 22px; margin: 0 2px; padding: 0 3px; }
+        .fd-block { width: calc(100% - 24px); margin-left: 20px; min-height: 22px; padding: 0 3px; line-height: 1.9; }
+        .fd-block-i2 { width: calc(100% - 44px); margin-left: 40px; min-height: 22px; padding: 0 3px; line-height: 1.9; }
+        .fd-block:empty::after, .fd-block-i2:empty::after { content: '\00a0'; }
+        .fd:empty::after, .fd-full:empty::after { content: '\00a0'; }
+        .fr { display: flex; align-items: baseline; line-height: 1.9; width: 100%; }
+        .notify-row { flex-wrap: nowrap; align-items: center; }
+        .notify-row .fd { min-width: 0; flex: 1 1 auto; }
+        .notify-other-text { display: inline-block; flex: 1 1 auto; min-width: 0; margin-left: 2px; }
+        .notify-other-text:empty {
+            border-bottom: 1px dotted #888;
+            line-height: 1;
+            min-height: 14px;
+        }
+        .notify-other-text:empty::after { content: '\00a0'; }
+        .ck { display: inline-flex; align-items: center; margin-right: 8px; font-size: 14px; white-space: nowrap; }
+        .cb { width: 13px; height: 13px; border: 1.5px solid #000; display: inline-flex; align-items: center; justify-content: center; margin-right: 3px; font-size: 12px; line-height: 1; flex-shrink: 0; vertical-align: middle; font-weight: 700; }
+        .sec-heading { text-decoration: none; font-weight: 700; font-size: 14px; margin-top: 2px; margin-bottom: 1px; }
+        .sub-heading { font-weight: 600; font-size: 14px; margin-left: 20px; }
+        .i1 { padding-left: 20px; }
+        .i2 { padding-left: 40px; }
+        .i3 { padding-left: 60px; }
+        .blank-line { width: 100%; border-bottom: 1px dotted #888; min-height: 22px; margin-bottom: 0; }
+        .form-footer { margin-top: auto; padding-top: 6px; font-size: 10px; color: #333; display: flex; justify-content: space-between; align-items: flex-end; }
+        .form-footer-right { text-align: right; white-space: nowrap; line-height: 1.4; font-size: 11px; }
+        .signature-block { margin-top: 30px; text-align: center; padding-left: 50%; line-height: 2.2; }
+        .no-print { text-align: center; padding: 12px; background: #fff; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+        .no-print button { padding: 8px 24px; font-size: 14px; margin: 0 6px; border: none; border-radius: 6px; cursor: pointer; font-family: 'Sarabun', sans-serif; font-weight: 600; }
+        .no-print button:first-child { background: #0d6efd; color: #fff; }
+        .no-print button.secondary { background: #6c757d; color: #fff; }
+        @page { margin: 0; size: A4 portrait; }
+        @media print {
+            body { background: #fff; margin: 0; }
+            .no-print { display: none !important; }
+            .page { margin: 0; box-shadow: none; padding: 10mm 12mm 8mm 12mm; min-height: 297mm; page-break-after: always; }
+            .page:last-child { page-break-after: auto; }
+        }
+    
+        /* ===== OVERRIDE: Dotted line & overflow fix ===== */
+        .fd {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='1'%3E%3Ccircle cx='0.5' cy='0.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important;
+            background-repeat: repeat-x !important;
+            background-position: 0 bottom !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            border-bottom: none !important;
+            overflow-wrap: break-word !important;
+            word-break: keep-all !important;
+            max-width: 100% !important;
+            overflow: hidden !important;
+            min-height: 18px;
+            line-height: 18px;
+        }
+        .fd-s {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='1'%3E%3Ccircle cx='0.5' cy='0.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important;
+            background-repeat: repeat-x !important;
+            background-position: 0 bottom !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            border-bottom: none !important;
+            min-height: 18px;
+            line-height: 18px;
+        }
+        .fd-m {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='1'%3E%3Ccircle cx='0.5' cy='0.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important;
+            background-repeat: repeat-x !important;
+            background-position: 0 bottom !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            border-bottom: none !important;
+            white-space: nowrap !important;
+            min-height: 18px;
+            line-height: 18px;
+        }
+        .fd-full {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='18'%3E%3Ccircle cx='0.5' cy='17.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important;
+            background-repeat: repeat !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            border-bottom: none !important;
+            overflow-wrap: break-word !important;
+            word-break: keep-all !important;
+            max-width: 100% !important;
+            overflow: hidden !important;
+            min-height: 18px;
+            line-height: 18px;
+        }
+        .fd-full.text-xs { font-size: 8px !important; line-height: 14px !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='14'%3E%3Ccircle cx='0.5' cy='13.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important; }
+        .fd-full.text-sm { font-size: 9px !important; line-height: 15px !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='15'%3E%3Ccircle cx='0.5' cy='14.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important; }
+        .fd-full.text-md { font-size: 10px !important; line-height: 16px !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='16'%3E%3Ccircle cx='0.5' cy='15.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important; }
+        .fd-multiline {
+            width: 100%; height: auto; min-height: 22px; line-height: 1.9 !important;
+            font-size: 14px !important;
+            white-space: normal;
+            overflow-wrap: anywhere !important; word-break: keep-all !important;
+            word-wrap: break-word !important;
+            max-width: 100% !important; overflow: visible;
+            border-bottom: 1px dotted #888;
+            padding: 0 2px;
+            -webkit-print-color-adjust: exact; print-color-adjust: exact;
+        }
+        .fd-multiline.text-xs { font-size: 8px !important; line-height: 14px !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='14'%3E%3Ccircle cx='0.5' cy='13.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important; }
+        .fd-multiline.text-sm { font-size: 9px !important; line-height: 15px !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='15'%3E%3Ccircle cx='0.5' cy='14.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important; }
+        .fd-multiline.text-md { font-size: 10px !important; line-height: 16px !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='16'%3E%3Ccircle cx='0.5' cy='15.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important; }
+        .col-left, .col-right { max-width: 50% !important; overflow: hidden !important; }
+        .sec-body { overflow: hidden !important; max-width: 100% !important; }
+        @media print {
+            .page { overflow: hidden; }
+            .form-body { overflow: hidden !important; }
+            .fd, .fd-full, .fd-multiline { overflow-wrap: anywhere !important; word-break: break-word !important; white-space: normal !important; max-width: 100% !important; overflow: visible !important; height: auto !important; }
+            .fd-m, .fd-s { white-space: nowrap !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="no-print">
+    <button onclick="window.print()">พิมพ์ / ดาวน์โหลด PDF</button>
+    <button class="secondary" onclick="window.close()">ปิดหน้าต่าง</button>
+</div>
+
+<!-- ==================== PAGE 1 ==================== -->
+<div class="page">
+    <div class="page-header">
+        <div class="page-header-left">
+            <u>รายงานการตรวจพิสูจน์ที่</u>&nbsp;<span class="fd-s" style="display:inline-block;width:auto; min-width:40px; max-width:200px;border-bottom:1px dotted #888;text-align:center;">{{report_no}}</span>
+            &nbsp;/25&nbsp;
+            <span class="fd-s" style="display:inline-block;min-width:40px;border-bottom:1px dotted #888;text-align:center;">{{report_year_short}}</span>
+        </div>
+        <div class="page-header-right">1/{{total_pages}}</div>
+    </div>
+    <div class="fr"><span class="fl">หน่วยงาน</span><span class="fd">{{agency_name}}</span></div>
+
+    <div class="form-title">รายงานการตรวจพิสูจน์คดีจราจร</div>
+
+    <!-- 1. การรับแจ้งเหตุ -->
+    <div class="sec-heading">1. <u>การรับแจ้งเหตุ</u></div>
+    <div class="fr i1">
+        <span class="fl">เมื่อวันที่</span><span class="fd-m">{{receive_date}}</span>
+        <span class="fl">เวลา</span><span class="fd-m">{{receive_time}}</span>
+        <span class="fl">น. ตามประจำวันข้อที่</span><span class="fd-l">{{daily_ref}}</span>
+    </div>
+    <div class="fr i1">
+        <span class="fl">กลุ่มงานตรวจสถานที่เกิดเหตุ</span>
+    </div>
+    <div class="fr i1">
+        <span class="fl">กองพิสูจน์หลักฐานกลาง/ ศูนย์พิสูจน์หลักฐาน</span><span class="fd-l">{{agency_center_name}}</span>
+        <span class="fl">/ พิสูจน์หลักฐานจังหวัด</span><span class="fd-l">{{agency_province_name}}</span>
+    </div>
+    <div class="fr i1 notify-row">
+        <span class="fl">ได้รับแจ้งตาม&nbsp;&nbsp;</span>
+        <span class="fd-l">{{notify_method_text}}</span>
+    </div>
+    <div class="fr i1">
+        <span class="fl">จาก สน./สภ.</span><span class="fd-l">{{from_station}}</span>
+        <span class="fl">ของเจ้าหน้าที่ ร่วมตรวจพิสูจน์คดีอุบัติเหตุจราจร</span>
+    </div>
+    <div class="fr i1">
+        <span class="fl">โดยมี</span><span class="fd">{{officer_name}}</span>
+        <span class="fl">เป็นพนักงานสอบสวน</span>
+    </div>
+    <div class="fr i1"><span class="fl">รายละเอียดปรากฏดังนี้</span></div>
+
+    <!-- รถของกลาง -->
+    {{vehicle_rows}}
+
+    <div class="fr i1" style="margin-top:4px;">
+        <span class="fl-b">1.{{vehicle_next_no}}</span>
+        <span class="fl">&nbsp;สถานที่เกิดเหตุ</span>
+    </div>
+    <div class="fd-block">{{scene_location}}</div>
+
+    <!-- 2. จุดประสงค์ในการตรวจพิสูจน์ -->
+    <div class="sec-heading" style="margin-top:6px;">2. <u>จุดประสงค์ในการตรวจพิสูจน์</u> <span style="font-weight:400;">(เลือกตามความเหมาะสม)</span></div>
+    <div class="fr i1">
+        <span class="fl">1. เพื่อทราบว่ามีร่องรอยการเฉี่ยวชนระหว่างรถของกลาง</span><span class="fd-s">{{purpose_qty_1}}</span>
+        <span class="fl">............</span><span class="fl">(ระบุจำนวนคัน) หรือไม่ อย่างไร</span>
+    </div>
+    <div class="fr i1">
+        <span class="fl">หรือ 2. เพื่อทราบว่ารถของกลาง</span><span class="fd-s">{{purpose_qty_2}}</span>
+        <span class="fl">............</span><span class="fl">(ระบุจำนวนคัน) มีการเฉี่ยวชนกันหรือไม่ อย่างไร</span>
+    </div>
+    <div class="fr i1"><span class="fl">หรือ 3. เพื่อทราบว่ามีร่องรอยการเฉี่ยวชนที่รถของกลางทั้งหนึ่งหรือไม่และมีลักษณะการเฉี่ยวชนอย่างไร</span></div>
+    <div class="fr i1"><span class="fl">หรือ 4. เพื่อทราบว่ามีร่องรอยการเฉี่ยวชนระหว่างรถของกลางหรือไม่อย่างไร</span></div>
+    <div class="fr i1"><span class="fl">หรือ 5.</span><span class="fd">{{purpose_other_text}}</span></div>
+
+    <!-- 3. ผู้ตรวจพิสูจน์ -->
+    <div class="sec-heading" style="margin-top:6px;">3. <u>ผู้ตรวจพิสูจน์</u></div>
+    {{inspector_rows}}
+
+    <!-- 4. ผลการตรวจพิสูจน์ -->
+    <div class="sec-heading" style="margin-top:6px;">4. <u>ผลการตรวจพิสูจน์</u></div>
+    <div class="fr i1"><span class="fl">พฤติการณ์คดี</span></div>
+    <div class="fd-block">{{case_behavior}}</div>
+
+    <div class="form-footer">
+        <div></div>
+        <div class="form-footer-right">รายงานการตรวจพิสูจน์คดีจราจร</div>
+    </div>
+</div>
+
+<!-- ==================== PAGE 2 ==================== -->
+<div class="page">
+    <div class="page-header">
+        <div class="page-header-left">
+            <u>รายงานการตรวจพิสูจน์ที่</u>&nbsp;<span class="fd-s" style="display:inline-block;width:auto; min-width:40px; max-width:200px;border-bottom:1px dotted #888;text-align:center;">{{report_no}}</span>&nbsp;/25&nbsp;<span class="fd-s" style="display:inline-block;min-width:40px;border-bottom:1px dotted #888;text-align:center;">{{report_year_short}}</span>
+        </div>
+        <div class="page-header-right">2/{{total_pages}}</div>
+    </div>
+    <div class="fr"><span class="fl">หน่วยงาน</span><span class="fd">{{agency_name}}</span></div>
+    <br>
+
+    <div class="fr i1">
+        <span class="fl">ได้ทำการตรวจพิสูจน์</span><span class="fd">{{inspect_location}}</span>
+    </div>
+    <div class="fr i1">
+        <span class="fl">ที่</span><span class="fd-l">{{inspect_place}}</span>
+        <span class="fl">(ระบุสถานที่ตรวจฯ)</span>
+    </div>
+    <div class="fr i1">
+        <span class="fl">เมื่อวันที่</span><span class="fd-l">{{analyze_date}}</span>
+        <span class="fl">เวลาประมาณ</span><span class="fd-s">{{analyze_time}}</span><span class="fl">น.</span>
+    </div>
+    <div class="fr i1"><span class="fl">ปรากฏรายละเอียดดังนี้</span></div>
+
+    <!-- ผลการตรวจรถแต่ละคัน -->
+    {{analysis_vehicle_rows}}
+
+    <div class="form-footer">
+        <div></div>
+        <div class="form-footer-right">รายงานการตรวจพิสูจน์คดีจราจร</div>
+    </div>
+</div>
+
+<!-- ==================== PAGE 3 ==================== -->
+<div class="page">
+    <div class="page-header">
+        <div class="page-header-left">
+            <u>รายงานการตรวจพิสูจน์ที่</u>&nbsp;<span class="fd-s" style="display:inline-block;width:auto; min-width:40px; max-width:200px;border-bottom:1px dotted #888;text-align:center;">{{report_no}}</span>&nbsp;/25&nbsp;<span class="fd-s" style="display:inline-block;min-width:40px;border-bottom:1px dotted #888;text-align:center;">{{report_year_short}}</span>
+        </div>
+        <div class="page-header-right">3/{{total_pages}}</div>
+    </div>
+    <div class="fr"><span class="fl">หน่วยงาน</span><span class="fd">{{agency_name}}</span></div>
+    <br>
+
+    {{analysis_extra_section}}
+
+    {{scene_detail_section}}
+
+    <div style="margin-top:6px;"></div>
+    <!-- 5. ผลการตรวจเปรียบเทียบ -->
+    <div class="sec-heading" style="margin-top:6px;">5. <u>ผลการตรวจเปรียบเทียบ</u></div>
+    <div class="fr i1"><span class="fl">จากการเปรียบเทียบสภาพร่องรอยความเสียหายและการแลกเปลี่ยนวัตถุพยานของรถของกลางทั้ง</span></div>
+    <div class="fr i2"><span class="fd-s">{{compare_total_items}}</span><span class="fl">รายการ พบว่า</span></div>
+
+    <div class="fr i1" style="margin-top:4px;">
+        <span class="fl-b">5.1</span>
+        <span class="fl">&nbsp;รอยครูดบริเวณ</span>
+    </div>
+    <div class="fd-block">{{compare_5_1}}</div>
+    <div class="fr i1"><span class="fl">มีลักษณะรอยและระดับความสูงเข้ากันได้</span></div>
+    <div class="fr i2"><span class="fl">กับรอยครูดบริเวณ</span></div>
+    <div class="fd-block">{{compare_5_1_sub}}</div>
+    <div class="fr i2"><span class="fl">ตามผลการตรวจในข้อ</span><span class="fd-s" style="display:inline-block;min-width:80px;">{{compare_5_ref}}</span></div>
+
+    <div class="fr i1" style="margin-top:4px;">
+        <span class="fl-b">5.2</span>
+    </div>
+    <div class="fd-block">{{compare_5_2}}</div>
+
+    <div class="fr i1" style="margin-top:4px;">
+        <span class="fl-b">5.3</span>
+        <span class="fl">&nbsp;(ลักษณะร่องรอยที่เข้ากัน)</span>
+    </div>
+    <div class="fd-block">{{compare_5_3}}</div>
+
+    <div class="fr i1" style="margin-top:4px;">
+        <span class="fl-b">5.4</span>
+        <span class="fl">&nbsp;(ร่องรอยความเสียหายของรถกับร่องรอยบริเวณจุดชนในสถานที่เกิดเหตุ)</span>
+    </div>
+    <div class="fd-block">{{compare_5_4}}</div>
+
+    <!-- 6. ความเห็น -->
+    <div class="sec-heading" style="margin-top:6px;">6. <u>ความเห็น</u></div>
+    <div class="fr i1"><span class="fl">จากผลการตรวจในข้อ 4 และ 5</span></div>
+    <div class="fd-block">{{opinion}}</div>
+    <div class="fr i1"><span class="fl">จนได้รับความเสียหายดังที่ปรากฏ</span></div>
+
+    <!-- ลงชื่อ -->
+    <div class="signature-block">
+        <div>(ลงชื่อ) .............................................................. ผู้รายงาน</div>
+        <div>( <span class="fd" style="min-width:200px;">{{sign_name}}</span> )</div>
+        <div>ตำแหน่ง <span class="fd" style="min-width:200px;">{{sign_position}}</span></div>
+        <div>วันที่ <span class="fd-s" style="display:inline-block;min-width:30px;">{{sign_date_day}}</span> เดือน <span class="fd-s" style="display:inline-block;min-width:80px;">{{sign_date_month}}</span> พ.ศ. <span class="fd-s" style="display:inline-block;min-width:40px;">{{sign_date_year}}</span></div>
+    </div>
+
+    <div class="form-footer">
+        <div></div>
+        <div class="form-footer-right">รายงานการตรวจพิสูจน์คดีจราจร</div>
+    </div>
+</div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function autoFitContent() {
+            var fdElements = document.querySelectorAll('.fd-full, .fd, .fd-multiline');
+            fdElements.forEach(function(el) {
+                var text = el.textContent || el.innerText;
+                if (!text || text.trim() === '') return;
+                var textLength = text.length;
+                el.classList.remove('text-xs', 'text-sm', 'text-md');
+                if (textLength > 300) { el.classList.add('text-xs'); }
+                else if (textLength > 200) { el.classList.add('text-sm'); }
+                else if (textLength > 100) { el.classList.add('text-md'); }
+            });
+            var secBodies = document.querySelectorAll('.sec-body');
+            secBodies.forEach(function(secBody) {
+                if (secBody.scrollHeight > secBody.clientHeight + 10) {
+                    var ratio = secBody.clientHeight / secBody.scrollHeight;
+                    var newSize = Math.max(7, 11.5 * ratio);
+                    secBody.style.fontSize = newSize + 'px';
+                    secBody.style.lineHeight = '1.2';
+                }
+            });
+        }
+        setTimeout(autoFitContent, 100);
+        window.addEventListener('beforeprint', function() { autoFitContent(); });
+    });
+    </script>
+</body>
+</html>

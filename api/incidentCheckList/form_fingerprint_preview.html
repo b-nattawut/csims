@@ -1,0 +1,845 @@
+﻿<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบตรวจสอบการปฏิบัติงาน (Check list) - ลายนิ้วมือแฝง</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #000;
+            background: #ccc;
+        }
+
+        .no-print {
+            text-align: center; padding: 12px; background: #fff;
+            position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+        }
+        .no-print button {
+            padding: 8px 24px; font-size: 14px; margin: 0 6px; border: none;
+            border-radius: 6px; cursor: pointer; font-family: 'Sarabun', sans-serif; font-weight: 600;
+        }
+        .no-print button:first-child { background: #0d6efd; color: #fff; }
+        .no-print button.secondary { background: #6c757d; color: #fff; }
+
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 10px auto;
+            padding: 8mm 10mm 5mm 10mm;
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            page-break-after: always;
+        }
+
+        /* ===== HEADER ===== */
+        .fpf-header { flex-shrink: 0; }
+        .fpf-header-inner { position: relative; height: 70px; margin-bottom: 20px; }
+        .fpf-header-logo { position: absolute; left: 0; top: 0; }
+        .fpf-header-logo img { width: 70px; height: 70px; object-fit: contain; }
+        .fpf-header-center {
+            position: absolute; left: 80px; right: 340px; top: 8px;
+            text-align: center; white-space: nowrap;
+        }
+        .fpf-title-main { font-size: 15px; font-weight: 700; }
+        .fpf-title-sub { font-size: 13px; font-weight: 600; color: #333; }
+        .fpf-header-right { position: absolute; right: 0; top: 50%; transform: translateY(-50%); }
+        .fpf-doc-box {
+            border: 1.5px solid #000; padding: 3px 8px; font-size: 11px; line-height: 1.6;
+            white-space: nowrap;
+        }
+        .fpf-doc-line { font-size: 11px; }
+        .fpf-header-qr { position: absolute; right: 90px; top: 7px; }
+        .fpf-header-qr .fpf-doc-box { border: 1.5px solid #000; padding: 3px 8px; font-size: 11px; line-height: 1.6; white-space: nowrap; }
+        .fpf-header-qr-code { position: absolute; right: 0; top: 0; width: 56px; height: 56px; }
+        .fpf-header-qr-code canvas, .fpf-header-qr-code img { width: 56px !important; height: 56px !important; }
+
+        /* ===== FORM BODY ===== */
+        .fpf-form-body {
+            display: flex; flex-direction: column; border: 2px solid #000;
+        }
+
+        /* ===== Row Header ===== */
+        .fpf-row-header {
+            display: flex; border-bottom: 1px solid #000;
+            font-weight: 600; font-size: 12px; flex-shrink: 0;
+        }
+        .fpf-lbl-seq { min-width: 50px; text-align: center; padding: 6px 0; border-right: 1px solid #000; }
+        .fpf-lbl-data { flex: 1; text-align: center; padding: 6px 0; }
+
+        /* ===== Section rows ===== */
+        .fpf-sec-row { display: flex; border-bottom: 1px solid #000; min-height: 30px; }
+        .fpf-sec-row:last-child { border-bottom: none; }
+        .fpf-sec-label {
+            min-width: 50px; max-width: 50px; border-right: 1px solid #000;
+            padding: 6px 4px; text-align: center; font-size: 10px; line-height: 1.3;
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+        }
+        .fpf-sec-num { font-weight: 700; font-size: 12px; display: block; }
+        .fpf-sec-txt { font-size: 10px; word-break: keep-all; }
+        .fpf-sec-body { flex: 1; padding: 8px 12px; font-size: 11.5px; line-height: 1.8; }
+
+        /* ===== Field row ===== */
+        .fr { display: flex; flex-wrap: wrap; align-items: baseline; margin-bottom: 4px; line-height: 1.8; }
+        .fl { font-size: 11.5px; white-space: nowrap; margin-right: 6px; }
+        .fl-b { font-size: 11.5px; font-weight: 600; white-space: nowrap; margin-right: 6px; }
+        .fd { flex: 1; border-bottom: 1.5px dotted #666; min-width: 20px; margin: 0 4px; min-height: 20px; overflow-wrap: break-word; word-break: keep-all; padding: 0 2px; }
+        .fd-s { border-bottom: 1.5px dotted #666; min-width: 15px; max-width: 50px; margin: 0 4px; min-height: 20px; flex: 0 1 40px; text-align: center; padding: 0 2px; }
+        .fd-m { border-bottom: 1.5px dotted #666; min-width: 60px; margin: 0 4px; min-height: 20px; flex: 1; text-align: center; padding: 0 2px; }
+
+        /* ===== Checkbox ===== */
+        .ck { display: inline-flex; align-items: center; margin-right: 16px; font-size: 11.5px; white-space: nowrap; }
+        .cb {
+            width: 13px; height: 13px; border: 1.5px solid #000;
+            display: inline-flex; align-items: center; justify-content: center;
+            margin-right: 4px; flex-shrink: 0; position: relative; top: 2px;
+            font-size: 13px; font-weight: 700; line-height: 0; text-align: center;
+        }
+        .bk {
+            width: 10px; height: 10px; background: #000; display: inline-block;
+            margin-right: 5px; flex-shrink: 0; position: relative; top: 1px;
+        }
+
+        /* ===== Bullet header ===== */
+        .bh { display: flex; align-items: center; font-weight: 600; font-size: 11.5px; margin-top: 8px; margin-bottom: 5px; }
+        .bh:first-child { margin-top: 0; }
+
+        /* ===== Checkbox group ===== */
+        .cg { display: flex; flex-wrap: wrap; align-items: center; gap: 4px 6px; margin-bottom: 5px; }
+
+        /* ===== Indents ===== */
+        .i1 { padding-left: 18px; }
+        .i2 { padding-left: 32px; }
+
+        /* ===== Separator ===== */
+        .sep { border-top: 1.5px dashed #bbb; margin: 6px 0; }
+
+        /* ===== Evidence card ===== */
+        .ev-card { 
+            padding: 6px 0; 
+            border-bottom: 1px dashed #999;
+            margin-bottom: 4px; 
+        }
+        .ev-card:last-child { border-bottom: none; margin-bottom: 0; }
+        
+        /* ===== Method item ===== */
+        .method-item {
+            padding: 4px 0;
+            margin-bottom: 4px;
+        }
+
+        /* ===== Section 6 set header ===== */
+        .set-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 4px; padding: 4px 0; border-bottom: 2px solid #0d6efd;
+        }
+        .set-label { color: #0d6efd; font-weight: 700; font-size: 12px; }
+
+        /* ===== FOOTER ===== */
+        .fpf-footer { flex-shrink: 0; margin-top: auto; }
+        .fpf-footer-inner {
+            margin-top: 15px; font-size: 9.5px; color: #333;
+            display: flex; justify-content: flex-end; align-items: flex-end;
+            padding-top: 5px;
+        }
+        .fpf-footer-right { text-align: right; white-space: nowrap; line-height: 1.3; }
+
+        /* ===== Photo page ===== */
+        .photo-slot {
+            width: 100%; height: 220px; border: 1px dashed #bbb; margin-bottom: 8px;
+            display: flex; align-items: center; justify-content: center;
+            position: relative; overflow: hidden; background: #fafafa;
+        }
+        .photo-slot img {
+            max-width: 100%; max-height: 100%; object-fit: contain;
+        }
+        .photo-caption {
+            position: absolute; bottom: 0; left: 0; right: 0;
+            background: rgba(255,255,255,0.85); padding: 2px 6px;
+            font-size: 10px; text-align: center;
+        }
+
+        @page { margin: 8mm 10mm; size: A4 portrait; }
+        @media print {
+            body { background: #fff; margin: 0; padding: 0; }
+            .no-print { display: none !important; }
+            .page {
+                margin: 0; box-shadow: none;
+                width: 100%; min-height: auto; padding: 0;
+                page-break-after: always;
+                display: flex; flex-direction: column;
+                overflow: visible !important;
+            }
+            .page:last-child { page-break-after: auto; }
+
+            /* Borders */
+            .fpf-form-body { border: 2px solid #000 !important; }
+            .fpf-sec-row { border-bottom: 1px solid #000 !important; }
+            .fpf-sec-row:last-child { border-bottom: none !important; }
+            .fpf-sec-label { border-right: 1px solid #000 !important; }
+            .fpf-row-header { border-bottom: 1px solid #000 !important; }
+            .fpf-lbl-seq { border-right: 1px solid #000 !important; }
+
+            /* Print colors */
+            .bk { background: #000 !important; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+        }
+    
+        /* ===== OVERRIDE: Dotted line & overflow fix ===== */
+        .fd {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='1'%3E%3Ccircle cx='0.5' cy='0.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important;
+            background-repeat: repeat-x !important;
+            background-position: 0 bottom !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            border-bottom: none !important;
+            overflow-wrap: break-word !important;
+            word-break: keep-all !important;
+            max-width: 100% !important;
+            overflow: hidden !important;
+            min-height: 18px;
+            line-height: 18px;
+        }
+        .fd-s {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='1'%3E%3Ccircle cx='0.5' cy='0.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important;
+            background-repeat: repeat-x !important;
+            background-position: 0 bottom !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            border-bottom: none !important;
+            min-height: 18px;
+            line-height: 18px;
+        }
+        .fd-m {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='1'%3E%3Ccircle cx='0.5' cy='0.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important;
+            background-repeat: repeat-x !important;
+            background-position: 0 bottom !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            border-bottom: none !important;
+            overflow-wrap: break-word;
+            word-break: keep-all;
+            min-height: 18px;
+            line-height: 18px;
+        }
+        .fd-full {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='18'%3E%3Ccircle cx='0.5' cy='17.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important;
+            background-repeat: repeat !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            border-bottom: none !important;
+            overflow-wrap: break-word !important;
+            word-break: keep-all !important;
+            max-width: 100% !important;
+            overflow: hidden !important;
+            min-height: 18px;
+            line-height: 18px;
+        }
+        .fd-full.text-xs { font-size: 8px !important; line-height: 14px !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='14'%3E%3Ccircle cx='0.5' cy='13.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important; }
+        .fd-full.text-sm { font-size: 9px !important; line-height: 15px !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='15'%3E%3Ccircle cx='0.5' cy='14.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important; }
+        .fd-full.text-md { font-size: 10px !important; line-height: 16px !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='16'%3E%3Ccircle cx='0.5' cy='15.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important; }
+        .fd-multiline {
+            width: 100%; height: auto; min-height: 22px; line-height: 22px;
+            white-space: normal;
+            overflow-wrap: break-word !important; word-break: keep-all !important;
+            max-width: 100% !important; overflow: hidden;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='22'%3E%3Ccircle cx='0.5' cy='21.5' r='0.4' fill='%23888'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+            -webkit-print-color-adjust: exact; print-color-adjust: exact;
+        }
+        .fd-multiline.text-xs { font-size: 8px !important; line-height: 14px !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='14'%3E%3Ccircle cx='0.5' cy='13.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important; }
+        .fd-multiline.text-sm { font-size: 9px !important; line-height: 15px !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='15'%3E%3Ccircle cx='0.5' cy='14.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important; }
+        .fd-multiline.text-md { font-size: 10px !important; line-height: 16px !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='16'%3E%3Ccircle cx='0.5' cy='15.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important; }
+        .col-left, .col-right { max-width: 50% !important; overflow: hidden !important; }
+        .sec-body { overflow: hidden !important; max-width: 100% !important; }
+        @media print {
+            .page { overflow: visible !important; }
+            .fpf-form-body { overflow: visible !important; }
+            .fd, .fd-full, .fd-m, .fd-multiline { overflow-wrap: break-word !important; word-break: keep-all !important; max-width: 100% !important; overflow: hidden !important; }
+        }
+    </style>
+</head>
+<body>
+    <div class="no-print">
+        <button onclick="window.print()">พิมพ์ / ดาวน์โหลด PDF</button>
+        <button class="secondary" onclick="window.close()">ปิดหน้าต่าง</button>
+    </div>
+
+    <!-- ========================= PAGE 1 ============================== -->
+    <div class="page">
+
+        <!-- HEADER -->
+        <div class="fpf-header">
+            <div class="fpf-header-inner">
+                <div class="fpf-header-logo">
+                    <img src="/csims/images/office-of-police-forensic-icon.png" alt="ตราสำนักงานพิสูจน์หลักฐานตำรวจ">
+                </div>
+                <div class="fpf-header-center">
+                    <div class="fpf-title-main">แบบฟอร์มตรวจสอบการปฏิบัติงาน (Check list)</div>
+                    <div class="fpf-title-sub">การตรวจเก็บวัตถุพยาน (ลายนิ้วมือแฝง)</div>
+                </div>
+                <div class="fpf-header-qr">
+                    <div class="fpf-doc-box">
+                        <div class="fpf-doc-line">รายงานที่ {{doc_no}} / 25{{doc_year}}</div>
+                        <div class="fpf-doc-line">หน้าที่ 1 / {{total_pages}}</div>
+                    </div>
+                </div>
+                <div class="fpf-header-qr-code" id="qr_page1"></div>
+            </div>
+        </div>
+
+        <!-- FORM BODY -->
+        <div class="fpf-form-body">
+
+            <div class="fpf-row-header">
+                <div class="fpf-lbl-seq">ลำดับ</div>
+                <div class="fpf-lbl-data">ข้อมูล</div>
+            </div>
+
+            <!-- 1. การรับแจ้ง -->
+            <div class="fpf-sec-row">
+                <div class="fpf-sec-label">
+                    <span class="fpf-sec-num">1.</span>
+                    <span class="fpf-sec-txt">การรับ<br>แจ้ง</span>
+                </div>
+                <div class="fpf-sec-body">
+                    <div class="fr">
+                        <span class="fl">วันที่</span>
+                        <span class="fd-m">{{receive_date}}</span>
+                        <span class="fl">เวลา</span>
+                        <span class="fd-m">{{receive_time}}</span>
+                        <span class="fl">น.</span>
+                    </div>
+                    <div class="fr">
+                        <span class="fl">ปจว.ข้อที่</span>
+                        <span class="fd">{{case_no}}</span>
+                    </div>
+                    <div class="fr">
+                        <span class="fl">การรับแจ้งทางหนังสือ สน./สภ.</span>
+                        <span class="fd">{{police_station}}</span>
+                        <span class="fl">ที่</span>
+                        <span class="fd">{{letter_no}}</span>
+                        <span class="fl">ลง</span>
+                        <span class="fd-m">{{letter_date}}</span>
+                    </div>
+                    <div class="fr">
+                        <span class="fl">ผู้ส่งของกลาง</span>
+                        <span class="fd">{{evidence_sender}}</span>
+                        <span class="fl">ตำแหน่ง</span>
+                        <span class="fd">{{evidence_sender_position}}</span>
+                        <span class="fl">โทร</span>
+                        <span class="fd" style="max-width:120px;">{{evidence_sender_phone}}</span>
+                    </div>
+                    <div class="fr">
+                        <span class="fl">รับวัตถุพยานตามหนังสือ</span>
+                        <span class="fd">{{evidence_letter_no}}</span>
+                        <span class="fl">ที่</span>
+                        <span class="fd">{{evidence_doc_no}}</span>
+                        <span class="fl">ลง</span>
+                        <span class="fd-m">{{evidence_doc_date}}</span>
+                    </div>
+                    <div class="cg">
+                        <span class="fl" style="margin-right:8px;">จุดประสงค์ในการตรวจพิสูจน์</span>
+                        <span class="ck"><span class="cb">{{chk_purpose_fingerprint}}</span>เพื่อตรวจเก็บรอยลายนิ้วมือแฝง</span>
+                        <span class="ck"><span class="cb">{{chk_purpose_other}}</span>อื่นๆ</span>
+                        <span class="fd">{{purpose_other_text}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. วันเวลาที่เกิดเหตุ/ที่ทราบเหตุ -->
+            <div class="fpf-sec-row">
+                <div class="fpf-sec-label">
+                    <span class="fpf-sec-num">2.</span>
+                    <span class="fpf-sec-txt">วันเวลา<br>ที่เกิด<br>เหตุ/<br>ทราบ<br>เหตุ</span>
+                </div>
+                <div class="fpf-sec-body">
+                    <div class="bh"><span class="bk"></span><span>วันเวลาที่เกิดเหตุ</span></div>
+                    <div class="fr">
+                        <span class="fl">วันที่</span>
+                        <span class="fd-m">{{incident_date}}</span>
+                        <span class="fl">เวลาประมาณ</span>
+                        <span class="fd-m">{{incident_time}}</span>
+                        <span class="fl">น.</span>
+                    </div>
+                    <div class="bh"><span class="bk"></span><span>วันเวลาที่ทราบเหตุ</span></div>
+                    <div class="fr">
+                        <span class="fl">วันที่</span>
+                        <span class="fd-m">{{known_date}}</span>
+                        <span class="fl">เวลา/ประมาณ</span>
+                        <span class="fd-m">{{known_time}}</span>
+                        <span class="fl">น.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. วันเวลาที่ตรวจเก็บ -->
+            <div class="fpf-sec-row">
+                <div class="fpf-sec-label">
+                    <span class="fpf-sec-num">3.</span>
+                    <span class="fpf-sec-txt">วันเวลา<br>ที่ตรวจ<br>เก็บ</span>
+                </div>
+                <div class="fpf-sec-body">
+                    <div class="bh"><span class="bk"></span><span>วันเวลาที่ทำการตรวจเก็บ</span></div>
+                    <div class="fr">
+                        <span class="fl">วันที่</span>
+                        <span class="fd-m">{{collect_date}}</span>
+                        <span class="fl">เวลาประมาณ</span>
+                        <span class="fd-m">{{collect_time}}</span>
+                        <span class="fl">น.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 4. ผู้ตรวจพิสูจน์ -->
+            <div class="fpf-sec-row">
+                <div class="fpf-sec-label">
+                    <span class="fpf-sec-num">4.</span>
+                    <span class="fpf-sec-txt">ผู้ตรวจ<br>พิสูจน์</span>
+                </div>
+                <div class="fpf-sec-body">
+                    <div class="bh" style="margin-top:0;"><span class="bk"></span><span>ผู้ตรวจพิสูจน์</span></div>
+                    {{inspectors_html}}
+                </div>
+            </div>
+
+            <!-- 5. ลักษณะการหีบห่อวัตถุพยาน -->
+            <div class="fpf-sec-row">
+                <div class="fpf-sec-label">
+                    <span class="fpf-sec-num">5.</span>
+                    <span class="fpf-sec-txt">ลักษณะ<br>การหีบ<br>ห่อวัตถุ<br>พยาน</span>
+                </div>
+                <div class="fpf-sec-body">
+                    <div class="cg">
+                        <span class="ck"><span class="cb">{{chk_pkg_envelope}}</span>บรรจุในซองวัตถุพยาน</span>
+                        <span class="ck"><span class="cb">{{chk_pkg_plastic}}</span>พลาสติก</span>
+                    </div>
+                    <div class="cg">
+                        <span class="ck"><span class="cb">{{chk_seal_signed}}</span>การปิดผนึกพร้อมลงลายมือชื่อกำกับ</span>
+                    </div>
+                    <div class="cg">
+                        <span class="ck"><span class="cb">{{chk_seal_detail}}</span>เขียนรายละเอียดหน้าซองวัตถุพยาน</span>
+                    </div>
+                    <div class="cg">
+                        <span class="ck"><span class="cb">{{chk_collector_forensic}}</span>เก็บไว้เจ้าหน้าที่พิสูจน์หลักฐาน</span>
+                    </div>
+                    <div class="cg">
+                        <span class="ck"><span class="cb">{{chk_collector_investigator}}</span>เก็บโดยพนักงานสอบสวน</span>
+                    </div>
+                    <div class="cg">
+                        <span class="ck"><span class="cb">{{chk_collector_other}}</span>เก็บโดย อื่นๆ</span>
+                        <span class="fd" style="max-width:200px;">{{collector_other_text}}</span>
+                    </div>
+                    <div class="fr" style="margin-top:3px;">
+                        <span class="fl">เก็บเมื่อ</span>
+                        <span class="fd-m">{{storage_date}}</span>
+                        <span class="fl">เวลาประมาณ</span>
+                        <span class="fd-m">{{storage_time}}</span>
+                    </div>
+                    <div class="fr">
+                        <span class="fl">ระยะเวลา</span>
+                        <span class="fd-s">{{duration_year}}</span>
+                        <span class="fl">ปี</span>
+                        <span class="fd-s">{{duration_month}}</span>
+                        <span class="fl">เดือน</span>
+                        <span class="fd-s">{{duration_day}}</span>
+                        <span class="fl">วัน</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 6. ลักษณะวัตถุพยาน -->
+            {{section6_html}}
+
+            <!-- 7. วิธีการดำเนินการ -->
+            <div class="fpf-sec-row">
+                <div class="fpf-sec-label">
+                    <span class="fpf-sec-num">7.</span>
+                    <span class="fpf-sec-txt">วิธีการ<br>ดำเนินการ</span>
+                </div>
+                <div class="fpf-sec-body">
+                    {{methods_html}}
+                </div>
+            </div>
+
+            <!-- 8. การดำเนินการ -->
+            <div class="fpf-sec-row">
+                <div class="fpf-sec-label">
+                    <span class="fpf-sec-num">8.</span>
+                    <span class="fpf-sec-txt">การ<br>ดำเนินการ</span>
+                </div>
+                <div class="fpf-sec-body">
+                    <div class="fr" style="flex-wrap:wrap;">
+                        <span class="fl-b">วัตถุพยานแผ่นเก็บรอยลายนิ้วมือแฝง/ภาพถ่ายรอยลายนิ้วมือแฝง</span>
+                    </div>
+                    <div class="cg">
+                        <span class="ck"><span class="cb">{{chk_action_gnf}}</span>กนฝ.</span>
+                        <span class="ck"><span class="cb">{{chk_action_evidence_other}}</span>อื่นๆ</span>
+                        <span class="fd" style="max-width:200px;">{{action_evidence_other_text}}</span>
+                    </div>
+                    <div class="fr" style="margin-top:3px;">
+                        <span class="fl-b">ของกลาง</span>
+                        <span class="ck" style="margin-left:6px;"><span class="cb">{{chk_action_return}}</span>ส่งคืนพนักงานสอบสวน</span>
+                        <span class="fl">สภ.</span>
+                        <span class="fd">{{action_return_station}}</span>
+                    </div>
+                    <div class="cg" style="margin-top:3px;">
+                        <span class="ck"><span class="cb">{{chk_action_forward}}</span>ส่งต่อกลุ่มงาน</span>
+                        <span class="ck"><span class="cb">{{chk_forward_gchw}}</span>กชว.</span>
+                        <span class="ck"><span class="cb">{{chk_forward_gop}}</span>กอป.</span>
+                        <span class="ck"><span class="cb">{{chk_forward_gos}}</span>กอส.</span>
+                        <span class="ck"><span class="cb">{{chk_forward_gkm}}</span>กคม.</span>
+                        <span class="ck"><span class="cb">{{chk_forward_gkp}}</span>กคพ.</span>
+                        <span class="ck"><span class="cb">{{chk_forward_other}}</span>อื่นๆ</span>
+                        <span class="fd" style="max-width:150px;">{{action_forward_other_text}}</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 9. การถ่ายภาพวัตถุพยาน / ผลการตรวจเก็บ -->
+            <div class="fpf-sec-row" style="flex:1; border-bottom:none;">
+                <div class="fpf-sec-label">
+                    <span class="fpf-sec-num">9.</span>
+                    <span class="fpf-sec-txt">การถ่ายภาพ<br>วัตถุพยาน<br>/ผลการ<br>ตรวจเก็บ</span>
+                </div>
+                <div class="fpf-sec-body">
+                    <!-- การถ่ายภาพวัตถุพยาน -->
+                    <div class="bh"><span class="bk"></span><span>การถ่ายภาพวัตถุพยาน</span></div>
+                    <div class="cg">
+                        <span class="ck"><span class="cb">{{chk_photo_package}}</span>ภาพการหีบห่อวัตถุพยาน</span>
+                    </div>
+                    <div class="cg">
+                        <span class="ck"><span class="cb">{{chk_photo_front_scale}}</span>ภาพวัตถุพยานพร้อมหนังสือนำส่ง ด้านหน้า (วางสเกล)</span>
+                    </div>
+                    <div class="cg">
+                        <span class="ck"><span class="cb">{{chk_photo_close_scale}}</span>ภาพวัตถุพยานระยะใกล้ (วางสเกล)</span>
+                    </div>
+                    <div class="cg i1">
+                        <span class="ck"><span class="cb">{{chk_side_front}}</span>ด้านหน้า</span>
+                        <span class="ck"><span class="cb">{{chk_side_left}}</span>ด้านซ้าย</span>
+                        <span class="ck"><span class="cb">{{chk_side_right}}</span>ด้านขวา</span>
+                        <span class="ck"><span class="cb">{{chk_side_back}}</span>ด้านหลัง</span>
+                    </div>
+                    <div class="cg">
+                        <span class="ck"><span class="cb">{{chk_photo_definition}}</span>ภาพค่าพิเศษบนวัตถุพยาน</span>
+                    </div>
+                    <div class="cg">
+                        <span class="ck"><span class="cb">{{chk_photo_lift_card}}</span>ภาพแผ่นเก็บรอยลายนิ้วมือแฝง พร้อมหนังสือนำส่ง</span>
+                    </div>
+                    <div class="cg" style="flex-wrap:wrap;">
+                        <span class="ck"><span class="cb">{{chk_photo_color_adj}}</span>การปรับสี/แสง</span>
+                        <span class="fd" style="flex:0 0 100%; height:auto; min-height:22px; line-height:22px; white-space:normal; overflow-wrap:break-word; word-break: keep-all; border-bottom:none; background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%272%27 height=%2722%27%3E%3Crect x=%270%27 y=%2721%27 width=%271%27 height=%271%27 fill=%27%23888%27/%3E%3C/svg%3E'); background-repeat:repeat; -webkit-print-color-adjust:exact; print-color-adjust:exact;">{{color_adj_detail}}</span>
+                    </div>
+                    <div class="cg" style="flex-wrap:wrap;">
+                        <span class="ck"><span class="cb">{{chk_photo_resize}}</span>การปรับขนาดภาพ</span>
+                        <span class="fd" style="flex:0 0 100%; height:auto; min-height:22px; line-height:22px; white-space:normal; overflow-wrap:break-word; word-break: keep-all; border-bottom:none; background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%272%27 height=%2722%27%3E%3Crect x=%270%27 y=%2721%27 width=%271%27 height=%271%27 fill=%27%23888%27/%3E%3C/svg%3E'); background-repeat:repeat; -webkit-print-color-adjust:exact; print-color-adjust:exact;">{{resize_detail}}</span>
+                    </div>
+
+                    <!-- ผลการตรวจเก็บ -->
+                    <div class="sep" style="margin-top:6px;"></div>
+                    <div class="bh"><span class="bk"></span><span>ผลการตรวจเก็บ</span></div>
+                    <!-- ไม่พบ -->
+                    <div class="cg">
+                        <span class="ck"><span class="cb">{{chk_result_not_found}}</span><strong>ไม่พบรอยลายนิ้วมือแฝง</strong></span>
+                    </div>
+                    <div class="i1">
+                        <div class="fr" style="flex-wrap:wrap;">
+                            <span class="fl">เพราะ</span>
+                            <span class="fd" style="flex:0 0 100%; height:auto; min-height:22px; line-height:22px; white-space:normal; overflow-wrap:break-word; word-break: keep-all; border-bottom:none; background-image:url('data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 width=%272%27 height=%2722%27%3E%3Crect x=%270%27 y=%2721%27 width=%271%27 height=%271%27 fill=%27%23888%27/%3E%3C/svg%3E'); background-repeat:repeat; -webkit-print-color-adjust:exact; print-color-adjust:exact;">{{not_found_reason}}</span>
+                        </div>
+                    </div>
+
+                    <div class="sep"></div>
+
+                    <!-- พบ -->
+                    <div class="cg">
+                        <span class="ck"><span class="cb">{{chk_result_found}}</span><strong>พบรอยลายนิ้วมือแฝง</strong></span>
+                        <span class="fl">จำนวน</span>
+                        <span class="fd-s">{{found_total_sheets}}</span>
+                        <span class="fl">แผ่น</span>
+                    </div>
+                    {{found_items_html}}
+
+                    <div class="sep"></div>
+
+                    <!-- Photograph -->
+                    <div class="cg">
+                        <span class="ck"><span class="cb">{{chk_has_photograph}}</span><strong>Photograph</strong></span>
+                    </div>
+                    {{photograph_html}}
+                </div>
+            </div>
+
+        </div><!-- /fpf-form-body -->
+
+        <!-- FOOTER -->
+        <div class="fpf-footer">
+            <div class="fpf-footer-inner">
+                <div><strong></strong></div>
+                <div class="fpf-footer-right">F-CS-XX แก้ไขครั้งที่ 1<br>เริ่มใช้ 1 ต.ค. 63</div>
+            </div>
+        </div>
+
+    </div><!-- /page 1 -->
+
+    <!-- ========================= PAGE 2 (Photos) ============================== -->
+    <div class="page page-photo">
+
+        <div class="fpf-header">
+            <div class="fpf-header-inner">
+                <div class="fpf-header-logo">
+                    <img src="/csims/images/office-of-police-forensic-icon.png" alt="">
+                </div>
+                <div class="fpf-header-center">
+                    <div class="fpf-title-main">แบบตรวจสอบการปฏิบัติงาน (Check list)</div>
+                    <div class="fpf-title-sub">การตรวจเก็บวัตถุพยาน (ลายนิ้วมือแฝง)</div>
+                    <div style="font-size:11px; font-weight:600;">บันทึกการถ่ายภาพ</div>
+                </div>
+                <div class="fpf-header-qr">
+                    <div class="fpf-doc-box">
+                        <div class="fpf-doc-line">รายงานที่ {{doc_no}} / 25{{doc_year}}</div>
+                        <div class="fpf-doc-line">หน้าที่ 2 / {{total_pages}}</div>
+                    </div>
+                </div>
+                <div class="fpf-header-qr-code" id="qr_page2"></div>
+            </div>
+        </div>
+
+        <div style="margin-bottom:8px;">
+            <div class="fr" style="margin-bottom:6px;">
+                <span class="fl">วันที่ตรวจเก็บวัตถุพยาน</span>
+                <span class="fd-m">{{photo_inspect_date}}</span>
+                <span class="fl">เวลาประมาณ</span>
+                <span class="fd-m">{{photo_inspect_time}}</span>
+                <span class="fl">น.</span>
+            </div>
+            <div class="fr" style="margin-bottom:6px;">
+                <span class="fl">รหัสภาพถ่ายที่</span>
+                <span class="fd" style="text-align:center;">{{photo_id_start}}</span>
+                <span class="fl">ถึง</span>
+                <span class="fd" style="text-align:center;">{{photo_id_end}}</span>
+                <span class="fl">จำนวน</span>
+                <span class="fd-s" style="text-align:center;">{{photo_amount}}</span>
+                <span class="fl">ภาพ</span>
+            </div>
+            <div style="font-size:10.5px; font-style:italic; margin-top:2px;">(ตามภาพถ่ายรวมที่แนบ)</div>
+        </div>
+
+        <!-- Photo slots -->
+        {{photo_slots_html}}
+
+        <div style="margin-top:auto; display:flex; flex-direction:column; align-items:flex-end;">
+            <div class="fr" style="width:auto;">
+                <span class="fl">ผู้จดบันทึก</span>
+                <span class="fd" style="min-width:250px;">{{photographer_name}}</span>
+            </div>
+            <div class="fr" style="width:auto;">
+                <span class="fl">วัน /เวลา</span>
+                <span class="fd" style="min-width:250px;">{{photographer_datetime}}</span>
+            </div>
+        </div>
+
+        <div class="fpf-footer">
+            <div class="fpf-footer-inner">
+                <div><strong></strong></div>
+                <div class="fpf-footer-right">F-CS-XX แก้ไขครั้งที่ 1<br>เริ่มใช้ 1 ต.ค. 63</div>
+            </div>
+        </div>
+
+    </div><!-- /page 2 -->
+
+    {{extra_photo_pages_html}}
+
+<!-- QR Code Library -->
+<script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    var qrText = '{{qr_data}}';
+    if (qrText && qrText !== '' && typeof QRCode !== 'undefined') {
+        for (var i = 1; i <= 10; i++) {
+            var el = document.getElementById('qr_page' + i);
+            if (el) {
+                new QRCode(el, { text: qrText, width: 56, height: 56, colorDark: '#000000', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });
+            }
+        }
+    }
+});
+</script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function autoFitContent() {
+            var fdElements = document.querySelectorAll('.fd-full, .fd, .fd-multiline');
+            fdElements.forEach(function(el) {
+                var text = el.textContent || el.innerText;
+                if (!text || text.trim() === '') return;
+                var textLength = text.length;
+                el.classList.remove('text-xs', 'text-sm', 'text-md');
+                if (textLength > 300) { el.classList.add('text-xs'); }
+                else if (textLength > 200) { el.classList.add('text-sm'); }
+                else if (textLength > 100) { el.classList.add('text-md'); }
+            });
+            var secBodies = document.querySelectorAll('.sec-body');
+            secBodies.forEach(function(secBody) {
+                if (secBody.scrollHeight > secBody.clientHeight + 10) {
+                    var ratio = secBody.clientHeight / secBody.scrollHeight;
+                    var newSize = Math.max(7, 11.5 * ratio);
+                    secBody.style.fontSize = newSize + 'px';
+                    secBody.style.lineHeight = '1.2';
+                }
+            });
+        }
+        setTimeout(autoFitContent, 100);
+        window.addEventListener('beforeprint', function() { autoFitContent(); });
+    });
+    </script>
+    <script>
+    // === Page splitter: header/footer on every printed page ===
+    document.addEventListener('DOMContentLoaded', function() {
+        setTimeout(function() { splitFormPages(); }, 400);
+    });
+
+    function splitFormPages() {
+        var page1 = document.querySelector('.page:not(.page-photo)');
+        if (!page1) return;
+
+        var header = page1.querySelector('.fpf-header');
+        var footer = page1.querySelector('.fpf-footer');
+        var formBody = page1.querySelector('.fpf-form-body');
+        if (!header || !footer || !formBody) return;
+
+        // A4 content: (297mm - 8mm*2) = 281mm
+        var pageContentH = 281 * 3.7795;
+        var headerH = header.offsetHeight + 25;
+        var footerH = footer.offsetHeight + 25;
+        var availableH = pageContentH - headerH - footerH;
+
+        if (formBody.offsetHeight <= availableH) return;
+
+        var rowHeader = formBody.querySelector('.fpf-row-header');
+        var secRows = Array.from(formBody.querySelectorAll('.fpf-sec-row'));
+        var rowHeaderH = rowHeader ? rowHeader.offsetHeight : 0;
+        var maxBodyH = availableH - rowHeaderH;
+
+        // Flatten all sections into splittable items
+        // Each item = { element: DOM node (a section row), height }
+        // Large sections get split into multiple partial rows
+        var allItems = [];
+
+        secRows.forEach(function(row) {
+            var rh = row.offsetHeight;
+            if (rh <= maxBodyH) {
+                allItems.push({ el: row, h: rh });
+            } else {
+                // Section too tall - split by children inside sec-body
+                var secLabel = row.querySelector('.fpf-sec-label');
+                var secBody = row.querySelector('.fpf-sec-body');
+                if (!secBody || !secLabel) {
+                    allItems.push({ el: row, h: rh });
+                    return;
+                }
+
+                var children = Array.from(secBody.children);
+                var batch = [];
+                var batchH = 0;
+
+                children.forEach(function(child) {
+                    var ch = child.offsetHeight + 4;
+                    if (batchH + ch > maxBodyH && batch.length > 0) {
+                        allItems.push(makePartialRow(row.className, secLabel, batch, batchH));
+                        batch = [];
+                        batchH = 0;
+                    }
+                    batch.push(child);
+                    batchH += ch;
+                });
+                if (batch.length > 0) {
+                    allItems.push(makePartialRow(row.className, secLabel, batch, batchH));
+                }
+            }
+        });
+
+        // Group items into pages
+        var pages = [];
+        var curItems = [];
+        var curH = 0;
+
+        allItems.forEach(function(item) {
+            if (curH + item.h > maxBodyH && curItems.length > 0) {
+                pages.push(curItems);
+                curItems = [];
+                curH = 0;
+            }
+            curItems.push(item);
+            curH += item.h;
+        });
+        if (curItems.length > 0) pages.push(curItems);
+        if (pages.length <= 1) return;
+
+        // Build new page divs
+        var parent = page1.parentNode;
+        var nextSib = page1.nextElementSibling;
+        parent.removeChild(page1);
+
+        pages.forEach(function(items, idx) {
+            var pg = document.createElement('div');
+            pg.className = 'page';
+
+            // Header with updated page number
+            var h = header.cloneNode(true);
+            h.querySelectorAll('.fpf-doc-line').forEach(function(dl) {
+                if (dl.textContent.indexOf('หน้าที่') !== -1) {
+                    dl.textContent = dl.textContent.replace(/หน้าที่\s*\d+/, 'หน้าที่ ' + (idx + 1));
+                }
+            });
+            pg.appendChild(h);
+
+            // Form body
+            var fb = document.createElement('div');
+            fb.className = 'fpf-form-body';
+            if (rowHeader) fb.appendChild(rowHeader.cloneNode(true));
+            items.forEach(function(item) { fb.appendChild(item.el); });
+            pg.appendChild(fb);
+
+            // Footer
+            pg.appendChild(footer.cloneNode(true));
+            parent.insertBefore(pg, nextSib);
+        });
+
+        // Update total page count
+        var allPages = document.querySelectorAll('.page');
+        var total = allPages.length;
+        allPages.forEach(function(p) {
+            p.querySelectorAll('.fpf-doc-line').forEach(function(dl) {
+                if (dl.textContent.indexOf('หน้าที่') !== -1) {
+                    dl.textContent = dl.textContent.replace(/\/\s*\d+/, '/ ' + total);
+                }
+            });
+        });
+    }
+
+    function makePartialRow(className, secLabel, children, h) {
+        var row = document.createElement('div');
+        row.className = className;
+        row.appendChild(secLabel.cloneNode(true));
+
+        var body = document.createElement('div');
+        body.className = 'fpf-sec-body';
+        body.style.padding = '8px 12px';
+        body.style.flex = '1';
+        body.style.fontSize = '11.5px';
+        body.style.lineHeight = '1.8';
+        children.forEach(function(c) { body.appendChild(c); });
+        row.appendChild(body);
+        return { el: row, h: h };
+    }
+    </script>
+</body>
+</html>

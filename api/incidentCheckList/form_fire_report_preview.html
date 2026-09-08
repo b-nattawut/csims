@@ -1,0 +1,416 @@
+﻿<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="/csims/api/incidentCheckList/form_footer.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>รายงานการตรวจสถานที่เกิดเหตุคดีเพลิงไหม้</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Sarabun', sans-serif; font-size: 14px; line-height: 1.6; color: #000; background: #ccc; }
+        .page { width: 210mm; min-height: 297mm; margin: 10px auto; padding: 12mm 15mm 10mm 15mm; background: #fff; box-shadow: 0 2px 10px rgba(0,0,0,0.25); position: relative; overflow: visible; page-break-after: always; display: flex; flex-direction: column; }
+        .page-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 0; padding-bottom: 0; }
+        .page-header-left { font-size: 13px; line-height: 1.6; }
+        .page-header-right { font-size: 13px; text-align: right; }
+        .form-title { text-decoration: underline; text-align: center; font-size: 15px; font-weight: 700; margin: 6px auto 4px auto; width: fit-content; }
+        .fl { font-size: 14px; white-space: nowrap; flex-shrink: 0; margin-right: 2px; }
+        .fl-b { font-size: 14px; font-weight: 700; white-space: nowrap; flex-shrink: 0; margin-right: 2px; }
+        .fd { flex: 1; border-bottom: 1px dotted #888; min-width: 20px; margin: 0 4px; padding: 0 4px; height: 22px; }
+        .fd-s { border-bottom: 1px dotted #888; min-width: 30px; max-width: none; flex: 0 0 auto; width: auto; margin: 0 2px; padding: 0 3px; height: 22px; text-align: center; white-space: nowrap; }
+        .fd-m { border-bottom: 1px dotted #888; min-width: 90px; margin: 0 4px; padding: 0 4px; height: 22px; flex: 0 0 auto; width: auto; white-space: nowrap; }
+        .fd-l { border-bottom: 1px dotted #888; min-width: 30px; margin: 0 4px; padding: 0 4px; height: 22px; flex: 1; }
+        .fd-full { width: 100%; border-bottom: 1px dotted #888; height: 22px; margin: 0 4px; padding: 0 4px; }
+        .fd-fill { flex: 1; border-bottom: 1px dotted #888; min-width: 20px; margin: 0 4px; padding: 0 4px; height: 22px; }
+        .fr { display: flex; align-items: baseline; line-height: 1.9; width: 100%; }
+        .ck { display: inline-flex; align-items: baseline; margin-right: 8px; font-size: 14px; white-space: nowrap; }
+        .cb { width: 13px; height: 13px; border: 1.5px solid #000; display: inline-flex; align-items: center; justify-content: center; margin-right: 3px; font-size: 12px; line-height: 1; flex-shrink: 0; font-weight: 700; position: relative; top: 1px; }
+        .sec-heading { font-weight: 700; font-size: 14px; margin-top: 2px; margin-bottom: 1px; }
+        .sub-heading { font-weight: 600; font-size: 14px; margin-left: 20px; }
+        .i1 { padding-left: 20px; }
+        .i2 { padding-left: 40px; }
+        .blank-line { width: 100%; border-bottom: 1px dotted #888; height: 22px; margin-bottom: 0; }
+        .wall-row { display: flex; align-items: baseline; line-height: 1.9; padding-left: 40px; }
+        .form-footer { margin-top: auto; padding-top: 6px; font-size: 10px; color: #333; display: flex; justify-content: space-between; align-items: flex-end; }
+        .form-footer-left { flex: 1; }
+        .form-footer-right { text-align: right; white-space: nowrap; line-height: 1.4; }
+        .signature-block { margin-top: 30px; text-align: center; padding-left: 50%; line-height: 2; }
+        .text-block { padding-left: 20px; line-height: 1.8; white-space: pre-wrap; word-break: keep-all; min-height: 22px; border-bottom: 1px dotted #888; margin-bottom: 2px; }
+
+        .no-print { text-align: center; padding: 12px; background: #fff; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+        .no-print button { padding: 8px 24px; font-size: 14px; margin: 0 6px; border: none; border-radius: 6px; cursor: pointer; font-family: 'Sarabun', sans-serif; font-weight: 600; }
+        .no-print button:first-child { background: #0d6efd; color: #fff; }
+        .no-print button.secondary { background: #6c757d; color: #fff; }
+        @page { margin: 0; size: A4 portrait; }
+        @media print {
+            body { background: #fff; margin: 0; }
+            .no-print { display: none !important; }
+            .page { margin: 0; box-shadow: none; padding: 10mm 12mm 8mm 12mm; min-height: 297mm; page-break-after: always; }
+            .page:last-child { page-break-after: auto; }
+        }
+    
+        /* ===== OVERRIDE: Dotted line & overflow fix ===== */
+        .fd {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='1'%3E%3Ccircle cx='0.5' cy='0.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important;
+            background-repeat: repeat-x !important;
+            background-position: 0 bottom !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            border-bottom: none !important;
+            overflow-wrap: break-word !important;
+            word-break: keep-all !important;
+            max-width: 100% !important;
+            overflow: hidden !important;
+            min-height: 18px;
+            line-height: 18px;
+        }
+        .fd-s {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='1'%3E%3Ccircle cx='0.5' cy='0.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important;
+            background-repeat: repeat-x !important;
+            background-position: 0 bottom !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            border-bottom: none !important;
+            min-height: 18px;
+            line-height: 18px;
+        }
+        .fd-m {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='1'%3E%3Ccircle cx='0.5' cy='0.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important;
+            background-repeat: repeat-x !important;
+            background-position: 0 bottom !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            border-bottom: none !important;
+            white-space: nowrap !important;
+            min-height: 18px;
+            line-height: 18px;
+        }
+        .fd-full {
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='18'%3E%3Ccircle cx='0.5' cy='17.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important;
+            background-repeat: repeat !important;
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+            border-bottom: none !important;
+            overflow-wrap: break-word !important;
+            word-break: keep-all !important;
+            max-width: 100% !important;
+            overflow: hidden !important;
+            min-height: 18px;
+            line-height: 18px;
+        }
+        .fd-full.text-xs { font-size: 8px !important; line-height: 14px !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='14'%3E%3Ccircle cx='0.5' cy='13.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important; }
+        .fd-full.text-sm { font-size: 9px !important; line-height: 15px !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='15'%3E%3Ccircle cx='0.5' cy='14.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important; }
+        .fd-full.text-md { font-size: 10px !important; line-height: 16px !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='16'%3E%3Ccircle cx='0.5' cy='15.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important; }
+        .fd-multiline {
+            width: 100%; height: auto; min-height: 22px; line-height: 1.9 !important;
+            font-size: 14px !important;
+            white-space: normal;
+            overflow-wrap: anywhere !important; word-break: keep-all !important;
+            word-wrap: break-word !important;
+            max-width: 100% !important; overflow: visible;
+            border-bottom: 1px dotted #888;
+            padding: 0 2px;
+            -webkit-print-color-adjust: exact; print-color-adjust: exact;
+        }
+        .fd-multiline.text-xs { font-size: 8px !important; line-height: 14px !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='14'%3E%3Ccircle cx='0.5' cy='13.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important; }
+        .fd-multiline.text-sm { font-size: 9px !important; line-height: 15px !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='15'%3E%3Ccircle cx='0.5' cy='14.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important; }
+        .fd-multiline.text-md { font-size: 10px !important; line-height: 16px !important; background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='16'%3E%3Ccircle cx='0.5' cy='15.5' r='0.4' fill='%23888'/%3E%3C/svg%3E") !important; }
+        .col-left, .col-right { max-width: 50% !important; overflow: hidden !important; }
+        .sec-body { overflow: hidden !important; max-width: 100% !important; }
+        @media print {
+            .page { overflow: hidden; }
+            .form-body { overflow: hidden !important; }
+            .fd, .fd-full, .fd-multiline { overflow-wrap: anywhere !important; word-break: break-word !important; white-space: normal !important; max-width: 100% !important; overflow: visible !important; height: auto !important; }
+            .fd-m, .fd-s { white-space: nowrap !important; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="no-print">
+    <button onclick="window.print()">พิมพ์ / ดาวน์โหลด PDF</button>
+    <button class="secondary" onclick="window.close()">ปิดหน้าต่าง</button>
+</div>
+
+<!-- ==================== PAGE 1 ==================== -->
+<div class="page">
+    <div class="page-header">
+        <div class="page-header-left">
+            <u>รายงานการตรวจสถานที่เกิดเหตุที่</u>&nbsp;<span class="fd-s" style="display:inline-block;min-width:60px;border-bottom:1px dotted #888;text-align:center;">{{report_no}}</span>&nbsp;/25&nbsp;<span class="fd-s" style="display:inline-block;min-width:30px;border-bottom:1px dotted #888;text-align:center;">{{report_year_short}}</span>
+        </div>
+        <div class="page-header-right">1/{{total_pages}}</div>
+    </div>
+    <div class="fr"><span class="fl">หน่วยงาน</span><span class="fd">{{agency_name}}</span></div>
+
+    <div class="form-title">รายงานการตรวจสถานที่เกิดเหตุคดีเพลิงไหม้</div>
+
+    <!-- 1. การรับแจ้งเหตุ -->
+    <div class="sec-heading">1. <u>การรับแจ้งเหตุ</u></div>
+    <div class="fr i1">
+        <span class="fl">เมื่อวันที่</span><span class="fd-m" style="text-align:center">{{receive_date}}</span>
+        <span class="fl">เวลา</span><span class="fd-m" style="text-align:center">{{receive_time}}</span>
+        <span class="fl">น. ตามประจำวันข้อที่</span><span class="fd-l">{{daily_ref}}</span>
+    </div>
+    <div class="fr i1">
+        <span class="fl">ได้รับแจ้งตาม&nbsp;&nbsp;</span>
+        <span class="fd-l">{{notify_method_text}}</span>
+    </div>
+    <div class="fr i1">
+        <span class="fl">จาก สน./สภ.</span><span class="fd-l">{{from_station}}</span>
+        <span class="fl">ขอเจ้าหน้าที่ร่วมตรวจสถานที่เกิดเหตุคดีเพลิงไหม้</span>
+    </div>
+    <div class="fr i1">
+        <span class="fl">โดยมี</span><span class="fd">{{investigator_name}}</span>
+        <span class="fl">เป็นพนักงานสอบสวนเจ้าของคดี</span>
+    </div>
+
+    <!-- 2. สถานที่เกิดเหตุ -->
+    <div class="sec-heading">2. <u>สถานที่เกิดเหตุ</u></div>
+    <div class="fr i1"><span class="fl">เหตุเกิดที่</span><span class="fd">{{crime_location}}</span></div>
+
+    <!-- 3. วันเวลาที่ทราบเหตุ/เกิดเหตุ -->
+    <div class="sec-heading">3. <u>วันเวลาที่ทราบเหตุ/เกิดเหตุ</u></div>
+    <div class="fr i1">
+        <span class="fl">ผู้เสียหายทราบเหตุ/เกิดเหตุ เมื่อวันที่</span><span class="fd-l" style="text-align:center;">{{victim_know_date}}</span>
+        <span class="fl">เวลาประมาณ</span><span class="fd-l" style="text-align:center;">{{victim_know_time}}</span><span class="fl">น.</span>
+    </div>
+    <div class="fr i1">
+        <span class="fl">พนักงานสอบสวนทราบเหตุ เมื่อวันที่</span><span class="fd-l" style="text-align:center;">{{officer_know_date}}</span>
+        <span class="fl">เวลาประมาณ</span><span class="fd-l" style="text-align:center;">{{officer_know_time}}</span><span class="fl">น.</span>
+    </div>
+
+    <!-- 4. วันเวลาตรวจสถานที่เกิดเหตุ -->
+    <div class="sec-heading">4. <u>วันเวลาตรวจสถานที่เกิดเหตุ</u></div>
+    <div class="fr i1">
+        <span class="fl">ตรวจสถานที่เกิดเหตุ เมื่อวันที่</span><span class="fd-l" style="text-align:center;">{{inspect_date}}</span>
+        <span class="fl">เวลาประมาณ</span><span class="fd-l" style="text-align:center;">{{inspect_time}}</span><span class="fl">น.</span>
+    </div>
+    <div class="fr i1">
+        <span class="fl">ตรวจเพิ่มเติม เมื่อวันที่</span><span class="fd-l" style="text-align:center;">{{inspect_add_date}}</span>
+        <span class="fl">เวลาประมาณ</span><span class="fd-l" style="text-align:center;">{{inspect_add_time}}</span><span class="fl">น.</span>
+    </div>
+
+    <!-- 5. ผู้ตรวจ -->
+    <div class="sec-heading">5. <u>ผู้ตรวจสถานที่เกิดเหตุ</u></div>
+    {{inspector_rows}}
+
+    <!-- 6. ลักษณะของสถานที่เกิดเหตุ -->
+    <div class="sec-heading">6. <u>ลักษณะของสถานที่เกิดเหตุ</u></div>
+    <div class="sub-heading">6.1 ลักษณะภายนอก</div>
+    <div class="text-block">{{exterior_detail}}</div>
+    <div class="fr i2">
+        <span class="fl">จำนวนชั้น</span><span class="fd-s">{{floor_count}}</span>
+        <span class="fl" style="margin-left:10px;">รั้วล้อมรอบ</span>
+        <label class="ck"><span class="cb">{{chk_fence_yes}}</span>&nbsp;มี</label>
+        <label class="ck"><span class="cb">{{chk_fence_no}}</span>&nbsp;ไม่มี</label>
+    </div>
+    <div class="fr i2">
+        <span class="fl">ด้านหน้าติด</span><span class="fd">{{ext_front}}</span>
+        <span class="fl">ด้านซ้ายติด</span><span class="fd">{{ext_left}}</span>
+    </div>
+    <div class="fr i2">
+        <span class="fl">ด้านขวาติด</span><span class="fd">{{ext_right}}</span>
+        <span class="fl">ด้านหลังติด</span><span class="fd">{{ext_back}}</span>
+    </div>
+
+    <div class="sub-heading">6.2 ลักษณะภายใน</div>
+    <div class="text-block">{{interior_detail}}</div>
+
+    <div class="sub-heading">6.3 บริเวณที่เกิดเหตุ</div>
+    <div class="fr i2">
+        <span class="fl">เกิดเหตุที่</span><span class="fd">{{incident_area}}</span>
+        <span class="fl">ขนาด</span><span class="fd-m">{{area_size}}</span>
+        <span class="fl">หันหน้าไปทาง</span><span class="fd-m">{{facing_direction}}</span>
+    </div>
+
+    <div class="form-footer">
+        <div class="form-footer-left"></div>
+        <div class="form-footer-right">รายงานการตรวจสถานที่เกิดเหตุคดีเพลิงไหม้</div>
+    </div>
+</div>
+
+<!-- ==================== PAGE 2 ==================== -->
+<div class="page">
+    <div class="page-header">
+        <div class="page-header-left">
+            <u>รายงานการตรวจสถานที่เกิดเหตุที่</u>&nbsp;<span class="fd-s" style="display:inline-block;min-width:60px;border-bottom:1px dotted #888;text-align:center;">{{report_no}}</span>&nbsp;/25&nbsp;<span class="fd-s" style="display:inline-block;min-width:30px;border-bottom:1px dotted #888;text-align:center;">{{report_year_short}}</span>
+        </div>
+        <div class="page-header-right">2/{{total_pages}}</div>
+    </div>
+    <div class="fr"><span class="fl">หน่วยงาน</span><span class="fd">{{agency_name}}</span></div>
+
+    <div class="sub-heading">ลักษณะโครงสร้าง</div>
+    <div class="wall-row"><span class="fl">ฝาผนังด้านหน้า</span><span class="fd">{{wall_front}}</span></div>
+    <div class="wall-row"><span class="fl">ฝาผนังด้านซ้าย</span><span class="fd">{{wall_left}}</span></div>
+    <div class="wall-row"><span class="fl">ฝาผนังด้านขวา</span><span class="fd">{{wall_right}}</span></div>
+    <div class="wall-row"><span class="fl">ฝาผนังด้านหลัง</span><span class="fd">{{wall_back}}</span></div>
+    <div class="wall-row">
+        <span class="fl">พื้นห้อง</span><span class="fd">{{floor_material}}</span>
+        <span class="fl">เพดาน</span><span class="fd">{{ceiling}}</span>
+        <span class="fl">หลังคา</span><span class="fd">{{roof}}</span>
+    </div>
+
+    <div class="sub-heading" style="margin-top:4px;">ลักษณะการจัดวางสิ่งของ</div>
+    <div class="fr i2"><span class="fl">ด้านหน้า (ซ้ายไปขวา)</span><span class="fd">{{arrange_front}}</span></div>
+    <div class="fr i2"><span class="fl">ด้านซ้าย (หน้าไปหลัง)</span><span class="fd">{{arrange_left}}</span></div>
+    <div class="fr i2"><span class="fl">ด้านขวา (หน้าไปหลัง)</span><span class="fd">{{arrange_right}}</span></div>
+    <div class="fr i2"><span class="fl">ด้านหลัง (ซ้ายไปขวา)</span><span class="fd">{{arrange_back}}</span></div>
+    <div class="fr i2"><span class="fl">บริเวณอื่นๆ</span><span class="fd">{{arrange_other}}</span></div>
+
+    <!-- 7. พฤติการณ์คดี -->
+    <div class="sec-heading" style="margin-top:6px;">7. <u>พฤติการณ์คดี & สภาพความเสียหาย</u></div>
+    <div class="fr i1"><span class="fl">พฤติการณ์ของคดีจากการสอบถามข้อมูลในเบื้องต้นจาก พงส. ได้ความว่า</span></div>
+    <div class="text-block">{{case_behavior}}</div>
+    <div class="fr i1">
+        <span class="fl">การทำประกันภัย</span>
+        <label class="ck"><span class="cb">{{chk_insurance_yes}}</span>&nbsp;มี</label>
+        <label class="ck"><span class="cb">{{chk_insurance_no}}</span>&nbsp;ไม่มี</label>
+        <span class="fl" style="margin-left:15px;">เวลาในการเผาไหม้</span><span class="fd">{{burn_time}}</span>
+    </div>
+    <div class="fr i1">
+        <span class="fl">การดับเพลิง</span>
+        <label class="ck"><span class="cb">{{chk_extinguish_yes}}</span>&nbsp;ดับแล้ว</label>
+        <label class="ck"><span class="cb">{{chk_extinguish_no}}</span>&nbsp;ยังไม่ดับ</label>
+        <span class="fd">{{extinguish_detail}}</span>
+    </div>
+    <div class="fr i1"><span class="fl">สภาพความเสียหาย</span></div>
+    <div class="text-block">{{damage_condition}}</div>
+    <div class="fr i1"><span class="fl">การลุกลามของเพลิง</span></div>
+    <div class="text-block">{{spread_detail}}</div>
+
+    <div class="sub-heading">7.1 ความเสียหายโครงสร้าง</div>
+    <div class="wall-row"><span class="fl">ฝาผนังด้านหน้า</span><span class="fd">{{damage_wall_front}}</span></div>
+    <div class="wall-row"><span class="fl">ฝาผนังด้านซ้าย</span><span class="fd">{{damage_wall_left}}</span></div>
+    <div class="wall-row"><span class="fl">ฝาผนังด้านขวา</span><span class="fd">{{damage_wall_right}}</span></div>
+    <div class="wall-row"><span class="fl">ฝาผนังด้านหลัง</span><span class="fd">{{damage_wall_back}}</span></div>
+    <div class="wall-row">
+        <span class="fl">พื้น</span><span class="fd">{{damage_floor}}</span>
+        <span class="fl">หลังคา</span><span class="fd">{{damage_roof}}</span>
+        <span class="fl">เพดาน</span><span class="fd">{{damage_ceiling}}</span>
+    </div>
+
+    <div class="form-footer">
+        <div class="form-footer-left"></div>
+        <div class="form-footer-right">รายงานการตรวจสถานที่เกิดเหตุคดีเพลิงไหม้</div>
+    </div>
+</div>
+
+<!-- ==================== PAGE 3 ==================== -->
+<div class="page">
+    <div class="page-header">
+        <div class="page-header-left">
+            <u>รายงานการตรวจสถานที่เกิดเหตุที่</u>&nbsp;<span class="fd-s" style="display:inline-block;min-width:60px;border-bottom:1px dotted #888;text-align:center;">{{report_no}}</span>&nbsp;/25&nbsp;<span class="fd-s" style="display:inline-block;min-width:30px;border-bottom:1px dotted #888;text-align:center;">{{report_year_short}}</span>
+        </div>
+        <div class="page-header-right">3/{{total_pages}}</div>
+    </div>
+    <div class="fr"><span class="fl">หน่วยงาน</span><span class="fd">{{agency_name}}</span></div>
+
+    <div class="sub-heading">7.2 ความเสียหายสิ่งของ</div>
+    <div class="wall-row"><span class="fl">ด้านหน้า</span><span class="fd">{{damage_obj_front}}</span></div>
+    <div class="wall-row"><span class="fl">ด้านซ้าย</span><span class="fd">{{damage_obj_left}}</span></div>
+    <div class="wall-row"><span class="fl">ด้านขวา</span><span class="fd">{{damage_obj_right}}</span></div>
+    <div class="wall-row"><span class="fl">ด้านหลัง</span><span class="fd">{{damage_obj_back}}</span></div>
+    <div class="wall-row">
+        <span class="fl">พื้น</span><span class="fd">{{damage_obj_floor}}</span>
+        <span class="fl">หลังคา</span><span class="fd">{{damage_obj_roof}}</span>
+        <span class="fl">เพดาน</span><span class="fd">{{damage_obj_ceiling}}</span>
+    </div>
+
+    <div class="sub-heading" style="margin-top:4px;">7.3 บริเวณจุดเริ่มต้นของเพลิง</div>
+    <div class="text-block">{{first_area}}</div>
+
+    <div class="sub-heading">7.4 สภาพสวิตช์ไฟฟ้า/อุปกรณ์ไฟฟ้า</div>
+    <div class="text-block">{{switch_condition}}</div>
+
+    <div class="sub-heading">7.5 ความเสียหายอาคารข้างเคียง</div>
+    <div class="fr i2">
+        <label class="ck"><span class="cb">{{chk_adjacent_found}}</span>&nbsp;พบ</label>
+        <label class="ck"><span class="cb">{{chk_adjacent_notfound}}</span>&nbsp;ไม่พบ</label>
+        <span class="fd">{{adjacent_damage_detail}}</span>
+    </div>
+
+    <div class="sub-heading">7.6 ร่องรอยและวัตถุพยานที่ตรวจพบในสถานที่เกิดเหตุ</div>
+    <div class="text-block">{{evidence_found}}</div>
+
+    <!-- 8. สรุปผลการตรวจ -->
+    <div class="sec-heading" style="margin-top:6px;">8. <u>สรุปผลการตรวจ</u></div>
+    <div class="sub-heading">8.1 บริเวณจุดเริ่มต้นของเพลิง</div>
+    <div class="text-block">{{origin_area}}</div>
+    <div class="sub-heading">8.2 แหล่งเชื้อเพลิง</div>
+    <div class="text-block">{{fuel_source}}</div>
+    <div class="sub-heading">8.3 แหล่งความร้อน</div>
+    <div class="text-block">{{heat_source}}</div>
+    <div class="sub-heading">8.4 อื่นๆ</div>
+    <div class="text-block">{{summary_other}}</div>
+
+    <!-- 9. ความเห็น -->
+    <div class="sec-heading" style="margin-top:6px;">9. <u>ความเห็น</u></div>
+    <div class="fr i1"><span class="fl">จุดเริ่มต้นของเพลิง</span></div>
+    <div class="text-block">{{opinion_first_area}}</div>
+    <div class="fr i1">
+        <span class="fl">สาเหตุของเพลิง</span>
+        <label class="ck"><span class="cb">{{chk_cause_believed}}</span>&nbsp;เชื่อว่า</label>
+        <span class="fd">{{cause_believed_detail}}</span>
+    </div>
+    <div class="fr i1">
+        <label class="ck" style="margin-left:100px;"><span class="cb">{{chk_cause_unknown}}</span>&nbsp;ไม่ทราบสาเหตุ</label>
+        <span class="fd">{{cause_unknown_detail}}</span>
+    </div>
+
+    <!-- การส่งมอบ -->
+    <div style="margin-top: 10px;">
+        <div class="fr i1">
+            <span class="fl">เจ้าหน้าที่</span><span class="fd">{{handover_officer}}</span>
+        </div>
+        <div class="fr i1">
+            <span class="fl">ตรวจสถานที่เกิดเหตุเสร็จสิ้น ส่งมอบสถานที่เกิดเหตุคืนให้กับ</span><span class="fd">{{handover_to}}</span>
+        </div>
+        <div class="fr i1">
+            <span class="fl">เมื่อวันที่</span><span class="fd-m" style="text-align:center">{{handover_date}}</span>
+            <span class="fl">เวลาประมาณ</span><span class="fd-m" style="text-align:center">{{handover_time}}</span><span class="fl">น.</span>
+        </div>
+    </div>
+
+    <!-- ลงชื่อ -->
+    <div class="signature-block">
+        <div>ลงชื่อ ........................................ ผู้รายงาน</div>
+        <div>({{signer_name}})</div>
+        <div>ตำแหน่ง {{signer_position}}</div>
+        <div>วันที่ {{sign_date}}</div>
+    </div>
+
+    <div class="form-footer">
+        <div class="form-footer-left"></div>
+        <div class="form-footer-right">รายงานการตรวจสถานที่เกิดเหตุคดีเพลิงไหม้</div>
+    </div>
+</div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function autoFitContent() {
+            var fdElements = document.querySelectorAll('.fd-full, .fd, .fd-multiline');
+            fdElements.forEach(function(el) {
+                var text = el.textContent || el.innerText;
+                if (!text || text.trim() === '') return;
+                var textLength = text.length;
+                el.classList.remove('text-xs', 'text-sm', 'text-md');
+                if (textLength > 300) { el.classList.add('text-xs'); }
+                else if (textLength > 200) { el.classList.add('text-sm'); }
+                else if (textLength > 100) { el.classList.add('text-md'); }
+            });
+            var secBodies = document.querySelectorAll('.sec-body');
+            secBodies.forEach(function(secBody) {
+                if (secBody.scrollHeight > secBody.clientHeight + 10) {
+                    var ratio = secBody.clientHeight / secBody.scrollHeight;
+                    var newSize = Math.max(7, 11.5 * ratio);
+                    secBody.style.fontSize = newSize + 'px';
+                    secBody.style.lineHeight = '1.2';
+                }
+            });
+        }
+        setTimeout(autoFitContent, 100);
+        window.addEventListener('beforeprint', function() { autoFitContent(); });
+    });
+    </script>
+</body>
+</html>

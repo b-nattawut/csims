@@ -1,0 +1,2810 @@
+@font-face {
+    font-family: 'Sarabun';
+    src: url('../fonts/Sarabun/Sarabun-Regular.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Sarabun';
+    src: url('../fonts/Sarabun/Sarabun-Bold.ttf') format('truetype');
+    font-weight: bold;
+    font-style: normal;
+}
+
+@font-face {
+    font-family: 'Sarabun';
+    src: url('../fonts/Sarabun/Sarabun-Italic.ttf') format('truetype');
+    font-weight: normal;
+    font-style: italic;
+}
+
+@font-face {
+    font-family: 'Sarabun';
+    src: url('../fonts/Sarabun/Sarabun-BoldItalic.ttf') format('truetype');
+    font-weight: bold;
+    font-style: italic;
+}
+
+body {
+    font-family: 'Sarabun', sans-serif;
+    background: #e0f2ff;
+    display: flex;
+    justify-content: center;
+    min-height: 100vh;
+    padding: 20px;
+    overflow-x: hidden;
+}
+
+.container {
+    max-width: 1400px;
+    width: 100%;
+    margin-top: 2rem;
+    margin-bottom: 2rem;
+}
+
+.card {
+    background: white;
+    border-radius: 12px;
+    box-shadow: 0 8px 30px rgba(13, 109, 253, 0.15);
+    overflow: hidden;
+}
+
+.card-header {
+    background: linear-gradient(to right, #0d6efd, #3c8ce7);
+    color: white;
+    padding: 1.8rem 2.5rem;
+    font-size: 1.2rem;
+    font-weight: bold;
+    border-bottom: none;
+    display: flex;
+    align-items: center;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card-header i {
+    font-size: 1.4rem;
+    opacity: 0.9;
+}
+
+.card-header-title {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.4rem;
+    font-weight: bold;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card-header-dashboard {
+    background: linear-gradient(to right, #0d6efd, #3c8ce7);
+    color: white;
+    padding: 1.5rem 2.2rem;
+    font-size: 1.4rem;
+    font-weight: bold;
+    border-bottom: none;
+    display: flex;
+    align-items: center;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.card-incDetail {
+    background-color: #ffffff;
+    border: 1px solid #dee2e6;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+
+    margin-bottom: 1.5rem;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.card-incDetail:hover {
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.06);
+    border-color: #ced4da;
+    transform: translateY(-2px);
+}
+
+.card-incDetail-header {
+    background: linear-gradient(to right, #0d6efd, #3c8ce7);
+    /* border-bottom: 1px solid #eef2f6; */
+    border-bottom: none;
+    padding: 1.25rem 1.5rem;
+    font-weight: 700;
+    color: white;
+    /* color: #344767; */
+    display: flex;
+    align-items: center;
+    font-size: 1.15rem;
+}
+
+.card-body {
+    padding: 1.5rem 2.5rem;
+
+}
+
+.card-body-incident {
+    padding: 1.5rem;
+}
+
+.card-footer {
+    padding: 1.5rem 2.5rem;
+    background-color: #f8f9fa;
+    border-top: 1px solid #dee2e6;
+    display: flex;
+}
+
+.form-label {
+    font-weight: 600;
+    color: #6c757d;
+    margin-bottom: 0.5rem;
+}
+
+.form-control,
+.form-select {
+    border-radius: 8px;
+    border: 1px solid #ced4da;
+    padding: 0.75rem 1rem;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus,
+.form-select:focus {
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 0.25rem rgba(0, 123, 255, 0.25);
+}
+
+.form-control-sm,
+.form-select-sm {
+    padding: 0.25rem 0.5rem;
+    font-size: 0.875rem;
+    border-radius: 6px;
+    min-height: calc(1.5em + 0.5rem + 2px);
+}
+
+.form-check-input {
+    transition: all 0.2s linear;
+}
+
+.form-check-input:focus {
+    transition: box-shadow 0.2s linear;
+}
+
+.fieldset-header {
+    padding: 10px 18px;
+    width: auto;
+    margin-bottom: 20px;
+    font-weight: 600;
+    font-size: 1rem;
+    background-color: #f4f8ff;
+    color: #0b5ed7;
+    border: 1px solid #dbe8ff;
+    border-left: 5px solid #0d6efd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(13, 109, 253, 0.05);
+}
+
+.fieldset-header-approval {
+    padding: 10px 18px;
+    width: auto;
+    margin-bottom: 20px;
+    font-weight: 600;
+    font-size: 1rem;
+    background-color: #f8f9fa;
+    color: #495057;
+    border: 1px solid #dee2e6;
+    border-left: 5px solid #6c757d;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.03);
+
+}
+
+.fieldset-edit-mode {
+    border: 2px solid #ffc107 !important;
+    background-color: #fffbf0;
+    padding: 20px;
+    border-radius: 12px;
+    box-shadow: 0 4px 15px rgba(255, 193, 7, 0.15);
+    transition: all 0.3s ease-in-out;
+    margin-bottom: 1rem;
+}
+
+.fieldset-edit-mode .fieldset-header {
+    background-color: #ffecb5 !important;
+    color: #856404 !important;
+    border-color: #ffeeba !important;
+    border-left-color: #ffc107 !important;
+}
+
+.fieldset-edit-mode .form-label {
+    color: #856404;
+}
+
+.fieldset-edit-mode .form-control:focus,
+.fieldset-edit-mode .form-select:focus,
+.fieldset-edit-mode .form-check-input:focus {
+    border-color: #ffc107;
+    box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25);
+}
+
+.fieldset-edit-mode .form-check-input:checked {
+    background-color: #ffc107;
+    border-color: #ffc107;
+}
+
+.was-validated .fieldset-edit-mode .form-check-input:valid:checked,
+.was-validated .fieldset-edit-mode .form-check-input:checked,
+.fieldset-edit-mode.was-validated .form-check-input:valid:checked,
+.fieldset-edit-mode.was-validated .form-check-input:checked {
+    background-color: #ffc107 !important;
+    border-color: #ffc107 !important;
+}
+
+.was-validated .fieldset-edit-mode .form-check-input:valid:focus,
+.was-validated .fieldset-edit-mode .form-check-input:focus,
+.fieldset-edit-mode.was-validated .form-check-input:valid:focus,
+.fieldset-edit-mode.was-validated .form-check-input:focus {
+    border-color: #ffc107 !important;
+    box-shadow: 0 0 0 0.25rem rgba(255, 193, 7, 0.25) !important;
+}
+
+.was-validated .fieldset-edit-mode .form-check-input:valid,
+.fieldset-edit-mode.was-validated .form-check-input:valid {
+    border-color: #ffc107 !important;
+}
+
+.fieldset-edit-mode .text-primary {
+    color: #b78c00 !important;
+}
+
+.fieldset-edit-mode.bg-light {
+    background-color: #fffbf0 !important;
+    border-color: #ffc107 !important;
+}
+
+.table-custom {
+    border-collapse: collapse;
+}
+
+.table-custom th,
+.table-custom td {
+    border: 1px solid #dee2e6 !important;
+}
+
+.table-custom thead th {
+    border-bottom-width: 1px !important;
+    background-color: #0d6efd;
+    color: #ffffff;
+    font-weight: 600;
+    vertical-align: middle !important;
+    border-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+/* =========================================
+   Global Table Row Hover Effect
+   แถวปกติสีขาว เมื่อชี้ mouse จะเป็นสีเทา
+   ========================================= */
+.table-custom tbody tr,
+.table-custom tbody tr td {
+    background-color: #ffffff !important;
+}
+
+.table-custom.table-striped tbody tr:nth-of-type(odd) td,
+.table.table-striped tbody tr:nth-of-type(odd) td,
+.table-striped>tbody>tr:nth-of-type(odd)>* {
+    background-color: #f0f4ff !important;
+    --bs-table-bg-type: #f0f4ff !important;
+}
+
+.table-custom.table-striped tbody tr:nth-of-type(even) td,
+.table.table-striped tbody tr:nth-of-type(even) td,
+.table-striped>tbody>tr:nth-of-type(even)>* {
+    background-color: #ffffff !important;
+    --bs-table-bg-type: #ffffff !important;
+}
+
+.table-custom tbody tr:hover,
+.table-custom tbody tr:hover td,
+.table.table-striped tbody tr:hover,
+.table.table-striped tbody tr:hover td {
+    background-color: #e9ecef !important;
+    --bs-table-bg-type: #e9ecef !important;
+    transition: background-color 0.15s ease-in-out;
+}
+
+.table-wrapper-base {
+    border-radius: 12px;
+    border: 1px solid #dee2e6;
+    background-color: white;
+}
+
+.table-wrapper-base .table {
+    margin-bottom: 0;
+    border-style: hidden;
+}
+
+.table-wrapper-focus {
+    border-radius: 8px;
+    border: 1px solid #dee2e6;
+    background-color: white;
+
+    display: inline-block;
+    min-width: 100%;
+    overflow: hidden;
+}
+
+.table-wrapper-focus .table {
+    margin-bottom: 0;
+    border-style: hidden;
+}
+
+.table-wrapper-scroll {
+    border-radius: 12px;
+    border: 1px solid #dee2e6;
+    background-color: white;
+
+    display: block;
+    overflow-x: auto;
+    overflow-y: hidden;
+}
+
+.table-wrapper-scroll .table {
+    margin-bottom: 0;
+    border-style: hidden;
+}
+
+.table-disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    user-select: none;
+    background-color: #f8f9fa;
+}
+
+.table-hover tr:hover .badge-hover-dim,
+.table-hover tr.row-editing .badge-hover-dim {
+    --bs-bg-opacity: 0.1 !important;
+}
+
+input[type=number]::-webkit-outer-spin-button,
+input[type=number]::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    appearance: none;
+    margin: 0;
+}
+
+input[type=number] {
+    -moz-appearance: textfield;
+}
+
+.form-control.is-abnormal {
+    border-color: #dc3545 !important;
+    padding-right: calc(1.5em + .75rem);
+    background-image: url("../images/icon-abnormal.svg") !important;
+    background-repeat: no-repeat;
+    background-position: right calc(.375em + .1875rem) center;
+    background-size: calc(.75em + .375rem) calc(.75em + .375rem);
+}
+
+.form-control.is-abnormal:focus {
+    border-color: #dc3545 !important;
+    box-shadow: 0 0 0 0.25rem rgba(220, 53, 69, 0.25) !important;
+}
+
+/* ---Responsive Table Styling--- */
+
+/* Fingerprint Chemical Column Widths */
+
+.col-fp-date {
+    min-width: 110px;
+    white-space: nowrap;
+}
+
+.col-fp-chem-name {
+    min-width: 120px;
+    max-width: 200px;
+}
+
+.col-fp-detail {
+    min-width: 120px;
+    max-width: 200px;
+}
+
+.col-fp-status {
+    min-width: 110px;
+    white-space: nowrap;
+}
+
+.col-fp-note {
+    min-width: 120px;
+    max-width: 180px;
+}
+
+.col-fp-person {
+    min-width: 120px;
+    max-width: 180px;
+}
+
+.col-fp-action {
+    min-width: 90px;
+    text-align: center;
+}
+
+/* General Equipment Page */
+.col-gen-usage {
+    min-width: 200px;
+}
+
+.col-gen-user {
+    min-width: 120px;
+}
+
+.col-gen-note {
+    min-width: 100px;
+    max-width: 200px;
+}
+
+/* Computer Usage Page */
+
+.col-usage {
+    min-width: 200px;
+}
+
+.col-user {
+    min-width: 120px;
+}
+
+.col-note {
+    min-width: 100px;
+    max-width: 200px;
+}
+
+/* Maintenance Plan Page */
+
+.col-equip-name {
+    max-width: 180px;
+    min-width: 180px;
+}
+
+.col-equip-info {
+    max-width: 120px;
+    min-width: 120px;
+}
+
+.col-equip-resp {
+    max-width: 150px;
+    min-width: 150px;
+}
+
+.col-equip-note {
+    min-width: 100px;
+    max-width: 100px;
+}
+
+.col-month {
+    min-width: 45px;
+    text-align: center;
+}
+
+/* Temperature Control Page */
+.col-temp-date {
+    width: 10%;
+}
+
+.col-temp-val {
+    width: 20%;
+}
+
+.col-temp-status {
+    width: 15%;
+}
+
+.col-temp-time {
+    width: 15%;
+}
+
+.col-temp-recorder {
+    max-width: 100px;
+}
+
+/* Equipment History Page */
+.col-hist-action {
+    max-width: 100px;
+}
+
+.col-hist-company {
+    max-width: 80px;
+}
+
+.col-hist-officer {
+    max-width: 70px;
+}
+
+.col-hist-note {
+    max-width: 60px;
+}
+
+/* Chemical Test Page */
+.col-chem-detail {
+    min-width: 200px;
+}
+
+.col-chem-name {
+    min-width: 150px;
+    max-width: 300px;
+}
+
+.col-chem-brand {
+    min-width: 150px;
+    max-width: 200px;
+}
+
+.col-chem-person {
+    min-width: 120px;
+    max-width: 180px;
+}
+
+.col-chem-result {
+    min-width: 90px;
+    white-space: nowrap;
+}
+
+.name-truncate {
+    max-width: 180px;
+}
+
+@media (min-width: 768px) {
+
+    .name-truncate {
+        max-width: 230px;
+    }
+
+    /* Fingerprint Chemical Page */
+    .col-fp-chem-name {
+        min-width: 120px;
+        max-width: 250px;
+    }
+
+    .col-fp-detail {
+        min-width: 120px;
+        max-width: 220px;
+    }
+
+    .col-fp-note {
+        min-width: 150px;
+        max-width: 200px;
+    }
+
+    .col-fp-person {
+        min-width: 150px;
+        max-width: 200px;
+    }
+
+    /* General Equipment Page */
+    .col-gen-usage {
+        min-width: 200px;
+        max-width: 300px;
+    }
+
+    .col-gen-user {
+        min-width: 150px;
+        max-width: 200px;
+    }
+
+    .col-gen-note {
+        min-width: 100px;
+        max-width: 180px;
+    }
+
+    /* Computer Usage Page */
+    .col-usage {
+        min-width: 200px;
+        max-width: 300px;
+    }
+
+    .col-user {
+        min-width: 150px;
+        max-width: 200px;
+    }
+
+    .col-note {
+        min-width: 100px;
+        max-width: 180px;
+    }
+
+    /* Maintenance Plan Page */
+    .col-equip-name {
+        min-width: 250px;
+        max-width: 300px;
+    }
+
+    .col-equip-info {
+        min-width: 160px;
+        max-width: 180px;
+    }
+
+    .col-equip-resp {
+        min-width: 180px;
+        max-width: 220px;
+    }
+
+    .col-equip-note {
+        min-width: 150px;
+        max-width: 180px;
+    }
+
+    /* Temperature Control Page */
+    .col-temp-recorder {
+        max-width: 150px;
+    }
+
+    /* Equipment History Page */
+    .col-hist-action {
+        min-width: 250px;
+        max-width: 300px;
+    }
+
+    .col-hist-company {
+        min-width: 180px;
+        max-width: 200px;
+    }
+
+    .col-hist-officer {
+        min-width: 180px;
+        max-width: 200px;
+    }
+
+    .col-hist-note {
+        min-width: 150px;
+        max-width: 180px;
+    }
+
+    /* Chemical Test Page */
+    .col-chem-detail {
+        min-width: 150px;
+    }
+
+    .col-chem-name {
+        max-width: 300px;
+    }
+
+    .col-chem-person {
+        min-width: 90px;
+        max-width: 200px;
+    }
+
+    #addIncidentModal .modal-dialog,
+    #editIncidentModal .modal-dialog,
+    #modalReportReview .modal-dialog,
+    #addCheckListModal .modal-dialog,
+    #addEquipmentHistoryModal .modal-dialog,
+    #addLatentFingerprintModal .modal-dialog,
+    #assessModal .modal-dialog,
+    #addEditPlanModal .modal-dialog,
+    #viewPlanModal .modal-dialog,
+    #addCheckListModalBomb .modal-dialog,
+    #addCheckListModalLife .modal-dialog,
+    #addCheckListModalSceneEvidence .modal-dialog,
+    #addCheckListModalPersonEvidence .modal-dialog,
+    #addCheckListModalFingerprint .modal-dialog,
+    #addCheckListModalFingerprintNew .modal-dialog,
+    #addCheckListModalFire .modal-dialog,
+    #modalReportLifeIndoor .modal-dialog,
+    #modalReportLifeOutdoor .modal-dialog,
+    #addCheckListModalTraffic .modal-dialog,
+    #addEditEquipmentModal .modal-dialog,
+    #addEditComputerModal .modal-dialog,
+    #addEditTemperatureDeviceModal .modal-dialog,
+    #addEditChemicalModal .modal-dialog,
+    #addUsageModal .modal-dialog,
+    #addLogModal .modal-dialog,
+    #addRecordModal .modal-dialog,
+    #addEditInventoryModal .modal-dialog,
+    #viewLotHistoryModal .modal-dialog,
+    #addEditPrepModal .modal-dialog,
+    #viewPrepDetailModal .modal-dialog,
+    #addEditValidationModal .modal-dialog,
+    #addEditLatentModal .modal-dialog,
+    #addEditAssessmentModal .modal-dialog,
+    #addReadinessModal .modal-dialog,
+    #readinessModal .modal-dialog,
+    #addEditCategoryModal .modal-dialog {
+        max-width: 90%;
+    }
+
+    #hwModal .modal-dialog {
+        max-width: 75%;
+    }
+}
+
+@media (min-width: 1200px) {
+
+    .name-truncate {
+        max-width: 300px;
+    }
+
+    /* Fingerprint Chemical Page */
+    .col-fp-chem-name {
+        min-width: 250px;
+        max-width: 350px;
+    }
+
+    .col-fp-detail {
+        min-width: 220px;
+        max-width: 300px;
+    }
+
+    .col-fp-note {
+        min-width: 180px;
+        max-width: 250px;
+    }
+
+    .col-fp-person {
+        min-width: 150px;
+        max-width: 200px;
+    }
+
+    /* General Equipment Page */
+    .col-gen-usage {
+        min-width: 300px;
+        max-width: 380px;
+    }
+
+    .col-gen-user {
+        min-width: 180px;
+        max-width: 250px;
+    }
+
+    .col-gen-note {
+        min-width: 150px;
+        max-width: 250px;
+    }
+
+    /* Computer Usage Page */
+    .col-usage {
+        max-width: 380px;
+    }
+
+    .col-user {
+        max-width: 250px;
+    }
+
+    .col-note {
+        max-width: 250px;
+    }
+
+    /* Maintenance Plan Page */
+    .col-equip-name {
+        min-width: 300px;
+        max-width: 400px;
+    }
+
+    .col-equip-info {
+        min-width: 180px;
+        max-width: 220px;
+    }
+
+    .col-equip-resp {
+        min-width: 220px;
+        max-width: 280px;
+    }
+
+    .col-equip-note {
+        min-width: 180px;
+        max-width: 250px;
+    }
+
+    /* Temperature Control Page */
+    .col-temp-recorder {
+        max-width: 220px;
+    }
+
+    /* Equipment History Page */
+    .col-hist-action {
+        min-width: 250px;
+        max-width: 350px;
+    }
+
+    .col-hist-company {
+        max-width: 250px;
+    }
+
+    .col-hist-officer {
+        max-width: 150px;
+    }
+
+    .col-hist-note {
+        max-width: 150px;
+    }
+
+    /* Chemical Test Page */
+    .col-chem-detail {
+        min-width: 350px;
+    }
+
+    .col-chem-name {
+        max-width: 400px;
+    }
+
+    .col-chem-person {
+        min-width: 160px;
+        max-width: 200px;
+    }
+
+    .modal-xl {
+        max-width: 1140px;
+    }
+}
+
+.table-responsive::-webkit-scrollbar {
+    height: 8px;
+    -webkit-appearance: none;
+}
+
+.table-responsive::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 4px;
+}
+
+.table-responsive::-webkit-scrollbar-track {
+    background-color: transparent;
+}
+
+#month_wrapper {
+    padding-right: 2.5rem !important;
+    padding-left: 1.5rem !important;
+}
+
+#btn_select_all_months:disabled,
+#btn_clear_all_months:disabled {
+    opacity: 0.4 !important;
+    cursor: not-allowed;
+}
+
+.text-line-clamp-1 {
+    display: block;
+    width: 100%;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+
+    -webkit-line-clamp: unset;
+    -webkit-box-orient: unset;
+    word-break: unset;
+    padding-bottom: 0;
+}
+
+/* --- Incident Page Style --- */
+.btn-light {
+    background-color: #f8f9fa;
+    border: 1px solid #e9ecef;
+    color: #6c757d;
+    transition: all 0.2s ease-in-out;
+}
+
+.btn-light:hover {
+    background-color: #e2e6ea;
+    transform: translateY(-1px);
+}
+
+.btn-check:checked+.btn-light {
+    background-color: #0d6efd;
+    color: #ffffff;
+    border-color: #0d6efd;
+    box-shadow: 0 4px 6px rgba(13, 110, 253, 0.3) !important;
+}
+
+#channel_wrapper.is-invalid,
+#channel_wrapper.is-valid,
+#incident_type_wrapper.is-invalid,
+#incident_type_wrapper.is-valid {
+    background-image: none !important;
+}
+
+#incident_type_wrapper {
+    border: 1px solid transparent;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    transition: all 0.2s ease-in-out;
+}
+
+#channel_wrapper {
+    border: 1px solid transparent;
+    border-radius: 0.375rem;
+    padding: 0.25rem 0.5rem;
+    transition: all 0.2s ease-in-out;
+    display: flex;
+    align-items: center;
+}
+
+#channel_wrapper.is-invalid,
+#incident_type_wrapper.is-invalid {
+    border-color: #dc3545 !important;
+    background-color: #fff !important;
+    background-image: none !important;
+}
+
+#channel_wrapper.is-valid,
+#incident_type_wrapper.is-valid {
+    border-color: transparent !important;
+    box-shadow: none !important;
+
+}
+
+#incident_type_wrapper .btn {
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+#incident_type_wrapper .btn i {
+    font-size: 1.5rem;
+    margin-bottom: 6px;
+}
+
+#incident_type_wrapper .btn.text-small {
+    font-size: 0.95rem;
+}
+
+
+.table-custom th {
+    font-weight: 600;
+}
+
+.btn-icon {
+    width: 32px;
+    height: 32px;
+    padding: 0;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.btn-outline-secondary[aria-expanded="true"] {
+    color: #fff;
+    background-color: #6c757d;
+    border-color: #6c757d;
+    box-shadow: 0 0 0 0.25rem rgba(108, 117, 125, 0.5);
+}
+
+.btn-outline-secondary:hover:not([aria-expanded="true"]) {
+    background-color: #e9ecef;
+    color: #6c757d;
+    border-color: #6c757d;
+}
+
+.btn-outline-secondary:focus,
+.btn-outline-secondary:active,
+.btn-outline-secondary[aria-expanded="true"] {
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+.ts-control {
+    min-height: 49.6px !important;
+
+    display: flex !important;
+    align-items: center !important;
+
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+}
+
+#signature {
+    border: 1px solid #ced4da;
+    border-radius: 8px;
+    touch-action: none;
+    width: 100%;
+    max-width: 400px;
+    height: 200px;
+    background-color: #fff;
+    cursor: crosshair;
+}
+
+/* .signature-pad {
+    border: 1px dashed #ced4da;
+    background-color: #fafafa;
+    width: 100%;
+    height: 100px;
+    border-radius: 4px;
+} */
+
+.table-signature {
+    border-collapse: collapse !important;
+    border-spacing: 0;
+}
+
+.table-signature th,
+.table-signature td {
+    /* border-color: #f0f2f5 !important; */
+}
+
+.table-signature thead th {
+    /* background-color: #f8f9fa; */
+    /* border-bottom: 2px solid #e9ecef !important; */
+    color: #6c757d;
+}
+
+.table-active-row {
+    background-color: #fcfdff !important;
+    /* position: relative; */
+}
+
+.signature-box:hover {
+    border-color: #b0c4de !important;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05) !important;
+}
+
+.signature-pad {
+    width: 100% !important;
+    height: 100% !important;
+    display: block;
+    touch-action: none;
+    background-color: transparent;
+    border-radius: inherit;
+}
+
+.table-incident thead th {
+    background-color: #0b54ad !important;
+    color: white !important;
+}
+
+.table-incident tbody tr:nth-child(even) {
+    background-color: #f5f8ff !important;
+}
+
+.table-incident tbody tr:hover {
+    background-color: #e1ecff !important;
+}
+
+.info-label {
+    color: #6c757d;
+    font-size: 0.85rem;
+    margin-bottom: 0.1rem;
+}
+
+.info-value {
+    color: #212529;
+    font-weight: 500;
+    font-size: 1rem;
+}
+
+.status-badge {
+    font-size: 0.9em;
+    padding: 0.5em 1em;
+    border-radius: 50rem;
+}
+
+.page-header {
+    margin-bottom: 1.5rem;
+}
+
+
+.hover-text-primary,
+.hover-tel-primary {
+    transition: all 0.2s ease;
+}
+
+.hover-text-primary:hover,
+.hover-tel-primary:hover {
+    color: #0d6efd !important;
+    cursor: pointer;
+}
+
+.hover-text-primary:hover {
+    transform: translateX(-4px);
+}
+
+.card-hover-effect {
+    transition: all 0.3s ease;
+    border: 1px solid #dee2e6;
+    /* สีขอบปกติ */
+}
+
+.card-hover-effect:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .10) !important;
+}
+
+
+.hover-border-primary:hover {
+    border-color: var(--bs-primary) !important;
+    background-color: #f8fbff;
+}
+
+.hover-border-danger:hover {
+    border-color: var(--bs-danger) !important;
+    background-color: #fff8f8;
+}
+
+.hover-bg-warning:hover {
+    background-color: #ffc107 !important;
+    border-color: #ffc107 !important;
+}
+
+/* -----Dashboard - Style----- */
+
+/* CSS Variables */
+:root {
+    --primary-color: #0d6efd;
+    --secondary-color: #6c757d;
+    --info-color: #17a2b8;
+    --success-color: #28a745;
+    --danger-color: #dc3545;
+    --warning-color: #ffc107;
+    --text-dark: #343a40;
+}
+
+/* body {
+    font-family: 'Sarabun', sans-serif;
+    background-color: #f8f9fa;
+    padding-top: 56px;
+} */
+
+/* --- MENU CARD STYLES --- */
+
+/* Summary Card Styling */
+.summary-card {
+    border: none;
+    border-radius: 0.75rem;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    color: white;
+}
+
+.summary-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.2);
+}
+
+.card-icon {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+    opacity: 0.8;
+}
+
+.card-text.display-4 {
+    font-weight: 700;
+}
+
+/* --------------------------------------------------- */
+
+/* Floating Menu - Menu Modal */
+/* =========================================
+   1. Floating Menu Button (ปุ่มลอยมุมขวา)
+   ========================================= */
+.floating-menu {
+    position: fixed;
+    bottom: 30px;
+    right: 30px;
+    z-index: 1000;
+}
+
+.floating-menu button {
+    width: 65px;
+    height: 65px;
+    font-size: 1.75rem;
+    /* ใช้ Gradient เดียวกับ Navbar */
+    background: linear-gradient(135deg, var(--bs-primary) 0%, #0a58ca 100%);
+    border: none;
+    /* เงาฟุ้งแบบ Glow Effect */
+    box-shadow: 0 8px 25px rgba(13, 110, 253, 0.5);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    /* เด้งดึ๋ง */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.floating-menu button:hover {
+    transform: scale(1.1) rotate(90deg);
+    /* ลูกเล่นหมุนปุ่มเมื่อชี้ */
+    box-shadow: 0 12px 35px rgba(13, 110, 253, 0.6);
+}
+
+/* =========================================
+   2. Modal Styling (หน้าต่างเมนู)
+   ========================================= */
+/* ปรับ Header ให้เป็น Gradient */
+
+.modal-header {
+    background: linear-gradient(90deg, var(--bs-primary) 0%, #0a58ca 100%);
+    color: white;
+    border-bottom: none;
+    transition: all 0.3s ease;
+    /* เพิ่ม Transition ให้เปลี่ยนสีนุ่มๆ */
+}
+
+/* CSS สำหรับโหมดแก้ไข (สีส้ม/เหลือง) */
+.modal-header.edit-mode {
+    /* ใช้ Gradient สีส้มเหลือง เพื่อสื่อถึงการแก้ไข/แจ้งเตือน */
+    background: linear-gradient(90deg, #ffc107 0%, #fd7e14 100%) !important;
+    color: #212529 !important;
+    /* เปลี่ยนตัวหนังสือเป็นสีเข้ม */
+}
+
+/* ปรับปุ่มกากบาท (Close Button) ให้เป็นสีดำเมื่ออยู่บนพื้นเหลือง */
+.modal-header.edit-mode .btn-close {
+    filter: none !important;
+    /* เอา filter สีขาวออก ให้กลับเป็นสีดำตามปกติ */
+    opacity: 0.8;
+}
+
+/* โหมดเสร็จสิ้น/ดูอย่างเดียว (สีเขียว - ให้เหมือนกับ Card Header) */
+.modal-header.completed-mode {
+    background: linear-gradient(90deg, #198754 0%, #28a745 100%) !important;
+    color: white !important;
+}
+
+/* ปรับปุ่มกากบาทให้เป็นสีขาวเมื่ออยู่บนพื้นเขียว */
+.modal-header.completed-mode .btn-close {
+    filter: invert(1) grayscale(100%) brightness(200%);
+    /* บังคับให้เป็นสีขาว */
+}
+
+/* =========================================
+   3. Menu Cards (การ์ดเมนู)
+   ========================================= */
+.menu-card {
+    min-height: 140px;
+    /* สูงขึ้นนิดนึงเพื่อให้ดูโปร่ง */
+    text-align: center;
+    border: none;
+    /* ลบเส้นขอบเดิมออก */
+    background: #fff;
+    border-radius: 1rem !important;
+    /* มุมโค้งมน (Modern) */
+    /* เงาพื้นฐานแบบนุ่มนวล */
+    box-shadow: 0 0.5rem 1.5rem rgba(0, 0, 0, 0.05);
+    transition: all 0.3s ease;
+    text-decoration: none;
+    color: var(--text-dark);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    cursor: pointer;
+    position: relative;
+    overflow: hidden;
+}
+
+/* Hover Effect: ยกการ์ดขึ้น + เงาชัดขึ้น */
+.menu-card:hover {
+    transform: translateY(-8px);
+    box-shadow: 0 1rem 3rem rgba(0, 0, 0, 0.12);
+    /* ไม่ต้องเปลี่ยนสี Border แล้ว เพราะเราเน้นเงาแทน */
+}
+
+/* จัด Layout Grid ใน Modal */
+.modal-screen#mainMenuScreen .col-6 {
+    width: 33.333333%;
+}
+
+.menu-card .card-body {
+    padding: 1.5rem 1rem;
+    /* เพิ่ม Padding ให้ดูไม่อึดอัด */
+}
+
+/* --- Icons --- */
+.menu-card-icon {
+    font-size: 2.5rem;
+    /* ไอคอนใหญ่ขึ้น */
+    margin-bottom: 0.75rem;
+    transition: transform 0.3s ease;
+    /* สีของไอคอนถูกกำหนดผ่าน inline style หรือ class เฉพาะอยู่แล้ว */
+}
+
+.menu-card:hover .menu-card-icon {
+    transform: scale(1.15);
+    /* ขยายไอคอนเมื่อชี้ */
+}
+
+/* --- Typography --- */
+.menu-card-title {
+    font-size: 1rem;
+    font-weight: 700;
+    line-height: 1.3;
+    margin-bottom: 4px;
+    color: #495057;
+}
+
+.menu-card-subtitle {
+    font-size: 0.75rem;
+    color: #868e96;
+    /* สีเทาจางลง */
+    margin-top: 0;
+    opacity: 1;
+    /* ปรับให้ชัดขึ้นนิดนึง */
+}
+
+/* =========================================
+   4. Special Cards (Logout & Specific)
+   ========================================= */
+
+/* Logout Card (สีแดง Gradient) */
+.logout-card {
+    background: linear-gradient(135deg, #dc3545 0%, #b02a37 100%);
+    color: white !important;
+}
+
+.logout-card .menu-card-icon,
+.logout-card .menu-card-title,
+.logout-card .menu-card-subtitle {
+    color: white !important;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.logout-card:hover {
+    box-shadow: 0 1rem 3rem rgba(220, 53, 69, 0.4);
+    /* เงาสีแดง */
+    transform: translateY(-8px);
+    /* ลบ border-color/background เดิมออก เพราะใช้ gradient แล้ว */
+}
+
+/* Menu Card 5 (User Management - สีส้ม/เหลือง) */
+/* คงไว้เหมือนเดิม หรือจะปรับให้ icon เด้งอย่างเดียวก็ได้ */
+.menu-card-5 .menu-card-icon {
+    color: var(--warning-color);
+}
+
+.menu-card-5:hover .menu-card-icon {
+    color: #fd7e14;
+    /* เข้มขึ้นเล็กน้อยตอน Hover */
+}
+
+/* =========================================
+   5. Modal Transitions
+   ========================================= */
+.modal-body-wrapper {
+    transition: transform 0.4s ease-in-out;
+}
+
+.modal-screen {
+    min-height: 400px;
+    padding: 0 0.5rem;
+    /* ปรับลด padding ด้านข้างนิดหน่อย */
+}
+
+.modal-header .btn-back {
+    display: none;
+}
+
+/* --------------------------------------------------- */
+
+/* Navbar Styling Enhancements */
+.bg-gradient {
+    /* background: linear-gradient(90deg, var(--bs-primary) 0%, #0a58ca 100%); */
+    background: var(--bs-primary);
+    /* ไล่สีให้ดูมีมิติ */
+}
+
+.hover-opacity-100:hover {
+    opacity: 1 !important;
+}
+
+.transition-base {
+    transition: all 0.2s ease;
+}
+
+.line-height-sm {
+    line-height: 1.2;
+}
+
+/* ซ่อนลูกศร Dropdown default ของ Bootstrap เพื่อความสวยงาม */
+.dropdown-toggle.no-caret::after {
+    display: none;
+}
+
+.navbar-brand {
+    transition: opacity 0.2s ease;
+}
+
+.navbar-brand:hover {
+    opacity: 0.75;
+}
+
+/* Styling สำหรับ Link ทั้งก้อน */
+.user-profile-link {
+    padding: 4px 8px 4px 16px;
+    border-radius: 50rem;
+    transition: all 0.2s ease;
+    border: 1px solid transparent;
+}
+
+.user-profile-link:hover,
+.user-profile-link.show {
+    background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Avatar Styling */
+.avatar-circle {
+    font-size: 1.1rem;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+
+    will-change: transform;
+    backface-visibility: hidden;
+    -webkit-font-smoothing: subpixel-antialiased;
+}
+
+.avatar-text {
+    margin-top: -4px;
+    line-height: 1;
+    display: inline-block;
+}
+
+.user-profile-link:hover .avatar-circle {
+    transform: scale(1.15);
+}
+
+/* --- Dropdown --- */
+
+.dropdown-menu {
+    animation: fadeInSlide 0.2s ease;
+    transform-origin: top right;
+    border-radius: 0.5rem;
+    padding: 0.5rem;
+    border: none;
+}
+
+@keyframes fadeInSlide {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+/* 2. Styling รายการเมนู */
+.dropdown-item {
+    border-radius: 0.25rem;
+    padding: 0.5rem 1rem;
+    font-size: 0.95rem;
+    color: var(--text-dark);
+    display: flex;
+    align-items: center;
+    transition: all 0.2s ease;
+}
+
+.dropdown-item i {
+    color: inherit;
+    transition: transform 0.2s ease;
+    opacity: 0.7;
+}
+
+/* Hover State ทั่วไป */
+.dropdown-item:hover {
+    background-color: #f0f2f5;
+    color: var(--primary-color);
+    transform: translateX(3px);
+}
+
+/* Hover State Icon ทั่วไป */
+.dropdown-item:hover i {
+    opacity: 1;
+}
+
+/* Active State (หน้าปัจจุบัน) */
+.dropdown-item.active,
+.dropdown-item:active {
+    background-color: var(--primary-color);
+    color: white !important;
+}
+
+/* Active State Icon */
+.dropdown-item.active i,
+.dropdown-item:active i {
+    color: white;
+    opacity: 1;
+}
+
+/* 3. Logout Item Styling (พิเศษ) */
+.dropdown-item-danger:hover {
+    background-color: #fee2e2 !important;
+    color: #dc2626 !important;
+}
+
+.was-validated select:invalid+.select2 .select2-selection {
+    border-color: #dc3545 !important;
+}
+
+/* =========================================
+   Sidebar & Layout Styles 
+   ========================================= */
+
+/* 1. Global Variables & Base */
+:root {
+    --bs-offcanvas-width: 260px;
+    /* ความกว้าง Sidebar */
+    --navbar-height: 70px;
+    /* ความสูง Navbar */
+}
+
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    overflow-x: hidden;
+    background-color: #f8f9fa;
+    /* สีพื้นหลังหลัก */
+}
+
+/* 2. Custom Scrollbar (ตกแต่ง Scrollbar ให้สวยงาม) */
+.custom-scrollbar::-webkit-scrollbar {
+    width: 4px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+    background: #ccc;
+    border-radius: 4px;
+}
+
+/* 3. Sidebar Styling */
+.offcanvas-xl {
+    --bs-offcanvas-width: 260px;
+    /* ยืนยันความกว้างอีกครั้ง */
+}
+
+/* --- Desktop Mode (>= 1200px) --- */
+@media (min-width: 1200px) {
+
+    /* Sidebar: Fixed ซ้ายสุด เต็มความสูง */
+    .offcanvas-xl {
+        position: fixed;
+        top: 0;
+        bottom: 0;
+        left: 0;
+        z-index: 1045;
+        /* สูงกว่า Navbar เพื่อให้ Logo อยู่มุมบนซ้าย */
+        width: var(--bs-offcanvas-width);
+        transform: none;
+        visibility: visible;
+        background-color: #fff;
+        border-right: none !important;
+        transition: transform 0.3s ease-in-out;
+        /* เพิ่ม transition ให้เนียน */
+    }
+
+    /* Content & Navbar: ขยับหนี Sidebar ไปทางขวา */
+    .navbar-custom,
+    .main-content {
+        margin-left: var(--bs-offcanvas-width);
+        width: calc(100% - var(--bs-offcanvas-width));
+        transition: margin-left 0.3s ease-in-out, width 0.3s ease-in-out;
+    }
+
+    /* กรณีสั่งหุบ Sidebar (sb-collapsed) */
+    body.sb-collapsed .offcanvas-xl {
+        transform: translateX(-100%);
+    }
+
+    body.sb-collapsed .navbar-custom,
+    body.sb-collapsed .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+
+    .report-date-responsive {
+        font-size: 0.85rem;
+        opacity: 1;
+    }
+
+    .report-date-responsive i {
+        font-size: 0.85rem;
+        opacity: 1;
+    }
+}
+
+
+/* --- Mobile & Tablet Mode (< 1200px) --- */
+/* ครอบคลุม iPad ทั้งแนวตั้งและแนวนอน */
+@media (max-width: 1199.98px) {
+
+    /* Reset Margin: ให้เต็มจอ */
+    .navbar-custom,
+    .main-content {
+        margin-left: 0 !important;
+        width: 100% !important;
+    }
+
+    /* Sidebar: ทับทุกอย่างเมื่อเปิด */
+    .offcanvas-lg {
+        z-index: 1055;
+    }
+}
+
+/* 4. Navbar Specifics */
+.navbar-custom {
+    z-index: 1030;
+    /* ต่ำกว่า Sidebar */
+    height: var(--navbar-height);
+    position: fixed;
+    /* แนะนำให้ fixed ไว้ด้านบนเสมอ */
+    top: 0;
+    right: 0;
+    background-color: #fff;
+}
+
+/* 5. Main Content Area */
+.main-content {
+    margin-top: var(--navbar-height);
+    /* ดันเนื้อหาลงมาใต้ Navbar */
+    padding: 1.5rem;
+    flex: 1;
+    /* ขยายเต็มพื้นที่ที่เหลือ */
+}
+
+.accordion-button:focus {
+    box-shadow: none;
+    border-color: rgba(0, 0, 0, .125);
+}
+
+.hover-bg-gray:hover {
+    background-color: #f8f9fa;
+    color: var(--bs-primary) !important;
+}
+
+/* สถานะปกติ (Default): ให้เนียนไปกับเพื่อน แต่แอบมีสีแดงจางๆ หรือสีเทา */
+.hover-bg-danger-light {
+    color: #6c757d;
+    background-color: transparent;
+    border: 1px solid transparent;
+    transition: all 0.2s ease;
+}
+
+.hover-bg-danger-light:hover {
+    background-color: #fee2e2 !important;
+    color: #dc2626 !important;
+    border-color: #dc2626;
+}
+
+/* Icon Animation: เหมือนเดิม */
+.hover-bg-danger-light i {
+    transition: transform 0.2s ease-out;
+    color: inherit;
+}
+
+.hover-bg-danger-light:hover i {
+    transform: translateX(4px);
+}
+
+/* --- Hamburger Toggle Button Style --- */
+.sidebar-toggle-btn {
+    width: 40px;
+    height: 40px;
+
+    /* สไตล์พื้นฐานให้เหมือน Avatar */
+    background-color: #fff;
+    color: var(--bs-primary);
+    border: 2px solid rgba(255, 255, 255, 0.2);
+    /* เส้นขอบจางๆ เหมือน Avatar */
+    border-radius: 50%;
+
+    /* การจัดกึ่งกลางไอคอน */
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+
+    /* เงา */
+    box-shadow: 0 .125rem .25rem rgba(0, 0, 0, .075);
+    /* shadow-sm */
+
+    /* Animation: ใช้ cubic-bezier เดียวกับ Avatar เพื่อความเด้ง */
+    transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275), box-shadow 0.2s ease;
+    cursor: pointer;
+}
+
+/* Hover: ขยายใหญ่ขึ้น (เด้งออก) */
+.sidebar-toggle-btn:hover {
+    transform: scale(1.15);
+    color: var(--bs-primary);
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .15);
+}
+
+/* Active (ตอนกด): หดเล็กลง (เด้งเข้า) */
+.sidebar-toggle-btn:active {
+    transform: scale(0.9);
+    box-shadow: inset 0 3px 5px rgba(0, 0, 0, 0.125);
+}
+
+/* ปรับขนาดไอคอนภายใน */
+.sidebar-toggle-btn i {
+    font-size: 1.2rem;
+    pointer-events: none;
+    /* ป้องกันการกดโดนไอคอนแล้วไม่ติดปุ่ม */
+}
+
+.accordion-button.no-arrow::after {
+    display: none;
+}
+
+.hover-text-primary:hover {
+    color: var(--bs-primary) !important;
+    background-color: #f8f9fa;
+}
+
+/* กำหนดค่าเริ่มต้น (Default State): ใช้ลูกศรสีเทาแบบหนา */
+.accordion-button::after {
+    width: 0.85rem !important;
+    height: 0.85rem !important;
+    background-size: 0.85rem !important;
+    margin-left: 0.5rem !important;
+
+    background-image: url('../images/accordion-arrow-gray-bold.svg') !important;
+
+    transition: transform 0.2s ease-in-out, background-image 0.2s ease-in-out;
+}
+
+.accordion-button.collapsed.active-group-highlight::after,
+.accordion-button.active-group-highlight::after,
+.accordion-button:hover::after {
+    background-image: url('../images/accordion-arrow-blue-bold.svg') !important;
+}
+
+/* --- Refined Modern Sidebar Style --- */
+
+/* 1. ตัวปุ่มหลัก */
+.sidebar-menu-item {
+    position: relative;
+    overflow: hidden;
+    border: none !important;
+    /* transition: background-color 0.2s ease, color 0.2s ease, padding-left 0.2s ease; */
+    transition: background-color 0.3s ease-out, color 0.3s ease-out, padding-left 0.2s ease;
+}
+
+/* 2. สร้าง Pill (แถบสี) */
+.sidebar-menu-item::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    /* เริ่มต้น: ให้ Pill หลบไปทางซ้ายนิดนึง (-4px) เพื่อรอ Slide เข้ามา */
+    transform: translateY(-50%) translateX(-4px);
+    left: 4px;
+    width: 4px;
+    height: 0px;
+    /* เริ่มต้นสูง 0 (ซ่อนอยู่) */
+    background-color: var(--bs-primary);
+    border-radius: 4px;
+    opacity: 0;
+    transition:
+        height 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+        /* Curve นี้จะนุ่มนวล ไม่เด้งจัด */
+        transform 0.4s cubic-bezier(0.25, 0.8, 0.25, 1),
+        opacity 0.3s ease;
+}
+
+/* 3. จัดการเนื้อหาข้างใน (Icon & Text) ให้ขยับได้ */
+/* ต้องมั่นใจว่าใน HTML มี div หุ้มเนื้อหาไว้ (ซึ่งโค้ดคุณมีอยู่แล้ว) */
+.sidebar-menu-item>div {
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* --------------------------------------------------------- */
+/* STATE: HOVER (เมื่อเอาเมาส์ชี้ แต่ยังไม่กดเลือก) */
+/* --------------------------------------------------------- */
+.sidebar-menu-item:not(.active-group-highlight):hover {
+    /* ปรับสีพื้นหลังให้เข้มขึ้นตามที่ต้องการ */
+    background-color: #f0f2f5 !important;
+    color: var(--bs-primary) !important;
+}
+
+/* Effect ตอน Hover: Pill เป็นจุดเล็กๆ */
+.sidebar-menu-item:not(.active-group-highlight):hover::before {
+    opacity: 0.8;
+    height: 26px;
+    /* ดึง Pill กลับมาที่ตำแหน่งเดิม (Slide In) */
+    transform: translateY(-50%) translateX(0);
+}
+
+/* Effect ตอน Hover: ดันเนื้อหาไปทางขวานิดนึง (Translate X) */
+.sidebar-menu-item:not(.active-group-highlight):hover>div {
+    transform: translateX(6px);
+    /* ขยับเนื้อหาหนี Pill นิดนึง ดูมีมิติ */
+}
+
+/* --------------------------------------------------------- */
+/* STATE: ACTIVE (เมื่อถูกเลือก) */
+/* --------------------------------------------------------- */
+.sidebar-menu-item.active-group-highlight {
+    background-color: rgba(13, 110, 253, 0.12) !important;
+    /* เพิ่มความเข้มอีกนิดจาก 0.1 เป็น 0.12 */
+    color: var(--bs-primary) !important;
+    animation: fadeInBackground 0.6s ease-out forwards;
+}
+
+/* Effect ตอน Active: Pill ยืดเต็ม */
+.sidebar-menu-item.active-group-highlight::before {
+    opacity: 1;
+    height: 26px;
+    /* ความสูงกำลังสวย (ไม่สูงเกินไป) */
+    transform: translateY(-50%) translateX(0);
+    /* อยู่ในตำแหน่งปกติ */
+    animation: pillSlideIn 0.5s cubic-bezier(0.25, 0.8, 0.25, 1) 0.15s backwards;
+}
+
+/* ตอน Active ไม่ต้องดันเนื้อหา (ดันเฉพาะตัว) */
+.sidebar-menu-item.active-group-highlight>div {
+    transform: translateX(0);
+}
+
+/* --- Logic: จัดการเมนูที่ "เปิดอยู่" (Expanded) แต่ "ไม่ใช่หน้าปัจจุบัน" (Not Active) --- */
+
+/* 1. สถานะปกติ (Idle): ล้างสีพื้นหลัง, สีตัวอักษรเป็นเทา, และซ่อน Pill */
+.sidebar-menu-item:not(.collapsed):not(.active-group-highlight) {
+    background-color: transparent !important;
+    color: var(--bs-secondary) !important;
+    box-shadow: none !important;
+}
+
+/* ซ่อน Pill (ขีดซ้าย) ในสถานะปกตินี้ */
+.sidebar-menu-item:not(.collapsed):not(.active-group-highlight)::before {
+    opacity: 0 !important;
+    height: 0 !important;
+}
+
+/* 2. สถานะเอาเมาส์ชี้ (Hover): คืนชีพ Effect กลับมา! */
+/* เมื่อ Hover บนเมนูที่เปิดอยู่นี้ ให้แสดงพื้นหลังสีเทาอ่อนเหมือนปุ่มปกติ */
+.sidebar-menu-item:not(.collapsed):not(.active-group-highlight):hover {
+    background-color: #f0f2f5 !important;
+    color: var(--bs-primary) !important;
+}
+
+/* คืนชีพ Pill (ขีดซ้าย) กลับมาเป็นจุดเล็กๆ ตอน Hover */
+.sidebar-menu-item:not(.collapsed):not(.active-group-highlight):hover::before {
+    opacity: 0.8 !important;
+    height: 26px !important;
+    width: 4px !important;
+    transform: translateY(-50%) translateX(0) !important;
+}
+
+/* ---------------------------------------- */
+/* Submenu Item Styling */
+/* ---------------------------------------- */
+
+/* 1. ตัวลิงก์หลัก (Container) */
+.submenu-link {
+    position: relative;
+    color: #6c757d;
+    background-color: transparent;
+    border: none;
+    transition: background-color 0.2s ease-out, color 0.2s ease-out;
+    margin-right: 8px !important;
+    width: auto !important;
+}
+
+/* 2. จัดการกับเนื้อหาข้างใน (จุด Bullet และ ข้อความ) */
+/* เราจะสั่งให้ span ทั้งคู่ขยับพร้อมกัน */
+.submenu-link>span {
+    transition: transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* 3. ตัว Bullet (จุดกลมๆ) */
+.submenu-bullet {
+    background-color: #6c757d;
+    opacity: 0.4;
+    width: 6px;
+    height: 6px;
+    transition: background-color 0.2s ease, opacity 0.2s ease, transform 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+}
+
+/* --------------------------------------------------------- */
+/* STATE: HOVER (เมาส์ชี้) */
+/* --------------------------------------------------------- */
+.submenu-link:hover {
+    background-color: #f0f2f5;
+    /* สีพื้นหลังเดียวกับเมนูหลักตอน Hover */
+    color: var(--bs-primary) !important;
+}
+
+/* Hover: ขยับเนื้อหา (จุด + ข้อความ) ไปทางขวา 4px */
+.submenu-link:hover>span {
+    transform: translateX(4px);
+}
+
+/* Hover: เปลี่ยนสี Bullet เป็นน้ำเงินเข้ม */
+.submenu-link:hover .submenu-bullet {
+    background-color: var(--bs-primary) !important;
+    opacity: 1;
+}
+
+/* --------------------------------------------------------- */
+/* STATE: ACTIVE (หน้าปัจจุบัน) */
+/* --------------------------------------------------------- */
+
+.submenu-link.active {
+    /* ไล่สีจากฟ้าไปน้ำเงิน ให้ดูมี curve */
+    background: linear-gradient(135deg, #4b92ff 0%, var(--bs-primary) 100%) !important;
+    color: #fff !important;
+    font-weight: 500;
+
+    /* เงาสีฟ้าฟุ้งๆ ทำให้ดูลอยออกมา */
+    box-shadow: 0 4px 15px rgba(13, 110, 253, 0.35);
+    border: none;
+    animation: fadeInSubmenu 0.5s ease-out forwards;
+}
+
+/* Bullet สีขาว */
+.submenu-link.active .submenu-bullet {
+    background-color: #fff !important;
+    opacity: 1;
+    transform: scale(1.1);
+    transition: none !important;
+    animation: bulletPop 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275) 0s forwards;
+}
+
+/* Active: ให้เนื้อหา "ขยับค้างไว้" ที่ 4px (เหมือนเมนูหลักแบบ Single) */
+.submenu-link.active>span {
+    transform: translateX(4px);
+}
+
+@keyframes fadeInBackground {
+    from {
+        background-color: transparent;
+    }
+
+    to {
+        background-color: rgba(13, 110, 253, 0.12);
+    }
+}
+
+/* 2. สำหรับ Pill (แถบสี): ยืดออกมาจากตรงกลาง หรือค่อยๆ ชัดขึ้น */
+@keyframes pillSlideIn {
+    from {
+        height: 0;
+        opacity: 0;
+        transform: translateY(-50%) translateX(-4px);
+    }
+
+    to {
+        height: 26px;
+        opacity: 1;
+        transform: translateY(-50%) translateX(0);
+    }
+}
+
+/* 3. สำหรับ Submenu Text/Icon: ค่อยๆ เปลี่ยนสี */
+@keyframes textColorFade {
+    from {
+        color: #6c757d;
+    }
+
+    to {
+        color: var(--bs-primary);
+    }
+}
+
+@keyframes fadeInSubmenu {
+    from {
+        background-color: transparent;
+        color: #6c757d;
+        transform: translateX(0);
+    }
+
+    to {
+        background-color: rgba(13, 110, 253, 0.1);
+        color: var(--bs-primary);
+        transform: translateX(4px);
+    }
+}
+
+@keyframes bulletPop {
+    from {
+        opacity: 0.4;
+        transform: scale(1);
+        background-color: #6c757d;
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1.1);
+        background-color: var(--bs-primary);
+    }
+}
+
+.report-date-responsive {
+    font-size: 0.75rem;
+    opacity: 0.75;
+    transition: all 0.2s ease;
+}
+
+.report-date-responsive i {
+    font-size: 0.75rem;
+    opacity: 0.75;
+    transition: all 0.2s ease;
+}
+
+.select2-container--bootstrap-5 .select2-selection {
+    min-height: 49.6px !important;
+    height: 49.6px !important;
+    border: 1px solid #ced4da !important;
+    border-radius: 0.5rem !important;
+    display: flex !important;
+    align-items: center !important;
+    background-color: #fff;
+}
+
+.select2-container--bootstrap-5 .select2-selection--single .select2-selection__rendered {
+    line-height: normal !important;
+    padding-top: 0 !important;
+    padding-bottom: 0 !important;
+    font-size: 1rem;
+    color: #212529 !important;
+}
+
+/* 1. กรณีผ่าน (Valid) - สีเขียว */
+.was-validated select:valid+.select2-container .select2-selection {
+    border-color: #198754 !important;
+    /* สีเขียว Success */
+    padding-right: 4.125rem;
+    /* เว้นที่ทางขวาให้ icon */
+    background-image: url("../images/valid_icon.svg");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1.125rem 1.125rem;
+}
+
+/* ปรับตำแหน่งลูกศร Dropdown ปกติไม่ให้ทับกับเครื่องหมายถูก */
+.was-validated select:valid+.select2-container .select2-selection .select2-selection__arrow {
+    right: 30px !important;
+}
+
+/* 2. กรณีไม่ผ่าน (Invalid) - สีแดง (เผื่อไว้ให้ด้วยครับ) */
+.was-validated select:invalid+.select2-container .select2-selection {
+    border-color: #dc3545 !important;
+    /* สีแดง Danger */
+    padding-right: 4.125rem;
+    background-image: url("../images/invalid_icon.svg");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1.125rem 1.125rem;
+}
+
+.was-validated select:invalid+.select2-container .select2-selection .select2-selection__arrow {
+    right: 30px !important;
+}
+
+/* ปรับแต่งให้ปุ่ม Pagination ดูสวยขึ้น */
+.pagination .page-item .page-link {
+    color: #0d6efd;
+    /* สีน้ำเงิน Bootstrap */
+    border-radius: 5px;
+    margin: 0 2px;
+    transition: all 0.3s;
+}
+
+.pagination .page-item:not(.active) .page-link:hover {
+    background-color: #e9ecef;
+    color: #0b54ad;
+    border-radius: 50%;
+    /* บังคับกลมตอน Hover */
+}
+
+.pagination .page-item:first-child .page-link,
+.pagination .page-item:last-child .page-link {
+    font-size: 0.9rem;
+}
+
+/* ตกแต่งปุ่มที่กำลังเลือก (Active) */
+.pagination .page-item.active .page-link {
+    background-color: #0d6efd;
+    border-color: #0d6efd;
+    color: white;
+    font-weight: 600;
+    box-shadow: 0 4px 6px rgba(13, 110, 253, 0.2);
+}
+
+/* เอฟเฟกต์เวลาเอาเมาส์ไปชี้ (Hover) */
+.pagination .page-item .page-link:hover {
+    background-color: #e9ecef;
+    transform: translateY(-1px);
+}
+
+tr[onclick] {
+    cursor: pointer;
+}
+
+/* =========================================
+   Offline/Online Banner & Status Icons (Animated)
+   ========================================= */
+
+/* 1. แถบแจ้งเตือนด้านบน (Overlay Banner) */
+.connection-banner {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 99999;
+    text-align: center;
+    padding: 10px 15px;
+    font-weight: 600;
+    font-size: 0.95rem;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.15);
+
+    /* State เริ่มต้น: ซ่อนอยู่ด้านบน (-100%) */
+    transform: translateY(100%);
+    opacity: 0;
+    visibility: hidden;
+    /* ซ่อนจากสายตาและการกด */
+
+    /* Transition: ควบคุมการเคลื่อนที่ Slide Up/Down */
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1),
+        /* Custom Bezier ให้นุ่ม */
+        opacity 0.4s ease,
+        background-color 0.5s ease,
+        backdrop-filter 0.3s ease,
+        visibility 0.5s step-end;
+}
+
+.connection-banner.banner-show {
+    transform: translateY(0);
+    opacity: 1;
+    visibility: visible;
+
+    transition: transform 0.5s cubic-bezier(0.25, 1, 0.5, 1),
+        background-color 0.5s ease,
+        visibility 0s linear;
+}
+
+/* สีสำหรับสถานะ Offline */
+.banner-offline {
+    background-color: rgba(220, 53, 69, 0.95);
+    backdrop-filter: blur(5px);
+    color: white;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* สีสำหรับสถานะ Online */
+.banner-online {
+    background-color: rgba(25, 135, 84, 0.95);
+    backdrop-filter: blur(5px);
+    color: white;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* ------------------------------------------------ */
+
+/* 2. ไอคอนบน Navbar (Navbar Icon Container) */
+#connection-status {
+    position: relative;
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+/* Animation สำหรับตัวไอคอนข้างใน (i หรือ .fa-stack)
+   ทำงานทุกครั้งที่ JS สั่งเปลี่ยน innerHTML 
+*/
+#connection-status i,
+#connection-status .fa-stack {
+    animation: iconPopIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transform-origin: center;
+}
+
+/* Keyframes สำหรับไอคอนเด้ง */
+@keyframes iconPopIn {
+    0% {
+        opacity: 0;
+        transform: scale(0.5) rotate(-20deg);
+        /* เริ่มเล็กๆ เอียงๆ */
+    }
+
+    60% {
+        transform: scale(1.1) rotate(5deg);
+        /* ขยายเกินนิดหน่อย */
+    }
+
+    100% {
+        opacity: 1;
+        transform: scale(1) rotate(0deg);
+        /* กลับมาปกติ */
+    }
+}
+
+/* เพิ่มลูกเล่น Pulse (ชีพจร) ให้ไอคอนตอน Offline เพื่อดึงดูดสายตา */
+.banner-offline #status-icon i,
+#connection-status .fa-stack {
+    animation: iconPopIn 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+        offlinePulse 2s infinite 1s;
+    /* เล่น Pulse ต่อหลังจากเด้งเสร็จ */
+}
+
+@keyframes offlinePulse {
+    0% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(0.95);
+        opacity: 0.8;
+    }
+
+    100% {
+        transform: scale(1);
+        opacity: 1;
+    }
+}
+
+/* ------------------------------------------------ */
+
+/* 3. ปรับแต่ง Stack Icon (รูป WiFi ขีดฆ่า) */
+.fa-stack-custom {
+    font-size: 1rem;
+    width: 1.2em;
+    height: 1em;
+    line-height: 1em;
+    vertical-align: middle;
+    display: inline-block;
+}
+
+/* ปรับสีไอคอน Stack ให้ดูมีมิติขึ้น */
+.fa-stack-custom .fa-wifi {
+    color: rgba(255, 255, 255, 0.5) !important;
+    /* จางลง */
+}
+
+.fa-stack-custom .fa-slash {
+    color: #fff !important;
+    filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.3));
+    /* มีเงาที่เส้นขีดฆ่า */
+}
+
+/* --- Dropzone Styles --- */
+.upload-dropzone {
+    background-color: #f8f9fa;
+    border: 2px dashed #dee2e6;
+    transition: all 0.3s ease-out;
+    position: relative;
+}
+
+.pointer-events-none {
+    pointer-events: none;
+}
+
+/* Hover Effect: เปลี่ยนสี + ขยายขนาดนิดหน่อย (Zoom) */
+.upload-dropzone:hover,
+.upload-dropzone.drag-over {
+    background-color: #f1f7ff;
+    /* ฟ้าอ่อนจางๆ */
+    border-color: #0d6efd;
+    transform: scale(1.02);
+    /* Zoom In เล็กน้อย */
+    box-shadow: 0 8px 20px rgba(13, 110, 253, 0.15)
+}
+
+.upload-dropzone .icon-container {
+    width: 64px;
+    height: 64px;
+    background-color: #e9ecef;
+    color: #6c757d;
+    transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+        background-color 0.3s ease,
+        color 0.3s ease;
+}
+
+.upload-dropzone:hover .icon-container {
+    background-color: #cfe2ff;
+    color: #0d6efd;
+    transform: scale(1.15) rotate(-5deg);
+}
+
+/* ปรับ Text ให้ขยับตามนิดหน่อยเพื่อมิติที่ดีขึ้น */
+.upload-dropzone h6,
+.upload-dropzone p {
+    transition: transform 0.3s ease-out, color 0.3s ease;
+}
+
+.upload-dropzone:hover h6,
+.upload-dropzone:hover p {
+    transform: translateY(-2px);
+
+}
+
+.upload-dropzone:hover h6 {
+    color: #0d6efd !important;
+}
+
+/* --- Progress Bar Styles --- */
+.progress-wrapper {
+    background: white;
+    border: 1px solid #e9ecef;
+    border-radius: 8px;
+}
+
+.custom-progress {
+    height: 6px;
+    border-radius: 3px;
+    background-color: #e9ecef;
+    overflow: hidden;
+}
+
+.custom-progress-bar {
+    background-color: #0d6efd;
+    height: 100%;
+    width: 0%;
+    transition: width 0.2s linear;
+}
+
+/* --- Attachment Grid Styles --- */
+.attachment-card {
+    border: 1px solid #e9ecef;
+    border-radius: 12px;
+    background-color: white;
+    overflow: hidden;
+    position: relative;
+    /* ตัด Hover Effect ที่เปลี่ยน Transform ออก เพื่อลดความวูบวาบบนจอสัมผัส */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
+    transition: box-shadow 0.2s ease;
+}
+
+/* เน้นเงาตอน Active/Hover แทนการขยับ */
+.attachment-card:hover,
+.attachment-card:active {
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    border-color: #dee2e6;
+}
+
+/* --- Header Bar --- */
+.card-actions-bar {
+    position: relative;
+    width: 100%;
+    padding: 8px 12px;
+    background-color: #fff;
+    /* พื้นหลังทึบ */
+    border-bottom: 1px solid #f0f0f0;
+    /* เส้นคั่นระหว่างเมนูกับรูป */
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    gap: 8px;
+    border-radius: 12px 12px 0 0;
+    /* มนเฉพาะด้านบนให้เข้ากับ card */
+}
+
+/* ปุ่ม Action (ลบ, ดู) */
+.action-btn {
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    border: none;
+    background-color: #f8f9fa;
+    color: #495057;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s;
+}
+
+.action-btn:hover {
+    background-color: #e9ecef;
+    color: #212529;
+}
+
+.action-btn.delete:hover {
+    background-color: #ffe3e3;
+    color: #e03131;
+}
+
+
+/* --- Image Box --- */
+
+.img-thumbnail-box {
+    height: 180px;
+    background-color: #f8f9fa;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    border-bottom: 1px solid #f0f0f0;
+}
+
+.img-thumbnail-box img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+/* --- Delete Button --- */
+.btn-remove-attachment {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    background-color: white;
+    border: 1px solid #e9ecef;
+    color: #dc3545;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    /* ซ่อนไว้ก่อน */
+    transition: all 0.2s ease;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    cursor: pointer;
+    z-index: 5;
+}
+
+.btn-remove-attachment:hover {
+    background-color: #dc3545;
+    color: white;
+    border-color: #dc3545;
+}
+
+/* โชว์ปุ่มลบเมื่อ Hover การ์ด */
+.attachment-card:hover .btn-remove-attachment {
+    opacity: 1;
+}
+
+/* --- Text Styling --- */
+.filename-text {
+    font-size: 0.95rem;
+    font-weight: 600;
+    color: #212529;
+    margin-bottom: 4px;
+
+    /* ตัดบรรทัด */
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    line-height: 1.5;
+}
+
+.attachment-card .card-body {
+    padding: 12px;
+}
+
+/* --- Custom Lightbox Styles --- */
+.lightbox-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.85);
+    /* สีดำโปร่งแสง 90% มืดสะใจ */
+    z-index: 9999;
+    /* สูงกว่าทุกสิ่งในโลก (Bootstrap Modal ปกติแค่ 1055) */
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    backdrop-filter: blur(5px);
+    /* (Optional) เบลอฉากหลังนิดๆ ให้ดูหรู */
+}
+
+/* ซ่อน Scrollbar ของ Body ตอนเปิด Lightbox */
+body.lightbox-open {
+    overflow: hidden;
+}
+
+.lightbox-header {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    z-index: 10000;
+}
+
+.lightbox-content {
+    width: 100%;
+    height: 100%;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-top: 20px;
+}
+
+#lightboxImage {
+    max-width: 95%;
+    max-height: 85vh;
+    object-fit: contain;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.5);
+    /* เงาของรูป */
+}
+
+/* --- Final Verification Section --- */
+
+#final_verification_section .form-check-input:checked {
+    background-color: #198754;
+    border-color: #198754;
+}
+
+#final_verification_section .shadow-sm-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 .5rem 1rem rgba(25, 135, 84, 0.15) !important;
+    border-color: #198754 !important;
+}
+
+#final_verification_section .transition {
+    transition: all 0.2s ease-in-out;
+}
+
+/* ใช้ชื่อ Class เฉพาะเจาะจง เพื่อไม่ให้กระทบที่อื่น */
+.btn-delete-inspector {
+    color: #6c757d;
+    /* สีเทาปกติ (Secondary) */
+    transition: all 0.2s ease-in-out;
+    border-radius: 50%;
+    /* ทำเป็นวงกลมรอไว้เลย */
+}
+
+/* เมื่อเอาเมาส์ไปชี้ เฉพาะปุ่มที่มี class นี้เท่านั้นที่จะเปลี่ยน */
+.btn-delete-inspector:hover {
+    color: #dc3545 !important;
+    /* เปลี่ยนไอคอนเป็นสีแดง */
+    background-color: rgba(220, 53, 69, 0.1);
+    /* พื้นหลังแดงจางๆ */
+}
+
+/* =========================================
+   Selection Card Components
+   ========================================= */
+.selection-card {
+    transition: all 0.2s ease-in-out;
+    border: 1px solid #dee2e6;
+    background-color: #fff;
+}
+
+.selection-card:hover {
+    border-color: #0d6efd !important;
+    /* สี Primary ของ Bootstrap */
+    transform: translateY(-2px);
+    box-shadow: 0 .5rem 1rem rgba(0, 0, 0, .05) !important;
+    cursor: pointer;
+    /* เพิ่ม cursor pointer ให้รู้ว่ากดได้ */
+}
+
+/* =========================================
+   Global Form States
+   ========================================= */
+/* ปรับ Input ที่ Disabled ให้ดูจางลงชัดเจน */
+input:disabled,
+textarea:disabled,
+select:disabled {
+    /* เพิ่ม select เข้าไปด้วยเพื่อความครบถ้วน */
+    background-color: #f8f9fa !important;
+    opacity: 0.7;
+    cursor: not-allowed;
+    color: #6c757d;
+    /* เพิ่มสีตัวอักษรให้ดูจางลงด้วย */
+}
+
+/* -----------------------------------------------------------
+       Custom Style เฉพาะ Select2 ที่มี Class "select2-sm-custom" 
+       (ใช้สำหรับตัวกรอง size small)
+    ----------------------------------------------------------- */
+
+/* เพิ่ม body นำหน้า เพื่อให้ Selector แรงกว่า CSS ของ Theme เดิม */
+body .select2-container.select2-sm-custom .select2-selection--single {
+    height: 31px !important;
+    min-height: 31px !important;
+    /* บางที min-height อาจถูก set ไว้ */
+    padding: 0px 6px !important;
+    /* ปรับ padding ให้สวยงาม */
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* ปรับตำแหน่ง Text */
+body .select2-container--bootstrap-5.select2-sm-custom .select2-selection--single .select2-selection__rendered {
+    line-height: 29px !important;
+    /* ลดลงนิดนึงเผื่อขอบ */
+    font-size: 0.875rem !important;
+    margin-top: 0px !important;
+    padding-left: 0px !important;
+    color: #212529 !important;
+    /* สีตัวอักษรมาตรฐาน Bootstrap */
+}
+
+/* ปรับปุ่ม Clear (x) */
+body .select2-container--bootstrap-5.select2-sm-custom .select2-selection__clear {
+    top: 16px !important;
+    height: 100% !important;
+    right: 32px !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* ปรับลูกศร Dropdown */
+body .select2-container--bootstrap-5.select2-sm-custom .select2-selection__arrow {
+    top: 0 !important;
+    height: 100% !important;
+    right: 8px !important;
+    display: flex !important;
+    align-items: center !important;
+}
+
+
+.card-header-custom {
+    background: linear-gradient(to right, #0d6efd, #3c8ce7);
+    color: white;
+    padding: 1rem 1.25rem !important;
+    font-size: 1rem !important;
+    font-weight: bold;
+    border-bottom: none;
+    display: flex;
+    align-items: center;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+    border-top-left-radius: 12px;
+    border-top-right-radius: 12px;
+}
+
+/* สีเขียว (สำหรับสถานะพร้อมเซ็น/สำเร็จ) */
+.card-header-custom.bg-success-gradient {
+    background: linear-gradient(to right, #198754, #28a745) !important;
+}
+
+/* สีเทา (สำหรับสถานะ Completed / Read-only) */
+.card-header-custom.bg-secondary-gradient {
+    background: linear-gradient(to right, #6c757d, #adb5bd) !important;
+}
+
+/* ปรับขนาดตัวอักษรและ icon ใน h5 */
+.card-header-custom h5 {
+    font-size: 1.1rem !important;
+    /* ลดขนาดหัวข้อ */
+    margin: 0;
+    font-weight: 600;
+}
+
+.card-header-custom i {
+    font-size: 1.1rem !important;
+    /* ไอคอนขนาดเล็กลงสัมพันธ์กับตัวอักษร */
+    opacity: 0.9;
+}
+
+.list-group-item:last-child {
+    border-bottom: none !important;
+}
+
+/* จัดการให้รายการสุดท้ายโค้งตามขอบ Card */
+.list-group-item:last-child {
+    border-bottom: none !important;
+}
+
+/* ปรับความนุ่มนวลเมื่อเอาเมาส์ไปวาง */
+.staff-item:hover {
+    background-color: #f8f9fa;
+    transition: background-color 0.2s;
+}
+
+/* ตกแต่ง Badge สถานะหลังประเมินเสร็จ (เดี๋ยวใช้ใน JS) */
+.badge-completed {
+    background-color: #e8f5e9 !important;
+    color: #2e7d32 !important;
+    border-color: #c8e6c9 !important;
+}
+
+.sticky-criteria {
+    position: sticky;
+    top: -25px;
+    /* ปรับตามความเหมาะสมของ Modal Header */
+    z-index: 1020;
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(5px);
+    border-bottom: 2px solid #dee2e6;
+    margin: -1.5rem -1.5rem 1.5rem -1.5rem;
+    /* ดันให้ชนขอบ Modal */
+    padding: 0.75rem 1.5rem;
+}
+
+.criteria-item {
+    font-size: 0.95rem;
+    color: #333;
+    font-weight: 500;
+}
+
+.criteria-number {
+    display: inline-block;
+    width: 26px;
+    height: 26px;
+    line-height: 26px;
+    text-align: center;
+    border-radius: 6px;
+    background: #e9ecef;
+    font-weight: bold;
+    margin-right: 8px;
+    color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+/* ใส่สีให้แต่ละระดับคะแนน */
+.bg-score-0 {
+    background-color: #6c757d;
+}
+
+/* สีเทา */
+.bg-score-1 {
+    background-color: #dc3545;
+}
+
+/* สีแดง */
+.bg-score-2 {
+    background-color: #ffc107;
+    color: #000 !important;
+}
+
+/* สีเหลือง */
+.bg-score-3 {
+    background-color: #198754;
+}
+
+/* สีเขียว */
+
+
+/* 1. สถานะปกติ: ให้เป็นรูปมือ */
+.js-click-score {
+    cursor: pointer;
+    transition: background-color 0.2s;
+    /* เพิ่มลูกเล่นนิดหน่อย */
+}
+
+/* 2. สถานะ Hover ปกติ: เปลี่ยนสีพื้นหลังจางๆ ให้รู้ว่ากดได้ */
+.js-click-score:hover {
+    background-color: rgba(0, 0, 0, 0.03);
+}
+
+/* 3. [สำคัญ] เมื่อ Input ข้างในถูก Disabled */
+/* ใช้ :has() เพื่อเช็คว่าถ้ามีลูกเป็น input:disabled ให้เปลี่ยนสไตล์แม่ */
+.js-click-score:has(input:disabled) {
+    cursor: default;
+    /* หรือ not-allowed ถ้าอยากให้ขึ้นเครื่องหมายห้าม */
+    pointer-events: none;
+    /* ป้องกันการ Hover หรือ Click ซ้ำซ้อน */
+    background-color: transparent;
+    /* ไม่ต้องมีสี Hover */
+}
+
+/* 1. กรณีถูกเลือก (Checked) + Disabled (โหมดดูประวัติ) */
+.js-click-score input[type="radio"]:disabled:checked {
+    opacity: 1 !important;
+    /* บังคับให้ชัด 100% ไม่จาง */
+    accent-color: #000;
+    /* เปลี่ยนสีเป็นเขียว (หรือสีดำ #000) */
+}
+
+/* 1. จัดการตัวครอบ Group (li) ให้มีระยะห่างจริง */
+.select2-results__option[role="group"] {
+    border-top: 1px solid #eee;
+    /* เพิ่มเส้นแบ่งบางๆ ให้ดูขาดจากกันชัดเจน */
+
+}
+
+/* ยกเว้นกลุ่มแรกสุด ไม่ต้องมีระยะห่างบน */
+.select2-results__option[role="group"]:first-child {
+    margin-top: 0 !important;
+    border-top: none !important;
+    padding-top: 0 !important;
+}
+
+/* 2. ปรับแต่งตัวหัวข้อ Group ให้ดูเด่นและสะอาด */
+.select2-results__group {
+    display: block;
+    /* บังคับเป็น block เพื่อให้กินพื้นที่เต็มแถว */
+    padding: 10px 15px !important;
+    background-color: #f8f9fa !important;
+    /* พื้นหลังสีนวลๆ ช่วยแยกส่วน */
+    color: #212529 !important;
+    font-weight: 700 !important;
+    font-size: 0.9rem;
+}
+
+/* 3. ปรับระยะห่างของตัวเลือก (Options) */
+.select2-results__option--selectable {
+    padding-left: 25px !important;
+    /* เยื้องเข้ามาให้เห็น Hierarchy */
+    padding-top: 10px !important;
+    padding-bottom: 10px !important;
+    transition: background-color 0.2s;
+    /* เพิ่มความนุ่มตอน hover */
+}

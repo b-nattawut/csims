@@ -1,0 +1,156 @@
+Rapid cSIMS 64-bit Debian Linux System
+In this example will demonstrate how to install on xUBUNTU 24.04 x64
+Rapid cSIMS works well both physical and VM.
+
+1. Minimum requirements
+	1.1 Processor at least 4 cores
+	1.2 Memory at least 4 GB
+	1.3 Storage at least 10 GB (test for 10000 cases) or more
+	1.4 Video memory at least 128 MB
+	
+2. Helper tools on other system
+	2.1 Heidi SQL in case of database connection
+	2.2 PuTTY in case of system connection
+	2.3 FileZilla client in case of files transfer
+	
+3. Install xUBUNTU x64 using ISO image form source
+
+4. Create user 
+	3.1 This example create user 'csims' and will use this user to demonstrate in the next step
+		If you use other user, please change to your desire
+	3.2 This example will use working folder name 'csims'
+		If you use other name, please change to your desire
+5. 	System tools
+		Open terminal and use these following commands:
+		
+		sudo apt update
+		sudo apt install net-tools -y
+
+6. Open SSH to allow connection from outer
+		Open terminal and use these following commands:
+			
+			sudo apt update
+			sudo apt install openssh-server -y
+
+7. MySQL Server
+		Open terminal and use these following commands:
+			
+			sudo apt update
+			sudo apt install mysql-server mysql-client -y
+			
+8.	MySQL port allow external connection
+
+		Open terminal and use these following commands:
+		
+		sudo nano /etc/mysql/mysql.conf.d/mysqld.cnf
+		
+		### change these following configurations
+		
+		bind-address            = 0.0.0.0
+		mysqlx-bind-address     = 0.0.0.0
+		
+		### Press CTRL+X and save
+		### Restart MySQL Server Service
+		
+		sudo service mysql restart
+		
+	Now you can connect to MySQL Server from external
+		
+		Open terminal and use these following commands:
+		
+		ifconfig
+
+		you can see message like this
+		
+		 inet xxx.xxx.xxx.xxx  netmask 255.xxx.xxx.0  broadcast xxx.xxx.xxx.xxx
+		
+		Where inet xxx.xxx.xxx.xxx is your IP Address
+
+			
+8. Create MySQL user and grant privileges with csims database setup
+		*** Default MySQL root as sudo has no password ****
+		Open terminal and use these following commands to login to MySQL as root:
+			
+			sudo mysql -u root -p
+		
+		In MySQL console will show:
+		
+			mysql>
+		
+		As default dbconfig.php mysql database connection refer 'csims' user with 'csimsSQL@' password
+		MySQL need to create 'csims' user with 'csimsSQL@' password
+		In case of user and password change, you need to change the configuration in db_config.php
+		
+		Use these following script to create 'csims' user:
+			
+			mysql> CREATE USER 'csims'@'%' IDENTIFIED WITH mysql_native_password BY 'csimsSQL@';
+			mysql> GRANT ALL PRIVILEGES ON *.* TO 'csims'@'%';
+			mysql> FLUSH PRIVILEGES;
+			mysql> exit
+			
+		Now you can connect to MySQL Server from external
+		Open Heidi SQL and connect to your database using the server IP Address on port 3306
+		Connect to the server with username 'csims' and password 'csimsSQL@' or your desire user authentication
+		Load 'csimsDB.sql' in source folder to create csims database
+		
+		Tables and supplement fileds will be created with the default Rapid cSIMS system administrator
+		
+		*** Rapid cSIMS system administrator username: sysadmin
+		*** Rapid cSIMS sysadmin password: sysadmin@
+		
+		you can change it later
+
+9. Install Apache2 and PHP
+
+	Open terminal and use these following commands
+	
+		sudo apt update
+		sudo apt install apache2 libapache2-mod-php -y
+		sudo apt install php-mysql php-curl php-gd php-mbstring php-xml php-zip -y
+	
+	*** cSIMS system need heavy load post and memory
+	*** The system need to reconfigure to new serve for www transfer
+	*** In this demonstration using PHP 8.3
+	*** If the system altered PHP version, then change 8.3 to the desire version
+		
+		sudo nano /etc/php/8.3/apache2/php.ini
+	
+	### Press CTRL+W to find these keyword and change to the following parameters
+	
+		memory_limit = 4096M
+		post_max_size = 512M
+		upload_max_filesize = 128M
+		
+	### Press CTRL+X and save
+	### Then, restart service to take effect
+	
+		sudo service apache2 restart
+
+10. Transfer your PHP source to system
+	
+	10.1 Grant csims and www-data to www folder
+	
+	Open terminal and use these following commands
+		
+		sudo usermod -a -G root csims
+		sudo usermod -a -G root www-data
+		sudo usermod -a -G www-data root
+		sudo usermod -a -G www-data csims
+		
+		sudo chmod 775 -R /var/www/html
+		
+	10.2 Use FileZilla FTP to connect to your system with the Ubuntu username and password on port 22 (sFTP)
+		### transfer csims folder from the source code to /var/www/html/
+		### Now you can see /var/www/html/csims with PHP and Rapid cSIMS supplement files
+
+		
+11. Now you can login to Rapid cSIMS system on you browser with username 'sysadmin' and password 'sysadmin@'
+
+	Open browser and browse to http://[your ip address]/csims
+	
+		
+		
+		
+		
+			
+	

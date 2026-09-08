@@ -1,0 +1,1343 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>วัตถุพยาน EVIDENCE</title>
+    <style>
+        @font-face { font-family: 'Sarabun'; font-weight: 400; font-style: normal; src: url('/csims/fonts/Sarabun/Sarabun-Regular.ttf') format('truetype'); }
+        @font-face { font-family: 'Sarabun'; font-weight: 700; font-style: normal; src: url('/csims/fonts/Sarabun/Sarabun-Bold.ttf') format('truetype'); }
+        @font-face { font-family: 'Sarabun'; font-weight: 400; font-style: italic; src: url('/csims/fonts/Sarabun/Sarabun-Italic.ttf') format('truetype'); }
+        @font-face { font-family: 'Sarabun'; font-weight: 700; font-style: italic; src: url('/csims/fonts/Sarabun/Sarabun-BoldItalic.ttf') format('truetype'); }
+    </style>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background: #e0e0e0;
+            font-size: 10px;
+            line-height: 1.4;
+            color: #1a1a1a;
+        }
+
+        /* ===== PRINT TOOLBAR ===== */
+        .no-print { text-align: center; padding: 12px; background: #fff; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+        .no-print button { padding: 8px 24px; font-size: 14px; margin: 0 6px; border: none; border-radius: 6px; cursor: pointer; font-family: 'Sarabun', sans-serif; font-weight: 600; }
+        .no-print button:first-child { background: #0d6efd; color: #fff; }
+        .no-print button.secondary { background: #6c757d; color: #fff; }
+
+        /* ===== PAGE (4.1 x 5.95 inches = 104mm x 151mm แนวตั้ง) ===== */
+        .page {
+            width: 104mm;
+            min-height: 151mm;
+            height: auto;
+            max-height: none;
+            margin: 15px auto;
+            background: #fff;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+            display: flex;
+            position: relative;
+            overflow: visible;
+        }
+
+        /* ===== LEFT SIDEBAR (Dark - 18% ของความกว้าง) ===== */
+        .sidebar {
+            width: 19mm;
+            min-width: 19mm;
+            max-width: 19mm;
+            background: #000000;
+            color: #fff;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 3mm 1mm;
+            position: relative;
+            flex-shrink: 0;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .sidebar .logo-img {
+            width: 15mm;
+            height: auto;
+            filter: brightness(0) invert(1);
+            margin-top: 5mm;
+            margin-bottom: 3mm;
+            flex-shrink: 0;
+        }
+        .sidebar .vertical-text {
+            font-size: 18px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            color: #ffffff;
+            line-height: 1.3;
+        }
+        .sidebar .vertical-text-en {
+            font-size: 12px;
+            font-weight: 700;
+            letter-spacing: 0.5px;
+            white-space: nowrap;
+            color: #ffffff;
+            margin-top: 3px;
+            line-height: 1.3;
+        }
+        .sidebar .text-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            transform: rotate(90deg);
+        }
+        .sidebar .red-icon-area {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 3mm;
+        }
+        .sidebar .red-icon-area img {
+            width: 14mm;
+            height: auto;
+        }
+
+        /* ===== RIGHT CONTENT ===== */
+        .content {
+            flex: 1;
+            padding: 4mm 5mm 14mm 5mm;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            min-height: 0;
+        }
+
+        /* Header */
+        .ev-title {
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            color: #1a1a2e;
+            margin-bottom: 6px;
+        }
+        .ev-subtitle {
+            text-align: center;
+            font-size: 12px;
+            font-weight: 600;
+            color: #555;
+            letter-spacing: 2px;
+            margin-bottom: 4mm;
+        }
+
+        /* Form rows */
+        .fr {
+            display: flex;
+            align-items: baseline;
+            flex-wrap: nowrap;
+            margin-bottom: 3px;
+            min-height: 14px;
+            font-size: 9px;
+            line-height: 1.5;
+        }
+        .fl {
+            font-weight: 700;
+            white-space: nowrap;
+            margin-right: 3px;
+            flex-shrink: 0;
+        }
+        .fd {
+            flex: 1;
+            min-width: 20px;
+            padding: 0 2px;
+            min-height: 10px;
+            overflow-wrap: break-word;
+            word-break: normal;
+            border-bottom: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='1'%3E%3Ccircle cx='0.5' cy='0.5' r='0.4' fill='%23888'/%3E%3C/svg%3E");
+            background-repeat: repeat-x;
+            background-position: 0 bottom;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .fd-location {
+            overflow-wrap: break-word;
+            word-break: normal;
+            text-align: left;
+            margin-left: 0;
+            padding-left: 0;
+            padding-right: 0;
+        }
+        .fr-location-line2 {
+            margin-top: 2px;
+        }
+        .fd-location-line2 {
+            width: 100%;
+            border-bottom: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='1'%3E%3Ccircle cx='0.5' cy='0.5' r='0.4' fill='%23888'/%3E%3C/svg%3E");
+            background-repeat: repeat-x;
+            background-position: 0 bottom;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+            line-height: 1.4;
+            margin: 0;
+            padding: 0;
+            min-height: 10px;
+            white-space: normal;
+            overflow: visible;
+            text-overflow: clip;
+            overflow-wrap: break-word;
+            word-break: normal;
+            text-align: left;
+        }
+        .is-hidden {
+            display: none !important;
+        }
+        .fd-short {
+            display: inline-block;
+            min-width: 30px;
+            padding: 0 2px;
+            text-align: center;
+            border-bottom: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='1'%3E%3Ccircle cx='0.5' cy='0.5' r='0.4' fill='%23888'/%3E%3C/svg%3E");
+            background-repeat: repeat-x;
+            background-position: 0 bottom;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .section-label {
+            font-weight: 700;
+            font-size: 10px;
+            margin-top: 3mm;
+            margin-bottom: 2mm;
+            text-decoration: underline;
+        }
+
+        /* Victim / Evidence tables */
+        .victim-table,
+        .evidence-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 8px;
+            margin-top: 1mm;
+            margin-bottom: 1mm;
+        }
+        .victim-table th,
+        .victim-table td,
+        .evidence-table th,
+        .evidence-table td {
+            border: 1px solid #333;
+            padding: 1px 2px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .victim-table th,
+        .evidence-table th {
+            background: #f0e6d2;
+            font-weight: 700;
+            font-size: 8px;
+        }
+        .victim-table td,
+        .evidence-table td {
+            font-size: 8px;
+            white-space: normal;
+            overflow-wrap: break-word;
+            word-break: normal;
+            max-height: 28px;
+            line-height: 1.2;
+        }
+
+        /* Chain of Custody Table */
+        .custody-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 9px;
+            margin-top: 2mm;
+            margin-bottom: 2mm;
+        }
+        .custody-table th, .custody-table td {
+            border: 1px solid #333;
+            padding: 2px 3px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        .custody-table th {
+            background: #f0e6d2;
+            font-weight: 700;
+            font-size: 9px;
+        }
+        .custody-table td {
+            font-size: 9px;
+            min-height: 14px;
+        }
+
+        /* Condition section */
+        .condition-section {
+            margin-top: 3mm;
+            font-size: 10px;
+        }
+        .condition-section .section-title {
+            font-weight: 700;
+            font-size: 10px;
+            margin-bottom: 2mm;
+        }
+        .ck {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 8px;
+            margin-bottom: 2px;
+        }
+        .cb {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border: 1px solid #333;
+            margin-right: 3px;
+            text-align: center;
+            line-height: 12px;
+            font-size: 10px;
+            font-weight: 700;
+            vertical-align: middle;
+        }
+
+        /* QR Code */
+        .qr-section {
+            position: absolute;
+            left: 0;
+            right: 0;
+            bottom: 1mm;
+            display: flex;
+            justify-content: center;
+            padding-top: 1mm;
+            z-index: 2;
+        }
+        .qr-section #qrcode {
+            display: flex;
+            justify-content: center;
+        }
+        .qr-section canvas, .qr-section img {
+            width: 12mm;
+            height: 12mm;
+        }
+        .btn-zebra { 
+            background: #198754 !important; color: #fff !important; 
+        }
+
+        @page { margin: 0; size: 104mm 151mm; }
+        @media print {
+            body { background: #fff; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            .no-print { display: none !important; }
+            .page {
+                margin: 0;
+                box-shadow: none;
+                width: 104mm;
+                height: 151mm;
+                min-height: 151mm;
+                max-height: 151mm;
+                overflow: hidden;
+                page-break-after: always;
+                page-break-inside: auto;
+            }
+            .page:last-child { page-break-after: auto; }
+            .sidebar {
+                background: #000000 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            /* ตารางตัดหน้าอัตโนมัติ พร้อมหัวตารางซ้ำ */
+            .evidence-table, .custody-table, .victim-table {
+                page-break-inside: auto;
+            }
+            .evidence-table tr, .custody-table tr, .victim-table tr {
+                page-break-inside: avoid;
+                page-break-after: auto;
+            }
+            .evidence-table thead, .custody-table thead, .victim-table thead {
+                display: table-header-group;
+            }
+        }
+    
+    </style>
+</head>
+<body>
+
+<div class="no-print">
+    <button onclick="window.print()">พิมพ์ / ดาวน์โหลด PDF</button>
+    <button class="secondary" onclick="window.close()">ปิดหน้าต่าง</button>
+</div>
+
+<!-- ==================== PAGE 1 ==================== -->
+<div class="page">
+
+    <!-- LEFT SIDEBAR -->
+    <div class="sidebar">
+        <img src="{{logo_base64}}" alt="Logo" class="logo-img">
+        <div class="text-group">
+            <div class="vertical-text">พิสูจน์หลักฐานตำรวจ</div>
+            <div class="vertical-text-en">Forensic Police</div>
+        </div>
+    </div>
+
+    <!-- RIGHT CONTENT -->
+    <div class="content">
+
+        <!-- Title -->
+        <div class="ev-title">วัตถุพยาน</div>
+        <div class="ev-subtitle">EVIDENCE</div>
+
+        <!-- Station & Case -->
+        <div class="fr">
+            <span class="fl">สถานีตำรวจ</span>
+            <span class="fd" style="max-width:120px;">{{station_name}}</span>
+            <span class="fl" style="margin-left:4px;">คดี</span>
+            <span class="fd">{{case_no}}</span>
+        </div>
+
+        <!-- Location -->
+        <div class="fr">
+            <span class="fl">สถานที่เกิดเหตุ</span>
+            <span class="fd fd-location">{{location_detail_line1}}</span>
+        </div>
+        <div class="fr fr-location-line2 {{location_line2_hidden}}">
+            <span class="fd-location-line2">{{location_detail_line2}}</span>
+        </div>
+
+        <!-- Incident Date/Time -->
+        <div class="fr">
+            <span class="fl">วันที่เกิดเหตุ</span>
+            <span class="fd" style="max-width:100px;">{{incident_date}}</span>
+            <span class="fl" style="margin-left:4px;">เวลาประมาณ</span>
+            <span class="fd-short">{{incident_time}}</span>
+            <span class="fl">น.</span>
+        </div>
+
+        <!-- Suspect/Victim -->
+        <div class="section-label" style="margin-top:2mm;">ผู้ต้องหา / ผู้ต้องสงสัย / ผู้เสียหาย</div>
+        <table class="victim-table">
+            <thead>
+                <tr>
+                    <th style="width:8%;">ลำดับ</th>
+                    <th style="width:28%;">ประเภท</th>
+                    <th style="width:45%;">ชื่อ-นามสกุล</th>
+                    <th style="width:19%;">อายุ (ปี)</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{victim_rows}}
+            </tbody>
+        </table>
+
+        <!-- Evidence Collection Date/Time -->
+        <div class="fr">
+            <span class="fl">วันที่เก็บวัตถุพยาน</span>
+            <span class="fd" style="max-width:100px;">{{collect_date}}</span>
+            <span class="fl" style="margin-left:4px;">เวลาประมาณ</span>
+            <span class="fd-short">{{collect_time}}</span>
+            <span class="fl">น.</span>
+        </div>
+
+        <!-- Collector Name & Position -->
+        <div class="fr">
+            <span class="fl">ชื่อผู้เก็บวัตถุพยาน</span>
+            <span class="fd">{{collector_name}}</span>
+        </div>
+
+        <!-- Evidence Description -->
+        <div class="section-label">ลักษณะ / จำนวน / ตำแหน่ง วัตถุพยานที่ตรวจพบ</div>
+        <table class="evidence-table">
+            <thead>
+                <tr>
+                    <th style="width:8%;">ลำดับ</th>
+                    <th style="width:50%;">รายละเอียดวัตถุพยาน</th>
+                    <th style="width:15%;">จำนวน</th>
+                    <th style="width:27%;">ตำแหน่งที่พบ</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{evidence_rows}}
+            </tbody>
+        </table>
+
+        <!-- QR Code (Page 1) -->
+        <div class="qr-section">
+            <div id="qrcode_page1"></div>
+        </div>
+
+    </div><!-- /content -->
+
+</div><!-- /page -->
+
+{{extra_evidence_pages}}
+
+<!-- ==================== PAGE 2 ==================== -->
+<div class="page">
+
+    <!-- LEFT SIDEBAR -->
+    <div class="sidebar">
+        <img src="{{logo_base64}}" alt="Logo" class="logo-img">
+        <div class="text-group">
+            <div class="vertical-text">พิสูจน์หลักฐานตำรวจ</div>
+            <div class="vertical-text-en">Forensic Police</div>
+        </div>
+    </div>
+
+    <!-- RIGHT CONTENT -->
+    <div class="content">
+
+        <!-- Title -->
+        <div class="ev-title">วัตถุพยาน</div>
+        <div class="ev-subtitle">EVIDENCE</div>
+
+        <!-- Station & Case -->
+        <div class="fr">
+            <span class="fl">สถานีตำรวจ</span>
+            <span class="fd" style="max-width:120px;">{{station_name}}</span>
+            <span class="fl" style="margin-left:4px;">คดี</span>
+            <span class="fd">{{case_no}}</span>
+        </div>
+
+        <!-- Location -->
+        <div class="fr">
+            <span class="fl">สถานที่เกิดเหตุ</span>
+            <span class="fd fd-location">{{location_detail_line1}}</span>
+        </div>
+        <div class="fr fr-location-line2 {{location_line2_hidden}}">
+            <span class="fd-location-line2">{{location_detail_line2}}</span>
+        </div>
+
+        <!-- Incident Date/Time -->
+        <div class="fr">
+            <span class="fl">วันที่เกิดเหตุ</span>
+            <span class="fd" style="max-width:100px;">{{incident_date}}</span>
+            <span class="fl" style="margin-left:4px;">เวลาประมาณ</span>
+            <span class="fd-short">{{incident_time}}</span>
+            <span class="fl">น.</span>
+        </div>
+
+        <!-- Chain of Custody -->
+        <div class="section-label" style="margin-top:4mm;">ลำดับการครอบครองวัตถุพยาน (CHAIN OF CUSTODY)</div>
+        <table class="custody-table">
+            <thead>
+                <tr>
+                    <th style="width:10%;">ลำดับ<br>ที่</th>
+                    <th style="width:24%;">จากใคร</th>
+                    <th style="width:24%;">ถึงใคร</th>
+                    <th style="width:18%;">วันที่</th>
+                    <th style="width:10%;">หมายเหตุ</th>
+                </tr>
+            </thead>
+            <tbody>
+                {{custody_rows}}
+            </tbody>
+        </table>
+
+        <!-- Condition Section -->
+        <div class="condition-section">
+            <div class="section-title">ลักษณะของของกลางขณะมาถึงผู้ตรวจพิสูจน์หรือ<br>ผู้รับผิดชอบ</div>
+            <div style="margin-top: 2mm;">
+                <span class="ck"><span class="cb">{{chk_condition_good}}</span> อยู่ในสภาพปิดผนึกเรียบร้อย</span>
+            </div>
+            <div>
+                <span class="ck"><span class="cb">{{chk_condition_other}}</span> อื่น ๆ</span>
+                <span class="fd" style="display:inline-block; min-width:60px;">{{condition_other_text}}</span>
+            </div>
+        </div>
+
+        <!-- QR Code -->
+        <div class="qr-section">
+            <div id="qrcode_page2"></div>
+        </div>
+
+    </div><!-- /content -->
+
+</div><!-- /page -->
+
+<!-- QR Code Library -->
+<script src="/csims/js/qrcode.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<script>
+function renderEvidenceQrCodes() {
+    var qrText = '{{qr_data}}';
+    if (!qrText || qrText === '' || typeof QRCode === 'undefined') {
+        return;
+    }
+
+    var qrOptions = {
+        text: qrText,
+        width: 56,
+        height: 56,
+        colorDark: '#000000',
+        colorLight: '#ffffff',
+        correctLevel: QRCode.CorrectLevel.L
+    };
+
+    function renderOne(el) {
+        if (!el) return;
+        el.innerHTML = '';
+        try {
+            new QRCode(el, qrOptions);
+        } catch (e) {
+            console.warn('[Evidence QR] overflow, skip:', e);
+        }
+    }
+
+    ['qrcode_page1', 'qrcode_page2'].forEach(function(id) {
+        renderOne(document.getElementById(id));
+    });
+
+    for (var i = 2; i <= 20; i++) {
+        renderOne(document.getElementById('qrcode_extra_' + i));
+    }
+}
+// ===== White logo (preloaded) =====
+var _preloadedWhiteLogo = null;
+var _whiteLogoReady = false;
+
+function preloadWhiteLogo(callback) {
+    var existingLogo = document.querySelector('.logo-img');
+    if (!existingLogo) { console.warn('No .logo-img found'); callback(); return; }
+
+    var src = existingLogo.src || existingLogo.getAttribute('src');
+    if (!src) { console.warn('Logo has no src'); callback(); return; }
+    console.log('Logo src type:', src.substring(0, 30) + '...');
+
+    var img = new Image();
+    // ถ้า src เป็น data URL ไม่ต้องใช้ crossOrigin
+    if (src.indexOf('data:') !== 0) {
+        img.crossOrigin = 'anonymous';
+    }
+    
+    img.onload = function() {
+        console.log('Logo loaded: ' + img.naturalWidth + 'x' + img.naturalHeight);
+        try {
+            var scale = 4;
+            var w = (img.naturalWidth || 200) * scale;
+            var h = (img.naturalHeight || 200) * scale;
+            var c = document.createElement('canvas');
+            c.width = w; c.height = h;
+            var ctx = c.getContext('2d');
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(img, 0, 0, w, h);
+            // ทุก pixel ที่มองเห็น (alpha>10) เปลี่ยนเป็นขาวทึบ 100% (ไม่จางบนพื้นดำ)
+            var imgData = ctx.getImageData(0, 0, w, h);
+            var d = imgData.data;
+            for (var i = 0; i < d.length; i += 4) {
+                if (d[i+3] > 10) {
+                    d[i] = 255; d[i+1] = 255; d[i+2] = 255; d[i+3] = 255;
+                } else {
+                    d[i+3] = 0;
+                }
+            }
+            ctx.putImageData(imgData, 0, 0);
+            _preloadedWhiteLogo = c.toDataURL('image/png');
+            _whiteLogoReady = true;
+            console.log('White logo OK (solid): ' + w + 'x' + h);
+        } catch(e) { 
+            console.warn('Logo convert failed (cross-origin?):', e); 
+            // Fallback: สร้าง white logo ด้วย composite mode
+            try {
+                var scale = 4;
+                var w = (img.naturalWidth || 200) * scale;
+                var h = (img.naturalHeight || 200) * scale;
+                var c = document.createElement('canvas');
+                c.width = w; c.height = h;
+                var ctx = c.getContext('2d');
+                ctx.drawImage(img, 0, 0, w, h);
+                ctx.globalCompositeOperation = 'source-in';
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(0, 0, w, h);
+                _preloadedWhiteLogo = c.toDataURL('image/png');
+                _whiteLogoReady = true;
+                console.log('White logo OK (composite mode): ' + w + 'x' + h);
+            } catch(e2) {
+                // ใช้ logo เดิม
+                _preloadedWhiteLogo = src;
+                _whiteLogoReady = true;
+                console.log('Using original logo as fallback');
+            }
+        }
+        callback();
+    };
+    img.onerror = function() { 
+        console.warn('Logo load error'); 
+        _preloadedWhiteLogo = null;
+        _whiteLogoReady = false;
+        callback(); 
+    };
+    img.src = src;
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    renderEvidenceQrCodes();
+
+    // Preload white logo หลัง DOM พร้อม
+    preloadWhiteLogo(function() {
+        console.log('Logo preload done. Ready:', _whiteLogoReady);
+    });
+});
+
+function canvasToZpl(canvas) {
+    var ctx = canvas.getContext('2d');
+    var targetW = 800;
+    var ratio = targetW / canvas.width;
+    var targetH = Math.round(canvas.height * ratio);
+
+    var tmp = document.createElement('canvas');
+    tmp.width = targetW;
+    tmp.height = targetH;
+    var tctx = tmp.getContext('2d');
+    tctx.drawImage(canvas, 0, 0, targetW, targetH);
+
+    var imgData = tctx.getImageData(0, 0, targetW, targetH);
+    var pixels = imgData.data;
+    var bytesPerRow = Math.ceil(targetW / 8);
+    var totalBytes = bytesPerRow * targetH;
+    var hex = '';
+
+    for (var y = 0; y < targetH; y++) {
+        for (var byteIdx = 0; byteIdx < bytesPerRow; byteIdx++) {
+            var byteVal = 0;
+            for (var bit = 0; bit < 8; bit++) {
+                var x = byteIdx * 8 + bit;
+                if (x < targetW) {
+                    var i = (y * targetW + x) * 4;
+                    var gray = pixels[i] * 0.299 + pixels[i+1] * 0.587 + pixels[i+2] * 0.114;
+                    if (gray < 170) byteVal |= (1 << (7 - bit));
+                }
+            }
+            hex += ('00' + byteVal.toString(16)).slice(-2).toUpperCase();
+        }
+    }
+
+    return '^XA\n^MD15\n^LH0,0\n^PW' + targetW + '\n^LL' + targetH +
+           '\n^FO0,0^GFA,' + totalBytes + ',' + totalBytes + ',' + bytesPerRow + ',' + hex +
+           '\n^XZ';
+}
+
+// Invert สีภาพ + เพิ่ม contrast สูง → ให้ icon ขาวชัดบนพื้นดำ (รักษารายละเอียด)
+function makeWhiteLogo(img) {
+    return new Promise(function(resolve) {
+        function processImage(sourceImg) {
+            try {
+                var c = document.createElement('canvas');
+                var w = sourceImg.naturalWidth || sourceImg.width || 200;
+                var h = sourceImg.naturalHeight || sourceImg.height || 200;
+                // render ขนาดใหญ่ขึ้น 4 เท่า ให้คมชัดสุด
+                c.width = w * 4;
+                c.height = h * 4;
+                var ctx = c.getContext('2d');
+                ctx.imageSmoothingEnabled = true;
+                ctx.imageSmoothingQuality = 'high';
+                ctx.drawImage(sourceImg, 0, 0, c.width, c.height);
+                var imgData = ctx.getImageData(0, 0, c.width, c.height);
+                var d = imgData.data;
+                for (var i = 0; i < d.length; i += 4) {
+                    if (d[i+3] > 20) {
+                        d[i]     = 255;
+                        d[i + 1] = 255;
+                        d[i + 2] = 255;
+                        d[i + 3] = 255;
+                    }
+                }
+                ctx.putImageData(imgData, 0, 0);
+                resolve(c.toDataURL('image/png'));
+            } catch(e) {
+                console.warn('makeWhiteLogo error (cross-origin?):', e);
+                // Fallback: return original src
+                resolve(sourceImg.src || null);
+            }
+        }
+
+        if (img.complete && img.naturalWidth > 0) {
+            processImage(img);
+        } else {
+            var tempImg = new Image();
+            tempImg.crossOrigin = 'anonymous';
+            tempImg.onload = function() { processImage(tempImg); };
+            tempImg.onerror = function() { console.warn('Failed to load logo'); resolve(img.src || null); };
+            tempImg.src = img.src;
+        }
+    });
+}
+
+function canvasToZplGfa(canvas, targetWidthDots, targetHeightDots) {
+    // Resize canvas to target label size
+    var resized = document.createElement('canvas');
+    resized.width = targetWidthDots;
+    resized.height = targetHeightDots;
+    var rCtx = resized.getContext('2d');
+    rCtx.fillStyle = '#ffffff';
+    rCtx.fillRect(0, 0, targetWidthDots, targetHeightDots);
+    rCtx.drawImage(canvas, 0, 0, targetWidthDots, targetHeightDots);
+
+    var ctx = resized.getContext('2d');
+    var imgData = ctx.getImageData(0, 0, targetWidthDots, targetHeightDots);
+    var pixels = imgData.data;
+
+    // ZPL requires width in bytes (8 pixels per byte)
+    var bytesPerRow = Math.ceil(targetWidthDots / 8);
+    var totalBytes = bytesPerRow * targetHeightDots;
+    var hexStr = '';
+
+    for (var y = 0; y < targetHeightDots; y++) {
+        for (var bx = 0; bx < bytesPerRow; bx++) {
+            var byteVal = 0;
+            for (var bit = 0; bit < 8; bit++) {
+                var px = bx * 8 + bit;
+                if (px < targetWidthDots) {
+                    var idx = (y * targetWidthDots + px) * 4;
+                    var gray = pixels[idx] * 0.299 + pixels[idx + 1] * 0.587 + pixels[idx + 2] * 0.114;
+                    if (gray < 170) {
+                        byteVal |= (1 << (7 - bit));
+                    }
+                }
+            }
+            hexStr += ('00' + byteVal.toString(16)).slice(-2).toUpperCase();
+        }
+    }
+
+    return '^GFA,' + totalBytes + ',' + totalBytes + ',' + bytesPerRow + ',' + hexStr;
+}
+
+function downloadFile(filename, content) {
+    // บันทึกไฟล์บน server ก่อน แล้วดาวน์โหลดจาก URL จริง
+    // (iOS Safari ไม่รองรับ Blob download ผ่าน <a> tag)
+    
+    // ตรวจสอบว่าเป็น iOS/iPad หรือไม่
+    var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    
+    // คำนวณขนาดไฟล์
+    var fileSize = new Blob([content]).size;
+    
+    // แสดง loading สำหรับ iOS
+    var loadingOverlay = null;
+    if (isIOS) {
+        loadingOverlay = document.createElement('div');
+        loadingOverlay.id = 'ios-loading-overlay';
+        loadingOverlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:99999;display:flex;align-items:center;justify-content:center;';
+        loadingOverlay.innerHTML = '<div style="background:#fff;border-radius:12px;padding:24px;text-align:center;"><div style="font-size:32px;margin-bottom:12px;">⏳</div><div style="font-size:16px;color:#333;">กำลังเตรียมไฟล์...</div></div>';
+        document.body.appendChild(loadingOverlay);
+    }
+    
+    fetch('/csims/api/incidentCheckList/save_zpl_file.php', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ zpl_content: content, filename: filename })
+    })
+    .then(function(res) { return res.json(); })
+    .then(function(data) {
+        if (data.status === 'success' && data.download_url) {
+            if (isIOS) {
+                // iOS/iPad: Pre-fetch ไฟล์ก่อนเพื่อให้ browser cache ไว้
+                return fetch(data.download_url, { method: 'HEAD' })
+                    .then(function() {
+                        // ลบ loading overlay
+                        if (loadingOverlay) loadingOverlay.remove();
+                        // แสดง dialog ให้ user กดเพื่อดาวน์โหลด
+                        _showIOSDownloadDialog(data.download_url, filename, fileSize);
+                    })
+                    .catch(function() {
+                        if (loadingOverlay) loadingOverlay.remove();
+                        _showIOSDownloadDialog(data.download_url, filename, fileSize);
+                    });
+            } else {
+                // PC/Android: ใช้ <a> tag download
+                var a = document.createElement('a');
+                a.href = data.download_url;
+                a.setAttribute('download', filename);
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+            }
+        } else {
+            if (loadingOverlay) loadingOverlay.remove();
+            _downloadBlob(filename, content);
+        }
+    })
+    .catch(function() {
+        if (loadingOverlay) loadingOverlay.remove();
+        _downloadBlob(filename, content);
+    });
+}
+
+// แสดง dialog สำหรับ iOS/iPad ให้ user กดดาวน์โหลด
+function _showIOSDownloadDialog(downloadUrl, filename, fileSize) {
+    // iOS: redirect ไปที่ URL ไฟล์โดยตรง → Safari จะดาวน์โหลดทันที
+    window.location.href = downloadUrl;
+}
+
+function _showIOSDownloadDialogFallback(downloadUrl, filename, fileSize) {
+    // สร้าง modal dialog
+    var overlay = document.createElement('div');
+    overlay.id = 'ios-download-overlay';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.7);z-index:99999;display:flex;align-items:center;justify-content:center;';
+    
+    // แสดงขนาดไฟล์
+    var sizeText = '';
+    if (fileSize) {
+        if (fileSize > 1024 * 1024) {
+            sizeText = (fileSize / 1024 / 1024).toFixed(2) + ' MB';
+        } else if (fileSize > 1024) {
+            sizeText = (fileSize / 1024).toFixed(0) + ' KB';
+        } else {
+            sizeText = fileSize + ' bytes';
+        }
+    }
+    
+    var dialog = document.createElement('div');
+    dialog.style.cssText = 'background:#fff;border-radius:12px;padding:24px;max-width:340px;text-align:center;font-family:Sarabun,sans-serif;';
+    dialog.innerHTML = '<div style="font-size:48px;margin-bottom:12px;">✅</div>' +
+        '<div style="font-size:18px;font-weight:700;margin-bottom:8px;color:#198754;">สร้างไฟล์ ZPL สำเร็จ!</div>' +
+        '<div style="font-size:13px;color:#333;margin-bottom:4px;"><strong>ไฟล์:</strong> ' + (filename || 'evidence.zpl') + '</div>' +
+        (sizeText ? '<div style="font-size:13px;color:#333;margin-bottom:12px;"><strong>ขนาด:</strong> ' + sizeText + '</div>' : '') +
+        '<div style="font-size:12px;color:#666;margin-bottom:16px;">กดปุ่มด้านล่างเพื่อบันทึกไฟล์<br>ไปยังแอป <strong>Files</strong> หรือ <strong>iCloud Drive</strong><br>แล้วเปิดด้วยแอป Zebra เพื่อพิมพ์</div>' +
+        '<a id="ios-download-btn" href="' + downloadUrl + '" download="' + filename + '" style="display:inline-block;background:#198754;color:#fff;padding:14px 36px;border-radius:8px;text-decoration:none;font-weight:600;font-size:16px;box-shadow:0 2px 8px rgba(25,135,84,0.3);">📥 บันทึกไฟล์ .zpl</a>' +
+        '<div style="margin-top:14px;"><button id="ios-download-close" style="background:none;border:none;color:#999;font-size:13px;cursor:pointer;">ปิด</button></div>';
+    
+    overlay.appendChild(dialog);
+    document.body.appendChild(overlay);
+    
+    // ปิด dialog เมื่อกดปุ่มปิด หรือกดพื้นหลัง
+    document.getElementById('ios-download-close').onclick = function() {
+        document.body.removeChild(overlay);
+    };
+    overlay.onclick = function(e) {
+        if (e.target === overlay) document.body.removeChild(overlay);
+    };
+    
+    // ปิด dialog หลังจากกดดาวน์โหลด
+    document.getElementById('ios-download-btn').onclick = function() {
+        setTimeout(function() {
+            if (document.getElementById('ios-download-overlay')) {
+                document.body.removeChild(overlay);
+            }
+        }, 1500);
+    };
+}
+
+function _downloadBlob(filename, content) {
+    var blob = new Blob([content], { type: 'application/octet-stream' });
+    var url = URL.createObjectURL(blob);
+    var a = document.createElement('a');
+    a.href = url;
+    a.download = filename;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    setTimeout(function() { URL.revokeObjectURL(url); }, 1000);
+}
+
+// === วาด sidebar ความละเอียดสูง (4x) → threshold B/W → scale ลง (ชัดเจ๋ว) ===
+function drawSidebarOnCanvas(ctx, sidebarW, totalW, totalH, logoImg) {
+    var SCALE = 4;
+    var hW = sidebarW * SCALE;
+    var hH = totalH * SCALE;
+
+    var hCanvas = document.createElement('canvas');
+    hCanvas.width = hW;
+    hCanvas.height = hH;
+    var hCtx = hCanvas.getContext('2d');
+
+    // พื้นดำสนิท 100% - ดำทั้งแถบตลอดความสูง
+    hCtx.fillStyle = '#000000';
+    hCtx.fillRect(0, 0, hW, hH);
+
+    var hCenterX = Math.round(hW / 2);
+
+    // วาด Logo (4x res) - อยู่กลาง sidebar ด้านบน (95% ของความกว้าง - ใหญ่ชัดมากๆ)
+    if (logoImg && logoImg.complete && logoImg.naturalWidth > 0) {
+        var logoSize = Math.round(hW * 0.95); // 95% ของความกว้าง sidebar - ใหญ่สุด
+        var logoX = Math.round((hW - logoSize) / 2) + Math.round(hW * 0.15); // ขยับไปขวา
+        var logoY = Math.round(hW * 0.35); // ขยับลงมาจากหัวกระดาษ
+        
+        // สร้าง canvas ชั่วคราวสำหรับ logo ขาวชัดมากๆ
+        var logoCanvas = document.createElement('canvas');
+        logoCanvas.width = logoSize * 2; // 2x สำหรับความชัด
+        logoCanvas.height = logoSize * 2;
+        var logoCtx = logoCanvas.getContext('2d');
+        
+        // วาด logo ขนาด 2x
+        logoCtx.filter = 'brightness(0) invert(1) contrast(3)';
+        logoCtx.drawImage(logoImg, 0, 0, logoSize * 2, logoSize * 2);
+        logoCtx.filter = 'none';
+        
+        // วาดทับด้วยสีขาวเฉพาะส่วนที่มี pixel
+        logoCtx.globalCompositeOperation = 'source-in';
+        logoCtx.fillStyle = '#ffffff';
+        logoCtx.fillRect(0, 0, logoSize * 2, logoSize * 2);
+        logoCtx.globalCompositeOperation = 'source-over';
+        
+        // Scale ลงมาที่ขนาดจริง
+        hCtx.drawImage(logoCanvas, 0, 0, logoSize * 2, logoSize * 2, logoX, logoY, logoSize, logoSize);
+        console.log('HiRes logo drawn with 2x scale:', logoSize + 'px');
+    } else {
+        console.warn('Logo not available - drawing placeholder circle');
+        var logoSize = Math.round(hW * 0.90);
+        var logoX = Math.round((hW - logoSize) / 2) + Math.round(hW * 0.15);
+        var logoY = Math.round(hW * 0.35);
+        hCtx.strokeStyle = '#ffffff';
+        hCtx.lineWidth = 8;
+        hCtx.beginPath();
+        hCtx.arc(logoX + logoSize/2, logoY + logoSize/2, logoSize/2 - 4, 0, Math.PI * 2);
+        hCtx.stroke();
+    }
+
+    // ข้อความหมุน -90° (4x res) — อ่านจากบนลงล่าง
+    // ข้อความอยู่ตรงกลาง sidebar
+    // Forensic Police อยู่ตรงกลางระหว่าง พิสูจน์หลักฐานตำรวจ
+    hCtx.fillStyle = '#ffffff';
+    hCtx.strokeStyle = '#ffffff';
+    hCtx.textAlign = 'center';
+    hCtx.textBaseline = 'middle';
+
+    var centerX = Math.round(hW / 2); // กลาง X
+    var textY = Math.round(hH * 0.38); // กลาง Y ของกระดาษ (เลื่อนขึ้นอีก)
+
+    // ข้อความไทย (หมุน -90 องศา) - ตัวใหญ่ขึ้น
+    var thFontSize = Math.round(hW * 0.48); // ใหญ่ขึ้น
+    hCtx.save();
+    hCtx.translate(centerX + Math.round(hW * 0.17), textY);
+    hCtx.rotate(-Math.PI / 2); // -90 องศา
+    hCtx.font = '900 ' + thFontSize + 'px Sarabun, sans-serif';
+    hCtx.lineWidth = Math.max(8, Math.round(thFontSize * 0.15));
+    hCtx.strokeText('พิสูจน์หลักฐานตำรวจ', 0, 0);
+    hCtx.fillText('พิสูจน์หลักฐานตำรวจ', 0, 0);
+    hCtx.restore();
+
+    // ข้อความอังกฤษ (หมุน -90 องศา) - ตัวใหญ่ขึ้น
+    var enFontSize = Math.round(hW * 0.30); // ใหญ่ขึ้น
+    var enTextY = textY + Math.round(hH * 0.075); // เลื่อนลงมาให้อยู่กลางๆ
+    hCtx.save();
+    hCtx.translate(centerX - Math.round(hW * 0.14), enTextY);
+    hCtx.rotate(-Math.PI / 2); // -90 องศา
+    hCtx.font = '900 ' + enFontSize + 'px Sarabun, sans-serif';
+    hCtx.lineWidth = Math.max(5, Math.round(enFontSize * 0.12));
+    hCtx.strokeText('Forensic Police', 0, 0);
+    hCtx.fillText('Forensic Police', 0, 0);
+    hCtx.restore();
+
+    // ===== Threshold: แปลง hi-res เป็นขาว-ดำ 100% (ไม่มีสีเทาเลย) =====
+    var thresholdSuccess = false;
+    try {
+        var imgData = hCtx.getImageData(0, 0, hW, hH);
+        var d = imgData.data;
+        for (var i = 0; i < d.length; i += 4) {
+            var gray = d[i] * 0.299 + d[i+1] * 0.587 + d[i+2] * 0.114;
+            if (gray > 80) { // ลด threshold ให้จับขาวได้ง่ายขึ้น
+                d[i] = 255; d[i+1] = 255; d[i+2] = 255; d[i+3] = 255;
+            } else {
+                d[i] = 0; d[i+1] = 0; d[i+2] = 0; d[i+3] = 255;
+            }
+        }
+        hCtx.putImageData(imgData, 0, 0);
+        thresholdSuccess = true;
+        console.log('Sidebar threshold applied successfully');
+    } catch(e) {
+        console.warn('Sidebar threshold failed, using direct draw:', e.message);
+        // ไม่ต้องทำอะไร - ใช้ canvas ที่วาดไว้แล้ว (ขาวบนดำอยู่แล้ว)
+    }
+
+    // Scale ลง → ปิด smoothing (nearest-neighbor) เพื่อขอบคมไม่เบลอ
+    ctx.imageSmoothingEnabled = false;
+    ctx.drawImage(hCanvas, 0, 0, hW, hH, 0, 0, sidebarW, totalH);
+    console.log('Sidebar B/W drawn: ' + hW + 'x' + hH + ' → ' + sidebarW + 'x' + totalH + (thresholdSuccess ? ' (threshold OK)' : ' (no threshold)'));
+}
+
+function printToZebra() {
+    var btn = document.getElementById('btnZebraPrint');
+    var pages = document.querySelectorAll('.page');
+    if (!pages.length) { alert('ไม่พบหน้าเอกสาร'); return; }
+
+    if (btn) { btn.disabled = true; btn.textContent = 'กำลังสร้างไฟล์...'; }
+    
+    // ตรวจสอบว่าเป็น iOS/iPad หรือไม่
+    var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+
+    // Label size: 4.1 x 5.95 inches at 203 DPI = 832 x 1208 dots (แนวตั้ง)
+    var LABEL_WIDTH_DOTS = 832;
+    var LABEL_HEIGHT_DOTS = 1208;
+
+    // คำนวณ sidebar เป็น dots (ประมาณ 18% ของความกว้าง)
+    var SIDEBAR_DOTS = Math.round(0.18 * LABEL_WIDTH_DOTS); // ~150 dots
+    var CONTENT_DOTS = LABEL_WIDTH_DOTS - SIDEBAR_DOTS;
+
+    // เตรียม white logo image (รอโหลดเสร็จก่อนเริ่ม)
+    var whiteLogoImg = new Image();
+    var logoReady = new Promise(function(resolve) {
+        console.log('Preparing logo... _preloadedWhiteLogo:', !!_preloadedWhiteLogo, '_whiteLogoReady:', _whiteLogoReady);
+        
+        if (_preloadedWhiteLogo && _whiteLogoReady) {
+            whiteLogoImg.onload = function() {
+                console.log('WhiteLogo loaded for print: ' + whiteLogoImg.naturalWidth + 'x' + whiteLogoImg.naturalHeight);
+                resolve(true);
+            };
+            whiteLogoImg.onerror = function() { 
+                console.warn('WhiteLogo load error, trying DOM logo');
+                tryDomLogo();
+            };
+            whiteLogoImg.src = _preloadedWhiteLogo;
+        } else {
+            tryDomLogo();
+        }
+        
+        function tryDomLogo() {
+            var domLogo = document.querySelector('.logo-img');
+            console.log('Trying DOM logo:', domLogo ? domLogo.src.substring(0, 50) + '...' : 'not found');
+            if (domLogo && domLogo.src) {
+                // สร้าง white logo จาก DOM
+                var tempImg = new Image();
+                tempImg.onload = function() {
+                    try {
+                        var c = document.createElement('canvas');
+                        c.width = tempImg.naturalWidth * 2;
+                        c.height = tempImg.naturalHeight * 2;
+                        var ctx = c.getContext('2d');
+                        ctx.drawImage(tempImg, 0, 0, c.width, c.height);
+                        // แปลงเป็นขาว
+                        var imgData = ctx.getImageData(0, 0, c.width, c.height);
+                        var d = imgData.data;
+                        for (var i = 0; i < d.length; i += 4) {
+                            if (d[i+3] > 20) {
+                                d[i] = 255; d[i+1] = 255; d[i+2] = 255; d[i+3] = 255;
+                            }
+                        }
+                        ctx.putImageData(imgData, 0, 0);
+                        whiteLogoImg.src = c.toDataURL('image/png');
+                        console.log('White logo created from DOM: ' + c.width + 'x' + c.height);
+                    } catch(e) {
+                        console.warn('Failed to create white logo:', e);
+                        whiteLogoImg.src = domLogo.src;
+                    }
+                    resolve(true);
+                };
+                tempImg.onerror = function() { 
+                    console.warn('DOM logo load error');
+                    resolve(false); 
+                };
+                tempImg.src = domLogo.src;
+            } else {
+                console.warn('No logo found');
+                resolve(false);
+            }
+        }
+    });
+
+    var zplPages = [];
+
+    // รอ logo โหลดเสร็จก่อนเริ่ม process
+    logoReady.then(function(logoOk) {
+        console.log('Logo ready:', logoOk, 'Starting page processing...');
+        processPage(0);
+    });
+
+    function processPage(index) {
+        if (index >= pages.length) {
+            var zplContent = '';
+            zplPages.forEach(function(gfa) {
+                zplContent += '^XA\n^MD15\n^LH0,0\n^PW' + LABEL_WIDTH_DOTS + '\n^LL' + LABEL_HEIGHT_DOTS + '\n^LS0\n^FO0,0\n' + gfa + '\n^FS\n^XZ\n\n';
+            });
+            // ดึงเลขคดีจากหน้าเอกสาร
+            var caseNoEl = document.querySelector('.page .fd');
+            var caseNoText = '';
+            document.querySelectorAll('.page .fl').forEach(function(fl) {
+                if (fl.textContent.trim() === 'คดี') {
+                    var fd = fl.nextElementSibling;
+                    if (fd) caseNoText = fd.textContent.trim();
+                }
+            });
+            var safeCase = caseNoText.replace(/[\/\\:*?"<>|]/g, '_') || 'unknown';
+            var filename = 'วัตถุพยาน_' + safeCase + '.zpl';
+            
+            // iOS: ใช้ downloadFile ที่จะแสดง dialog
+            // Windows: ใช้ downloadFile ปกติ
+            downloadFile(filename, zplContent);
+            
+            // แสดงข้อความเฉพาะ Windows (iOS จะแสดง dialog แทน)
+            if (!isIOS) {
+                alert('ดาวน์โหลดไฟล์ .zpl สำเร็จ (' + pages.length + ' แผ่น)\nเปิดไฟล์ด้วยแอป Zebra เพื่อพิมพ์ผ่าน Bluetooth');
+            }
+            if (btn) { btn.disabled = false; btn.textContent = 'พิมพ์ด้วย Zebra ZQ521'; }
+            return;
+        }
+
+        var page = pages[index];
+        if (btn) { btn.textContent = 'กำลังสร้าง แผ่น ' + (index + 1) + '/' + pages.length + '...'; }
+
+        var delay = index === 0 ? 1200 : 200;
+        setTimeout(function() {
+            console.log('Processing page ' + (index+1) + ', size: ' + page.offsetWidth + 'x' + page.offsetHeight);
+            html2canvas(page, {
+                scale: 4,
+                useCORS: true,
+                allowTaint: true,  // อนุญาต taint เพื่อให้ iPad ทำงานได้
+                logging: true,
+                backgroundColor: '#ffffff',
+                imageTimeout: 15000,
+                width: page.offsetWidth,
+                height: page.offsetHeight,
+                onclone: function(clonedDoc) {
+                    // แปลง QR canvas เป็น img เพื่อกัน taint บน iPad Safari
+                    var origCanvases = page.querySelectorAll('canvas');
+                    var clonedCanvases = clonedDoc.querySelectorAll('.page')[index] ? clonedDoc.querySelectorAll('.page')[index].querySelectorAll('canvas') : [];
+                    clonedCanvases.forEach(function(cc, i) {
+                        try {
+                            var origC = origCanvases[i];
+                            if (origC) {
+                                var dataUrl = origC.toDataURL('image/png');
+                                var img = clonedDoc.createElement('img');
+                                img.src = dataUrl;
+                                img.style.width = cc.offsetWidth + 'px';
+                                img.style.height = cc.offsetHeight + 'px';
+                                if (cc.parentNode) cc.parentNode.replaceChild(img, cc);
+                            }
+                        } catch(e) { /* skip */ }
+                    });
+
+                    var clonedPage = clonedDoc.querySelectorAll('.page')[index];
+                    if (!clonedPage) return;
+
+                    // ซ่อน sidebar - จะวาดใหม่ด้วย canvas ทีหลัง
+                    var sb = clonedPage.querySelector('.sidebar');
+                    if (sb) {
+                        sb.style.visibility = 'hidden';
+                    }
+
+                    // บังคับสี table header
+                    clonedPage.querySelectorAll('.victim-table th, .evidence-table th, .custody-table th').forEach(function(th) {
+                        th.style.backgroundColor = '#f0e6d2';
+                        th.style.background = '#f0e6d2';
+                    });
+
+                    // บังคับ checkbox ให้อยู่ในกรอบ
+                    clonedPage.querySelectorAll('.cb').forEach(function(cb) {
+                        cb.style.fontFamily = 'Sarabun, sans-serif';
+                        cb.style.fontSize = '7px';
+                        cb.style.lineHeight = '8px';
+                        cb.style.width = '9px';
+                        cb.style.height = '9px';
+                        cb.style.overflow = 'hidden';
+                        cb.style.textAlign = 'center';
+                        cb.style.verticalAlign = 'middle';
+                        cb.style.padding = '0';
+                        cb.style.border = '1px solid #333';
+                        cb.style.display = 'inline-block';
+                        cb.style.boxSizing = 'border-box';
+                    });
+                }
+            }).then(function(fullCanvas) {
+                console.log('html2canvas success! Canvas size: ' + fullCanvas.width + 'x' + fullCanvas.height);
+                
+                // ตัดเฉพาะ content (ข้าม sidebar 22%)
+                var srcSidebarPx = Math.round(fullCanvas.width * 0.22);
+                var srcContentW = fullCanvas.width - srcSidebarPx;
+                var srcContentH = fullCanvas.height;
+
+                var finalCanvas = document.createElement('canvas');
+                finalCanvas.width = LABEL_WIDTH_DOTS;
+                finalCanvas.height = LABEL_HEIGHT_DOTS;
+                var fCtx = finalCanvas.getContext('2d');
+
+                // พื้นขาว
+                fCtx.fillStyle = '#ffffff';
+                fCtx.fillRect(0, 0, LABEL_WIDTH_DOTS, LABEL_HEIGHT_DOTS);
+
+                // === วาด SIDEBAR ด้วยฟังก์ชัน drawSidebarOnCanvas (ความละเอียดสูง 4x) ===
+                drawSidebarOnCanvas(fCtx, SIDEBAR_DOTS, LABEL_WIDTH_DOTS, LABEL_HEIGHT_DOTS, whiteLogoImg);
+
+                // === วาง Content จาก html2canvas ทางขวา ===
+                fCtx.drawImage(fullCanvas,
+                    srcSidebarPx, 0, srcContentW, srcContentH,
+                    SIDEBAR_DOTS, 0, CONTENT_DOTS, LABEL_HEIGHT_DOTS
+                );
+                console.log('Content drawn');
+
+                console.log('Generating ZPL GFA...');
+                var gfa = canvasToZplGfa(finalCanvas, LABEL_WIDTH_DOTS, LABEL_HEIGHT_DOTS);
+                console.log('ZPL GFA length: ' + gfa.length);
+                zplPages.push(gfa);
+                processPage(index + 1);
+            }).catch(function(err) {
+                console.error('html2canvas error:', err);
+                // ไม่แสดง alert - ไปใช้ server-side เลย
+                console.log('Switching to server-side ZPL generation...');
+                if (btn) { btn.textContent = 'กำลังสร้างไฟล์ (server)...'; }
+                printToZebraServerSide(btn);
+            });
+        }, delay);
+    }
+}
+
+// Fallback สำหรับ iPad: สร้าง ZPL จาก server แล้วดาวน์โหลด
+function printToZebraServerSide(btn) {
+    var urlParams = new URLSearchParams(window.location.search);
+    var incidentId = urlParams.get('incident_id');
+    if (!incidentId) {
+        alert('ไม่พบ incident_id');
+        if (btn) { btn.disabled = false; btn.textContent = 'พิมพ์ด้วย Zebra ZQ521'; }
+        return;
+    }
+    
+    var isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) || 
+                (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+    
+    fetch('/csims/api/incidentCheckList/gen_zpl_evidence.php?incident_id=' + incidentId)
+        .then(function(res) { return res.json(); })
+        .then(function(data) {
+            if (data.status === 'success' && data.download_url) {
+                if (isIOS) {
+                    // iOS/iPad: แสดง dialog ให้ user กดดาวน์โหลด
+                    _showIOSDownloadDialog(data.download_url, data.filename || 'evidence.zpl');
+                } else {
+                    // PC/Android: ใช้ <a> tag download
+                    var a = document.createElement('a');
+                    a.href = data.download_url;
+                    a.setAttribute('download', data.filename || 'evidence.zpl');
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                }
+            } else {
+                alert('เกิดข้อผิดพลาด: ' + (data.message || 'ไม่สามารถสร้างไฟล์ได้'));
+            }
+            if (btn) { btn.disabled = false; btn.textContent = 'พิมพ์ด้วย Zebra ZQ521'; }
+        })
+        .catch(function(err) {
+            alert('เกิดข้อผิดพลาด: ' + err.message);
+            if (btn) { btn.disabled = false; btn.textContent = 'พิมพ์ด้วย Zebra ZQ521'; }
+        });
+}
+
+document.querySelector('.no-print').innerHTML += '<button id="btnZebraPrint" class="btn-zebra" onclick="printToZebra()">พิมพ์ด้วย Zebra ZQ521</button>';
+</script>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        function autoFitContent() {
+            var fdElements = document.querySelectorAll('.fd-full, .fd, .fd-multiline');
+            fdElements.forEach(function(el) {
+                var text = el.textContent || el.innerText;
+                if (!text || text.trim() === '') return;
+                var textLength = text.length;
+                el.classList.remove('text-xs', 'text-sm', 'text-md');
+                if (textLength > 300) { el.classList.add('text-xs'); }
+                else if (textLength > 200) { el.classList.add('text-sm'); }
+                else if (textLength > 100) { el.classList.add('text-md'); }
+            });
+            var secBodies = document.querySelectorAll('.sec-body');
+            secBodies.forEach(function(secBody) {
+                if (secBody.scrollHeight > secBody.clientHeight + 10) {
+                    var ratio = secBody.clientHeight / secBody.scrollHeight;
+                    var newSize = Math.max(7, 11.5 * ratio);
+                    secBody.style.fontSize = newSize + 'px';
+                    secBody.style.lineHeight = '1.2';
+                }
+            });
+        }
+        setTimeout(autoFitContent, 100);
+        window.addEventListener('beforeprint', function() { autoFitContent(); });
+    });
+    </script>
+</body>
+</html>

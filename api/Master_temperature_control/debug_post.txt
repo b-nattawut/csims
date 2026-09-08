@@ -1,0 +1,468 @@
+2026-01-27 04:37:15
+Array
+(
+    [id] => 
+    [dpt_name] => พี่บาส on to rock
+    [thermometer_number] => sa11
+    [timeuse] => 20.10-25.10
+    [location_use] => บ้านพี่บาส
+    [menstruation] => 2026-01-01
+    [responsive_person_1] => พี่บาส on to rock
+    [responsive_person_2] => พี่บาส on to rock farm
+    [measurement_uncertainly] => 0.20
+    [start_times] => 
+    [end_times] => 
+    [measured_value] => 20.10
+    [status_remark] => normal
+)
+
+
+Parsed values:
+{"dpt_name":"พี่บาส on to rock","thermometer_number":"sa11","timeuse":"20.10-25.10","location_use":"บ้านพี่บาส","menstruation":"2026-01-01","measurement_uncertainly":"0.20","measured_value":"20.10"}
+
+2026-01-27 06:26:33
+Array
+(
+    [id] => 
+    [dpt_name] => บาส on the rock
+    [thermometer_number] => sss1
+    [timeuse] => 
+    [location_use] => บ้านพี่บาส on the rock
+    [menstruation] => 2026-01-01
+    [responsive_person_1] => 1
+    [responsive_person_2] => 3
+    [measurement_uncertainly] => 0.10
+    [start_times] => 13:25
+    [end_times] => 16:25
+    [measured_value] => 20.00
+    [status_remark] => abnormal
+)
+
+
+Parsed values:
+{"dpt_name":"บาส on the rock","thermometer_number":"sss1","timeuse":"","location_use":"บ้านพี่บาส on the rock","menstruation":"2026-01-01","measurement_uncertainly":"0.10","measured_value":"20.00"}
+
+2026-01-27 06:40:42
+Array
+(
+    [id] => 
+    [dpt_name] => พี่บาส  on fine
+    [thermometer_number] => 1145
+    [timeuse] => 
+    [location_use] => พี่บาส  on area
+    [menstruation] => 2026-01-01
+    [responsive_person_1] => 3
+    [responsive_person_2] => 1
+    [measurement_uncertainly] => 1.00
+    [start_times] => 13:40
+    [end_times] => 15:40
+    [measured_value] => 
+    [status_remark] => abnormal
+)
+
+
+Parsed values:
+{"dpt_name":"พี่บาส  on fine","thermometer_number":"1145","timeuse":"","location_use":"พี่บาส  on area","menstruation":"2026-01-01","measurement_uncertainly":"1.00","measured_value":""}
+
+2026-01-27 06:43:10
+Array
+(
+    [id] => 
+    [dpt_name] => พี่บาส on going
+    [thermometer_number] => faa
+    [timeuse] => 
+    [location_use] => พี่บาส on going
+    [menstruation] => 2026-01-01
+    [responsive_person_1] => 3
+    [responsive_person_2] => 1
+    [measurement_uncertainly] => 0.50
+    [start_times] => 13:42
+    [end_times] => 15:42
+    [measured_value] => 20.50
+    [status_remark] => abnormal
+)
+
+
+Parsed values:
+{"dpt_name":"พี่บาส on going","thermometer_number":"faa","timeuse":null,"location_use":"พี่บาส on going","menstruation":"2026-01-01","measurement_uncertainly":"0.50","measured_value":"20.50"}
+
+2026-01-27 07:55:11
+Array
+(
+    [id] => 
+    [dpt_name] => bas  bm
+    [thermometer_number] => 1112
+    [timeuse] => 
+    [location_use] => homemle
+    [menstruation] => 2026-01-01
+    [responsive_person_1] => 3
+    [responsive_person_2] => 1
+    [measurement_uncertainly] => 0.50
+    [start_times] => 14:54
+    [end_times] => 03:54
+    [measured_value] => 20.10
+    [status_remark] => normal
+)
+
+
+Parsed values:
+{"dpt_name":"bas  bm","thermometer_number":"1112","timeuse":null,"location_use":"homemle","menstruation":"2026-01-01","measurement_uncertainly":"0.50","measured_value":"20.10"}
+
+2026-01-27 07:56:45
+Array
+(
+    [id] => 
+    [dpt_name] => bas  bm
+    [thermometer_number] => 1112
+    [timeuse] => 
+    [location_use] => homemle
+    [menstruation] => 2026-01-01
+    [responsive_person_1] => 3
+    [responsive_person_2] => 1
+    [measurement_uncertainly] => 0.50
+    [start_times] => 14:54
+    [end_times] => 03:54
+    [measured_value] => 20.10
+    [status_remark] => normal
+)
+
+
+Parsed values:
+{"dpt_name":"bas  bm","thermometer_number":"1112","timeuse":null,"location_use":"homemle","menstruation":"2026-01-01","measurement_uncertainly":"0.50","measured_value":"20.10"}
+
+2026-01-27 07:57:10
+Array
+(
+    [id] => 
+    [dpt_name] => asdsadsad
+    [thermometer_number] => 5555
+    [timeuse] => 
+    [location_use] => asdasd
+    [menstruation] => 2026-01-01
+    [responsive_person_1] => 3
+    [responsive_person_2] => 1
+    [measurement_uncertainly] => 0.10
+    [start_times] => 14:56
+    [end_times] => 02:56
+    [measured_value] => 20.10
+    [status_remark] => normal
+    [log_date] => 27
+    [log_time] => 14:56
+    [log_recorder] => 3
+)
+
+
+Parsed values:
+{"dpt_name":"asdsadsad","thermometer_number":"5555","timeuse":null,"location_use":"asdasd","menstruation":"2026-01-01","measurement_uncertainly":"0.10","measured_value":"20.10"}
+
+2026-01-27 07:59:49
+Array
+(
+    [id] => 
+    [dpt_name] => sad
+    [thermometer_number] => asdasd
+    [timeuse] => 
+    [location_use] => ASDSADSAD
+    [menstruation] => 2026-01-01
+    [responsive_person_1] => 3
+    [responsive_person_2] => 1
+    [measurement_uncertainly] => 0.10
+    [start_times] => 14:59
+    [end_times] => 16:59
+    [measured_value] => 20.50
+    [status_remark] => normal
+    [log_date] => 27
+    [log_time] => 14:59
+    [log_recorder] => 3
+)
+
+
+Parsed values:
+{"dpt_name":"sad","thermometer_number":"asdasd","timeuse":null,"location_use":"ASDSADSAD","menstruation":"2026-01-01","measurement_uncertainly":"0.10","measured_value":"20.50"}
+
+2026-01-27 08:01:28
+Array
+(
+    [id] => 
+    [dpt_name] => test
+    [thermometer_number] => aaaa
+    [timeuse] => 
+    [location_use] => AAA
+    [menstruation] => 2026-01-01
+    [responsive_person_1] => 3
+    [responsive_person_2] => 1
+    [measurement_uncertainly] => 0.20
+    [start_times] => 15:01
+    [end_times] => 03:01
+    [measured_value] => 20.10
+    [status_remark] => normal
+)
+
+
+Parsed values:
+{"dpt_name":"test","thermometer_number":"aaaa","timeuse":null,"location_use":"AAA","menstruation":"2026-01-01","measurement_uncertainly":"0.20","measured_value":"20.10"}
+
+2026-01-27 08:20:04
+Array
+(
+    [id] => 
+    [dpt_name] => bas barber
+    [thermometer_number] => 112
+    [timeuse] => 
+    [location_use] => home
+    [menstruation] => 2026-01-01
+    [responsive_person_1] => 3
+    [responsive_person_2] => 1
+    [measurement_uncertainly] => 0.50
+    [start_times] => 15:19
+    [end_times] => 03:19
+    [measured_value] => 20.50
+    [status_remark] => abnormal
+)
+
+
+Parsed values:
+{"dpt_name":"bas barber","thermometer_number":"112","timeuse":null,"location_use":"home","menstruation":"2026-01-01","measurement_uncertainly":"0.50","measured_value":"20.50"}
+
+2026-01-27 08:25:51
+Array
+(
+    [id] => 
+    [dpt_name] => asd
+    [thermometer_number] => asdad
+    [timeuse] => 2026-01-27 15:25:00
+    [location_use] => asdasd
+    [menstruation] => 2026-01-01
+    [responsive_person_1] => 3
+    [responsive_person_2] => 1
+    [measurement_uncertainly] => 0.50
+    [start_times] => 15:25
+    [end_times] => 16:25
+    [measured_value] => 20.00
+    [status_remark] => abnormal
+)
+
+
+Parsed values:
+{"dpt_name":"asd","thermometer_number":"asdad","timeuse":"2026-01-27 15:25:00","location_use":"asdasd","menstruation":"2026-01-01","measurement_uncertainly":"0.50","measured_value":"20.00"}
+
+2026-01-27 09:01:18
+Array
+(
+    [id] => 
+    [dpt_name] => asdasdsad
+    [thermometer_number] => 11112
+    [timeuse] => 2026-01-27 16:00:00
+    [location_use] => asdsadsad
+    [menstruation] => 2026-01-01
+    [responsive_person_1] => 3
+    [responsive_person_2] => 1
+    [measurement_uncertainly] => 0.20
+    [start_times] => 16:00
+    [end_times] => 18:00
+    [measured_value] => 19.00
+    [status_remark] => abnormal
+)
+
+
+Parsed values:
+{"dpt_name":"asdasdsad","thermometer_number":"11112","timeuse":"2026-01-27 16:00:00","location_use":"asdsadsad","menstruation":"2026-01-01","measurement_uncertainly":"0.20","measured_value":"19.00"}
+
+2026-01-27 10:15:33
+Array
+(
+    [record_id] => 
+    [dpt_name] => rgdg
+    [thermometer_number] => 555
+    [report_month_select] => 1
+    [report_year_select] => 2569
+    [location_use] => 444
+    [start_times] => 17:16
+    [end_times] => 17:17
+    [measurement_uncertainly] => 50.00
+    [responsible_1] => 3
+    [responsible_2] => 3
+    [temperature_val] => 50
+    [log_status] => normal
+)
+
+
+Parsed values:
+{"dpt_name":"rgdg","thermometer_number":"555","timeuse":null,"location_use":"444","menstruation":null,"measurement_uncertainly":"50.00","measured_value":null}
+
+2026-01-28 01:43:01
+Array
+(
+    [record_id] => 
+    [dpt_name] => sadsad
+    [thermometer_number] => sadsadasd
+    [report_month_select] => 1
+    [report_year_select] => 2569
+    [location_use] => aasdasd
+    [start_times] => 08:42
+    [end_times] => 20:42
+    [measurement_uncertainly] => 0.50
+    [responsible_1] => 3
+    [responsible_2] => 1
+    [temperature_val] => 20.1
+    [log_status] => normal
+)
+
+
+Parsed values:
+{"dpt_name":"sadsad","thermometer_number":"sadsadasd","timeuse":null,"location_use":"aasdasd","menstruation":null,"measurement_uncertainly":"0.50","measured_value":null}
+
+2026-01-28 01:45:21
+Array
+(
+    [record_id] => 
+    [dpt_name] => asdasdsad
+    [thermometer_number] => asdsadsad
+    [report_month_select] => 1
+    [report_year_select] => 2569
+    [location_use] => 0.5
+    [start_times] => 08:45
+    [end_times] => 20:45
+    [measurement_uncertainly] => 0.20
+    [responsible_1] => 3
+    [responsible_2] => 1
+    [temperature_val] => 30
+    [log_status] => normal
+)
+
+
+Parsed values:
+{"dpt_name":"asdasdsad","thermometer_number":"asdsadsad","timeuse":null,"location_use":"0.5","menstruation":null,"measurement_uncertainly":"0.20","measured_value":null}
+
+2026-01-28 01:48:46
+Array
+(
+    [record_id] => 
+    [dpt_name] => asdasdsad
+    [thermometer_number] => asdsadsad
+    [report_month_select] => 1
+    [report_year_select] => 2569
+    [location_use] => asdasd
+    [start_times] => 08:48
+    [end_times] => 08:50
+    [measurement_uncertainly] => 0.50
+    [responsible_1] => 3
+    [responsible_2] => 1
+    [temperature_val] => 19.00
+    [log_status] => normal
+)
+
+
+Parsed values:
+{"dpt_name":"asdasdsad","thermometer_number":"asdsadsad","timeuse":null,"location_use":"asdasd","menstruation":null,"measurement_uncertainly":"0.50","measured_value":null}
+
+2026-01-28 01:53:13
+Array
+(
+    [record_id] => 
+    [dpt_name] => asdasdas
+    [thermometer_number] => fffff
+    [report_month_select] => 1
+    [report_year_select] => 2569
+    [location_use] => asdasdasd
+    [start_times] => 08:53
+    [end_times] => 08:56
+    [measurement_uncertainly] => 0.5
+    [responsible_1] => 3
+    [responsible_2] => 1
+    [temperature_val] => 11
+    [log_status] => abnormal
+)
+
+
+Parsed values:
+{"dpt_name":"asdasdas","thermometer_number":"fffff","timeuse":null,"location_use":"asdasdasd","menstruation":null,"measurement_uncertainly":"0.5","measured_value":null}
+
+2026-01-28 01:53:17
+Array
+(
+    [record_id] => 
+    [dpt_name] => asdasdas
+    [thermometer_number] => fffff
+    [report_month_select] => 1
+    [report_year_select] => 2569
+    [location_use] => asdasdasd
+    [start_times] => 08:53
+    [end_times] => 08:56
+    [measurement_uncertainly] => 0.5
+    [responsible_1] => 3
+    [responsible_2] => 1
+    [temperature_val] => 11
+    [log_status] => abnormal
+)
+
+
+Parsed values:
+{"dpt_name":"asdasdas","thermometer_number":"fffff","timeuse":null,"location_use":"asdasdasd","menstruation":null,"measurement_uncertainly":"0.5","measured_value":null}
+
+2026-01-28 01:53:31
+Array
+(
+    [record_id] => 
+    [dpt_name] => 
+    [thermometer_number] => 
+    [report_month_select] => 1
+    [report_year_select] => 2569
+    [location_use] => 
+    [start_times] => 
+    [end_times] => 
+    [measurement_uncertainly] => 
+    [responsible_1] => 
+    [responsible_2] => 
+    [temperature_val] => 
+    [log_status] => normal
+)
+
+
+Parsed values:
+{"dpt_name":"","thermometer_number":"","timeuse":null,"location_use":"","menstruation":null,"measurement_uncertainly":null,"measured_value":null}
+
+2026-01-28 01:59:57
+Array
+(
+    [record_id] => 
+    [dpt_name] => 
+    [thermometer_number] => 
+    [report_month_select] => 1
+    [report_year_select] => 2569
+    [location_use] => 
+    [start_times] => 
+    [end_times] => 
+    [measurement_uncertainly] => 
+    [responsible_1] => 
+    [responsible_2] => 
+    [temperature_val] => 
+    [log_status] => normal
+)
+
+
+Parsed values:
+{"dpt_name":"","thermometer_number":"","timeuse":null,"location_use":"","menstruation":null,"measurement_uncertainly":null,"measured_value":null}
+
+2026-01-28 02:05:50
+Array
+(
+    [id] => 
+    [dpt_name] => sadasdasd
+    [thermometer_number] => asdasd
+    [timeuse] => 2026-01-28 09:05:00
+    [location_use] => gggg
+    [menstruation] => 2026-01-01
+    [responsive_person_1] => 3
+    [responsive_person_2] => 1
+    [measurement_uncertainly] => 1.00
+    [start_times] => 09:05
+    [end_times] => 10:05
+    [measured_value] => 9
+    [status_remark] => normal
+)
+
+
+Parsed values:
+{"dpt_name":"sadasdasd","thermometer_number":"asdasd","timeuse":"2026-01-28 09:05:00","location_use":"gggg","menstruation":"2026-01-01","measurement_uncertainly":"1.00","measured_value":"9"}
+

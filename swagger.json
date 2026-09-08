@@ -1,0 +1,173 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "CSIMS API",
+    "version": "1.0.0"
+  },
+  "servers": [
+    {
+      "url": "https://csims.ppunix.org/csims/api",
+      "description": "Production Server (Public)"
+    },
+    {
+      "url": "http://192.168.0.95/csims/api",
+      "description": "Local Server (Internal)"
+    }
+  ],
+  "paths": {
+    "/user_auth.php": {
+      "post": {
+        "summary": "Authenticate user",
+        "description": "ตรวจสอบผู้ใช้จาก email และ password ถ้าสำเร็จจะคืนข้อมูล session และรายละเอียดผู้ใช้",
+        "tags": ["Authentication"],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "required": ["email", "password"],
+                "properties": {
+                  "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "123456"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Login successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Login successful"
+                    },
+                    "session": {
+                      "type": "string",
+                      "example": "Session stored"
+                    },
+                    "user_id": { "type": "integer", "example": 1 },
+                    "role": { "type": "string", "example": "admin" },
+                    "member_email": {
+                      "type": "string",
+                      "example": "user@example.com"
+                    },
+                    "member_tel": { "type": "string", "example": "0812345678" },
+                    "title_id": { "type": "integer", "example": 2 },
+                    "member_firstname": {
+                      "type": "string",
+                      "example": "Somchai"
+                    },
+                    "department_id": { "type": "integer", "example": 5 },
+                    "organization_id": { "type": "integer", "example": 10 },
+                    "title": { "type": "string", "example": "นาย" }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Missing email or password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Missing email or password!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Invalid username or password",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Invalid username or password!"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Database connection failed"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/logout.php": {
+      "post": {
+        "summary": "Logout user",
+        "description": "ทำการ logout ผู้ใช้ โดยล้าง session และคืนค่า JSON ตอบกลับ",
+        "tags": ["Authentication"],
+        "responses": {
+          "200": {
+            "description": "Logout successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "Logout successful"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal server error",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "example": "Unexpected error occurred"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

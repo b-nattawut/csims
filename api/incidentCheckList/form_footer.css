@@ -1,0 +1,58 @@
+/**
+ * form_footer.css — สไตล์ footer ร่างรายงาน (ตามแบบฟอร์ม)
+ */
+.form-footer {
+    margin-top: auto;
+    padding: 10px 0 8px 0;
+    border-bottom: 1px solid #BFBFBF;
+    font-size: 11px;
+    color: #808080;
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    font-weight: 400;
+    flex-shrink: 0;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+}
+
+.form-footer-left,
+.form-footer-right,
+.form-footer-left-bottom,
+.form-footer-right-bottom {
+    color: #808080 !important;
+    font-weight: 400 !important;
+    font-size: 11px;
+    line-height: 1.45;
+}
+
+.form-footer .sub-heading-bottom {
+    margin-left: 0 !important;
+    font-weight: 400 !important;
+}
+
+.form-footer-left,
+.form-footer-left-bottom {
+    flex: 1;
+}
+
+.form-footer-right,
+.form-footer-right-bottom {
+    text-align: right;
+    white-space: normal;
+    line-height: 1.45;
+}
+
+@media print {
+    .form-footer {
+        border-bottom: 1px solid #BFBFBF !important;
+        color: #808080 !important;
+    }
+
+    .form-footer-left,
+    .form-footer-right,
+    .form-footer-left-bottom,
+    .form-footer-right-bottom {
+        color: #808080 !important;
+    }
+}

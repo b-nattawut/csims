@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ยืนยันตัวตน OTP | CSIMS</title>
+    <style>
+        @font-face {
+            font-family: 'Sarabun';
+            src: url('fonts/Sarabun/Sarabun-Regular.ttf') format('truetype');
+        }
+
+        *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+        :root {
+            --bg: #080c14;
+            --surface: #0e1420;
+            --surface2: #131926;
+            --accent: #00d4ff;
+            --accent2: #0057ff;
+            --danger: #ff4d6d;
+            --success: #00e676;
+            --text: #e8edf5;
+            --text-muted: #6b7a99;
+            --border: rgba(0, 212, 255, 0.12);
+            --glow: rgba(0, 212, 255, 0.25);
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            position: relative;
+        }
+
+        /* === BACKGROUND === */
+        .bg-grid {
+            position: fixed; inset: 0;
+            background-image:
+                linear-gradient(rgba(0,212,255,0.04) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0,212,255,0.04) 1px, transparent 1px);
+            background-size: 40px 40px;
+            pointer-events: none; z-index: 0;
+        }
+
+        .orb {
+            position: fixed; border-radius: 50%;
+            filter: blur(80px); pointer-events: none; z-index: 0;
+        }
+        .orb-1 {
+            width: 500px; height: 500px;
+            background: radial-gradient(circle, rgba(0,87,255,0.18) 0%, transparent 70%);
+            top: -150px; left: -150px;
+            animation: driftA 12s ease-in-out infinite alternate;
+        }
+        .orb-2 {
+            width: 400px; height: 400px;
+            background: radial-gradient(circle, rgba(0,212,255,0.12) 0%, transparent 70%);
+            bottom: -100px; right: -100px;
+            animation: driftB 15s ease-in-out infinite alternate;
+        }
+        .orb-3 {
+            width: 250px; height: 250px;
+            background: radial-gradient(circle, rgba(255,77,109,0.08) 0%, transparent 70%);
+            top: 50%; left: 60%;
+            animation: driftC 18s ease-in-out infinite alternate;
+        }
+
+        @keyframes driftA { from { transform: translate(0,0); } to { transform: translate(60px, 40px); } }
+        @keyframes driftB { from { transform: translate(0,0); } to { transform: translate(-50px, -30px); } }
+        @keyframes driftC { from { transform: translate(0,0); } to { transform: translate(-40px, 50px); } }
+
+        .scanline {
+            position: fixed; inset: 0;
+            background: repeating-linear-gradient(0deg, transparent, transparent 3px, rgba(0,0,0,0.04) 3px, rgba(0,0,0,0.04) 4px);
+            pointer-events: none; z-index: 1;
+        }
+
+        /* === CARD === */
+        .card {
+            position: relative; z-index: 10;
+            width: 460px; max-width: 95vw;
+            background: var(--surface);
+            border: 1px solid var(--border);
+            border-radius: 20px;
+            padding: 48px 44px;
+            box-shadow:
+                0 0 0 1px rgba(0,212,255,0.06),
+                0 40px 80px rgba(0,0,0,0.6),
+                0 0 60px rgba(0,87,255,0.08);
+            animation: cardIn 0.7s cubic-bezier(0.22,1,0.36,1) both;
+        }
+        @keyframes cardIn {
+            from { opacity: 0; transform: translateY(30px) scale(0.97); }
+            to { opacity: 1; transform: translateY(0) scale(1); }
+        }
+        .card::before, .card::after {
+            content: ''; position: absolute;
+            width: 24px; height: 24px;
+            border-color: var(--accent); border-style: solid;
+        }
+        .card::before { top: -1px; left: -1px; border-width: 2px 0 0 2px; border-radius: 20px 0 0 0; }
+        .card::after { bottom: -1px; right: -1px; border-width: 0 2px 2px 0; border-radius: 0 0 20px 0; }
+
+        /* === HEADER === */
+        .header {
+            text-align: center;
+            margin-bottom: 36px;
+            animation: fadeUp 0.6s 0.15s both;
+        }
+
+        @keyframes fadeUp {
+            from { opacity: 0; transform: translateY(12px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .icon-ring {
+            display: inline-flex;
+            align-items: center; justify-content: center;
+            width: 90px; height: 90px;
+            border-radius: 50%;
+            background: radial-gradient(circle at 35% 35%, rgba(0,212,255,0.15), rgba(0,87,255,0.05));
+            border: 1px solid rgba(0,212,255,0.3);
+            margin-bottom: 22px;
+            position: relative;
+            box-shadow: 0 0 30px rgba(0,212,255,0.15);
+        }
+        .icon-ring::before {
+            content: ''; position: absolute; inset: -4px;
+            border-radius: 50%;
+            border: 1px solid rgba(0,212,255,0.1);
+            animation: spinRing 8s linear infinite;
+            border-top-color: rgba(0,212,255,0.4);
+        }
+        @keyframes spinRing {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+
+        .icon-ring svg {
+            width: 42px; height: 42px;
+            color: var(--accent);
+            filter: drop-shadow(0 0 8px rgba(0,212,255,0.5));
+        }
+
+        .title {
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .subtitle {
+            font-size: 14px;
+            color: var(--text-muted);
+            line-height: 1.6;
+        }
+        .subtitle .email-highlight {
+            color: var(--accent);
+            font-weight: 600;
+        }
+
+        /* === DIVIDER === */
+        .divider {
+            height: 1px;
+            background: linear-gradient(90deg, transparent, var(--border), transparent);
+            margin-bottom: 32px;
+        }
+
+        /* === OTP LABEL === */
+        .otp-label {
+            display: flex; align-items: center; gap: 8px;
+            font-size: 13px; font-weight: 600;
+            color: var(--accent);
+            letter-spacing: 0.8px;
+            text-transform: uppercase;
+            margin-bottom: 16px;
+            animation: fadeUp 0.6s 0.3s both;
+        }
+        .otp-label svg {
+            width: 16px; height: 16px; opacity: 0.8;
+        }
+
+        /* === OTP INPUTS === */
+        .otp-container {
+            display: flex;
+            gap: 12px;
+            justify-content: center;
+            margin-bottom: 28px;
+            animation: fadeUp 0.6s 0.35s both;
+        }
+
+        .otp-input {
+            width: 52px; height: 62px;
+            background: var(--surface2);
+            border: 1.5px solid rgba(255,255,255,0.07);
+            border-radius: 12px;
+            text-align: center;
+            font-family: 'Sarabun', sans-serif;
+            font-size: 24px;
+            font-weight: 700;
+            color: var(--text);
+            outline: none;
+            transition: border-color 0.25s, box-shadow 0.25s, transform 0.15s;
+            caret-color: var(--accent);
+        }
+        .otp-input::placeholder {
+            color: var(--text-muted); opacity: 0.3;
+            font-size: 28px;
+        }
+        .otp-input:focus {
+            border-color: rgba(0,212,255,0.5);
+            box-shadow: 0 0 0 3px rgba(0,212,255,0.08), 0 0 20px rgba(0,212,255,0.06);
+            transform: translateY(-2px);
+        }
+        .otp-input.filled {
+            border-color: rgba(0,212,255,0.35);
+            background: rgba(0,212,255,0.04);
+        }
+        .otp-input.error {
+            border-color: var(--danger);
+            box-shadow: 0 0 0 3px rgba(255,77,109,0.1);
+            animation: shake 0.4s ease;
+        }
+        .otp-input.success {
+            border-color: var(--success);
+            box-shadow: 0 0 0 3px rgba(0,230,118,0.1);
+        }
+
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            25% { transform: translateX(-6px); }
+            50% { transform: translateX(6px); }
+            75% { transform: translateX(-4px); }
+        }
+
+        /* === TIMER === */
+        .timer-section {
+            text-align: center;
+            margin-bottom: 32px;
+            animation: fadeUp 0.6s 0.4s both;
+        }
+        .timer-text {
+            font-size: 13px;
+            color: var(--text-muted);
+        }
+        .timer-text .countdown {
+            color: var(--accent);
+            font-weight: 700;
+            font-variant-numeric: tabular-nums;
+        }
+        .resend-btn {
+            display: none;
+            background: none; border: none;
+            color: var(--accent);
+            font-family: 'Sarabun', sans-serif;
+            font-size: 14px; font-weight: 600;
+            cursor: pointer;
+            padding: 4px 8px;
+            border-radius: 6px;
+            transition: background 0.2s;
+        }
+        .resend-btn:hover {
+            background: rgba(0,212,255,0.08);
+        }
+
+        /* === VERIFY BUTTON === */
+        .btn-verify {
+            width: 100%;
+            padding: 15px;
+            border: none;
+            border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent2), var(--accent));
+            color: #fff;
+            font-family: 'Sarabun', sans-serif;
+            font-size: 16px;
+            font-weight: 700;
+            letter-spacing: 1px;
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            transition: transform 0.15s, box-shadow 0.3s, opacity 0.3s;
+            box-shadow: 0 4px 20px rgba(0,87,255,0.3);
+            animation: fadeUp 0.6s 0.45s both;
+        }
+        .btn-verify:hover:not(:disabled) {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 30px rgba(0,87,255,0.4);
+        }
+        .btn-verify:active:not(:disabled) {
+            transform: translateY(0);
+        }
+        .btn-verify:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .btn-verify::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent);
+            transform: translateX(-100%);
+            transition: transform 0.6s;
+        }
+        .btn-verify:hover::after {
+            transform: translateX(100%);
+        }
+
+        /* === BACK LINK === */
+        .back-link {
+            text-align: center;
+            margin-top: 20px;
+            animation: fadeUp 0.6s 0.5s both;
+        }
+        .back-link a {
+            color: var(--text-muted);
+            font-size: 13px;
+            text-decoration: none;
+            transition: color 0.2s;
+        }
+        .back-link a:hover {
+            color: var(--accent);
+        }
+
+        /* === STATUS MESSAGE === */
+        .status-msg {
+            text-align: center;
+            font-size: 13px;
+            min-height: 20px;
+            margin-bottom: 8px;
+            transition: opacity 0.3s;
+        }
+        .status-msg.error { color: var(--danger); }
+        .status-msg.success { color: var(--success); }
+
+        /* === LOADING SPINNER === */
+        .spinner {
+            display: none;
+            width: 20px; height: 20px;
+            border: 2.5px solid rgba(255,255,255,0.3);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.6s linear infinite;
+            margin: 0 auto;
+        }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        /* === RESPONSIVE === */
+        @media (max-width: 480px) {
+            .card { padding: 36px 24px; }
+            .otp-input { width: 44px; height: 54px; font-size: 20px; }
+            .otp-container { gap: 8px; }
+            .title { font-size: 20px; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Background Effects -->
+    <div class="bg-grid"></div>
+    <div class="orb orb-1"></div>
+    <div class="orb orb-2"></div>
+    <div class="orb orb-3"></div>
+    <div class="scanline"></div>
+
+    <!-- Main Card -->
+    <div class="card">
+        <div class="header">
+            <div class="icon-ring">
+                <!-- Email / Shield Icon -->
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="2" y="4" width="20" height="16" rx="3"/>
+                    <polyline points="2,4 12,13 22,4"/>
+                </svg>
+            </div>
+            <div class="title">ยืนยันรหัส OTP</div>
+            <div class="subtitle">
+                ระบบได้ส่งรหัส OTP 6 หลัก ไปยังอีเมล<br>
+                <span class="email-highlight" id="maskedEmail">กำลังโหลด...</span>
+            </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <!-- OTP Label -->
+        <div class="otp-label">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"/>
+                <path d="M7 11V7a5 5 0 0110 0v4"/>
+            </svg>
+            กรอกรหัส OTP 6 หลัก
+        </div>
+
+        <!-- OTP Inputs -->
+        <div class="otp-container" id="otpContainer">
+            <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]" autocomplete="one-time-code" placeholder="–" data-index="0">
+            <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]" placeholder="–" data-index="1">
+            <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]" placeholder="–" data-index="2">
+            <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]" placeholder="–" data-index="3">
+            <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]" placeholder="–" data-index="4">
+            <input type="text" class="otp-input" maxlength="1" inputmode="numeric" pattern="[0-9]" placeholder="–" data-index="5">
+        </div>
+
+        <!-- Status Message -->
+        <div class="status-msg" id="statusMsg"></div>
+
+        <!-- Timer / Resend -->
+        <div class="timer-section">
+            <span class="timer-text" id="timerText">
+                ส่งรหัสอีกครั้งใน <span class="countdown" id="countdown">2:00</span>
+            </span>
+            <button type="button" class="resend-btn" id="resendBtn" onclick="handleResend()">
+                <svg style="width:14px;height:14px;vertical-align:middle;margin-right:4px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/>
+                </svg>
+                ส่งรหัส OTP อีกครั้ง
+            </button>
+        </div>
+
+        <!-- Verify Button -->
+        <button type="button" class="btn-verify" id="btnVerify" disabled onclick="handleVerify()">
+            <span id="btnText">ยืนยันรหัส OTP</span>
+            <div class="spinner" id="btnSpinner"></div>
+        </button>
+
+        <!-- Back to login -->
+        <div class="back-link">
+            <a href="login.html">← กลับไปหน้าเข้าสู่ระบบ</a>
+        </div>
+    </div>
+
+    <script>
+    (function() {
+        // === OTP Input Logic ===
+        const inputs = document.querySelectorAll('.otp-input');
+        const btnVerify = document.getElementById('btnVerify');
+
+        inputs.forEach((input, idx) => {
+            // Only allow digits
+            input.addEventListener('input', function(e) {
+                this.value = this.value.replace(/\D/g, '');
+                if (this.value.length === 1) {
+                    this.classList.add('filled');
+                    this.classList.remove('error');
+                    // Move to next
+                    if (idx < inputs.length - 1) {
+                        inputs[idx + 1].focus();
+                    }
+                } else {
+                    this.classList.remove('filled');
+                }
+                updateVerifyButton();
+            });
+
+            // Backspace → move to prev
+            input.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && !this.value && idx > 0) {
+                    inputs[idx - 1].focus();
+                    inputs[idx - 1].value = '';
+                    inputs[idx - 1].classList.remove('filled');
+                    updateVerifyButton();
+                }
+                // Arrow keys
+                if (e.key === 'ArrowLeft' && idx > 0) {
+                    e.preventDefault();
+                    inputs[idx - 1].focus();
+                }
+                if (e.key === 'ArrowRight' && idx < inputs.length - 1) {
+                    e.preventDefault();
+                    inputs[idx + 1].focus();
+                }
+            });
+
+            // Select all text on focus
+            input.addEventListener('focus', function() {
+                this.select();
+            });
+
+            // Handle paste
+            input.addEventListener('paste', function(e) {
+                e.preventDefault();
+                const paste = (e.clipboardData || window.clipboardData).getData('text').replace(/\D/g, '');
+                if (paste.length >= 6) {
+                    inputs.forEach((inp, i) => {
+                        inp.value = paste[i] || '';
+                        if (inp.value) inp.classList.add('filled');
+                        else inp.classList.remove('filled');
+                    });
+                    inputs[5].focus();
+                    updateVerifyButton();
+                }
+            });
+        });
+
+        function updateVerifyButton() {
+            const code = getOtpCode();
+            btnVerify.disabled = code.length !== 6;
+        }
+
+        function getOtpCode() {
+            return Array.from(inputs).map(i => i.value).join('');
+        }
+
+        // === Countdown Timer ===
+        let timeLeft = 120; // 2 minutes
+        const countdownEl = document.getElementById('countdown');
+        const timerText = document.getElementById('timerText');
+        const resendBtn = document.getElementById('resendBtn');
+
+        function updateTimer() {
+            const min = Math.floor(timeLeft / 60);
+            const sec = timeLeft % 60;
+            countdownEl.textContent = min + ':' + String(sec).padStart(2, '0');
+
+            if (timeLeft <= 0) {
+                timerText.style.display = 'none';
+                resendBtn.style.display = 'inline-block';
+                return;
+            }
+            timeLeft--;
+            setTimeout(updateTimer, 1000);
+        }
+        updateTimer();
+
+        // === รับ user_id และ email จาก sessionStorage เท่านั้น (ไม่ใช้ URL params) ===
+        const otpUserId = sessionStorage.getItem('otp_user_id') || '';
+        const otpEmail  = sessionStorage.getItem('otp_email')   || '';
+
+        // ถ้าไม่มี user_id / email → กลับไปหน้า login
+        if (!otpUserId || !otpEmail) {
+            window.location.href = 'login.html';
+        }
+
+        // แสดง masked email ของ user
+        const maskedEmailEl = document.getElementById('maskedEmail');
+        const savedMaskedEmail = sessionStorage.getItem('otp_masked_email');
+        const savedTestOtp = sessionStorage.getItem('test_otp');
+
+        if (savedMaskedEmail) {
+            maskedEmailEl.textContent = savedMaskedEmail;
+        }
+
+        // ถ้า TEST MODE → แสดง OTP บนจอ
+        if (savedTestOtp) {
+            showStatus('TEST MODE — รหัส OTP: ' + savedTestOtp, 'success');
+            sessionStorage.removeItem('test_otp');
+        }
+        // ไม่ต้องเรียก sendOtp ตอนโหลดหน้า เพราะ OTP ถูกส่งจาก login.html แล้ว
+
+        // === ฟังก์ชันเรียก API ส่ง OTP ===
+        function sendOtp(isInitial) {
+            fetch('api/send_otp.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ user_id: parseInt(otpUserId), email: otpEmail })
+            })
+            .then(r => r.json())
+            .then(res => {
+                if (res.success) {
+                    if (res.masked_email) {
+                        maskedEmailEl.textContent = res.masked_email;
+                    }
+                    // Test Mode: แสดง OTP บนหน้าจอ
+                    if (res.test_otp) {
+                        showStatus('TEST MODE — รหัส OTP: ' + res.test_otp, 'success');
+                    } else if (!isInitial) {
+                        showStatus('ส่งรหัส OTP ไปยังอีเมลของคุณแล้ว', 'success');
+                        setTimeout(() => showStatus(''), 3000);
+                    }
+                } else {
+                    showStatus(res.message || 'ไม่สามารถส่ง OTP ได้', 'error');
+                }
+            })
+            .catch(() => {
+                showStatus('เกิดข้อผิดพลาดในการส่ง OTP', 'error');
+            });
+        }
+
+        // === Resend OTP ===
+        window.handleResend = function() {
+            resendBtn.style.display = 'none';
+            timerText.style.display = 'inline';
+            timeLeft = 120;
+            updateTimer();
+
+            // Clear inputs
+            inputs.forEach(inp => {
+                inp.value = '';
+                inp.classList.remove('filled', 'error', 'success');
+            });
+            inputs[0].focus();
+            btnVerify.disabled = true;
+
+            sendOtp(false);
+        };
+
+        // === Verify OTP ===
+        window.handleVerify = function() {
+            const code = getOtpCode();
+            if (code.length !== 6) return;
+
+            const btnText = document.getElementById('btnText');
+            const spinner = document.getElementById('btnSpinner');
+
+            // Show loading
+            btnText.style.display = 'none';
+            spinner.style.display = 'block';
+            btnVerify.disabled = true;
+
+            fetch('api/verify_otp.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    user_id: parseInt(otpUserId),
+                    email: otpEmail,
+                    otp_code: code
+                })
+            })
+            .then(r => r.json())
+            .then(res => {
+                spinner.style.display = 'none';
+                btnText.style.display = 'inline';
+
+                if (res.success) {
+                    inputs.forEach(inp => inp.classList.add('success'));
+                    showStatus('ยืนยันตัวตนสำเร็จ! กำลังเข้าสู่ระบบ...', 'success');
+                    // ลบข้อมูล OTP ออกจาก sessionStorage
+                    sessionStorage.removeItem('otp_user_id');
+                    sessionStorage.removeItem('otp_email');
+                    sessionStorage.removeItem('otp_masked_email');
+                    setTimeout(() => {
+                        window.location.href = res.redirect || 'dashboard.php';
+                    }, 1500);
+                } else {
+                    inputs.forEach(inp => inp.classList.add('error'));
+                    showStatus(res.message || 'รหัส OTP ไม่ถูกต้อง', 'error');
+
+                    // ถ้าถูกล็อก → ซ่อนปุ่มยืนยัน แสดงปุ่มขอรหัสใหม่
+                    if (res.locked) {
+                        btnVerify.disabled = true;
+                        timerText.style.display = 'none';
+                        resendBtn.style.display = 'inline-block';
+                    } else if (res.expired) {
+                        btnVerify.disabled = true;
+                        timerText.style.display = 'none';
+                        resendBtn.style.display = 'inline-block';
+                    } else {
+                        btnVerify.disabled = false;
+                        setTimeout(() => {
+                            inputs.forEach(inp => {
+                                inp.value = '';
+                                inp.classList.remove('error', 'filled');
+                            });
+                            inputs[0].focus();
+                            btnVerify.disabled = true;
+                        }, 1500);
+                    }
+                }
+            })
+            .catch(() => {
+                spinner.style.display = 'none';
+                btnText.style.display = 'inline';
+                btnVerify.disabled = false;
+                showStatus('เกิดข้อผิดพลาด กรุณาลองใหม่', 'error');
+            });
+        };
+
+        function showStatus(msg, type) {
+            const el = document.getElementById('statusMsg');
+            el.textContent = msg;
+            el.className = 'status-msg' + (type ? ' ' + type : '');
+        }
+
+        // Focus first input on load
+        inputs[0].focus();
+    })();
+    </script>
+</body>
+</html>

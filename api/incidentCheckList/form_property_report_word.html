@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>F-CS-12 รายงานคดีทรัพย์ (Word)</title>
+    <!--
+      Template สำหรับ DOCX คดีทรัพย์ — โครงแบบตาราง (เหมาะกับ Word)
+      ใช้ placeholder เดียวกับ form_property_report_preview.html
+      Header/Footer จริงถูกใส่ผ่าน PhpWord (ทุกหน้า)
+    -->
+    <style>
+        body { font-family: "TH Sarabun New", Sarabun, sans-serif; font-size: 14pt; color: #000; }
+        table { width: 100%; border-collapse: collapse; }
+        td { vertical-align: top; padding: 0; }
+        .title { text-align: center; font-weight: bold; font-size: 15pt; text-decoration: underline; margin: 8pt 0; }
+        .sec { font-weight: bold; margin-top: 6pt; }
+        .sub { font-weight: bold; margin-left: 20pt; margin-top: 4pt; }
+        .row { margin: 1pt 0; line-height: 1.7; }
+        .i1 { margin-left: 20pt; }
+        .i2 { margin-left: 40pt; }
+        .i3 { margin-left: 60pt; }
+        .dot { border-bottom: 1px dotted #888; display: inline; padding: 0 3pt; }
+        .page-break { page-break-before: always; }
+    </style>
+</head>
+<body>
+
+<!-- PAGE 1 -->
+<p class="title">รายงานการตรวจสถานที่เกิดเหตุคดีเกี่ยวกับทรัพย์</p>
+
+<p class="sec">1. <u>การรับแจ้งเหตุ</u></p>
+<p class="row i1">เมื่อวันที่ <span class="dot">{{receive_date}}</span> เวลา <span class="dot">{{receive_time}}</span> น. ตามประจำวันข้อที่ <span class="dot">{{daily_ref}}</span></p>
+<p class="row i1">ได้รับแจ้งตาม <span class="dot">{{notify_method_text}}</span></p>
+<p class="row i1">จาก สน./สภ. <span class="dot">{{from_station}}</span> ขอเจ้าหน้าที่ร่วมตรวจสถานที่เกิดเหตุคดีเกี่ยวกับทรัพย์</p>
+<p class="row i1">โดยมี <span class="dot">{{investigator_name}}</span> เป็นพนักงานสอบสวนเจ้าของคดี</p>
+
+<p class="sec">2. <u>สถานที่เกิดเหตุ</u></p>
+<p class="row i1"><span class="dot">{{crime_location}}</span></p>
+<p class="row i1">ผู้เสียหาย/ผู้ร้องทุกข์/เจ้าของ <span class="dot">{{victim_name}}</span> อายุประมาณ <span class="dot">{{victim_age}}</span> ปี</p>
+
+<p class="sec">3. <u>วันเวลาที่ทราบเหตุ/เกิดเหตุ</u></p>
+<p class="row i1">ผู้เสียหายทราบเหตุ/เกิดเหตุ เมื่อวันที่ <span class="dot">{{victim_know_date}}</span> เวลาประมาณ <span class="dot">{{victim_know_time}}</span> น.</p>
+<p class="row i1">พนักงานสอบสวนทราบเหตุ เมื่อวันที่ <span class="dot">{{officer_know_date}}</span> เวลาประมาณ <span class="dot">{{officer_know_time}}</span> น.</p>
+
+<p class="sec">4. <u>วันเวลาตรวจสถานที่เกิดเหตุ</u></p>
+<p class="row i1">ตรวจสถานที่เกิดเหตุ เมื่อวันที่ <span class="dot">{{inspect_date}}</span> เวลาประมาณ <span class="dot">{{inspect_time}}</span> น.</p>
+<p class="row i1">ตรวจสถานที่เกิดเหตุเพิ่มเติม เมื่อวันที่ <span class="dot">{{inspect_add_date}}</span> เวลาประมาณ <span class="dot">{{inspect_add_time}}</span> น.</p>
+
+<p class="sec">5. <u>ผู้ตรวจสถานที่เกิดเหตุ</u></p>
+{{inspector_rows}}
+
+<p class="sec">6. <u>ลักษณะของสถานที่เกิดเหตุ</u></p>
+<p class="sub">6.1 ลักษณะภายนอก</p>
+<p class="row i2">เป็น บ้าน/ตึกแถว/อาคาร/อื่นๆ <span class="dot">{{building_type_text}}</span> จำนวน ชั้น <span class="dot">{{floor_count}}</span> หลัง/คูหา <span class="dot">{{unit_count}}</span> ☐{{chk_mezzanine_yes}}มี / ☐{{chk_mezzanine_no}} ไม่มีชั้นลอย</p>
+<p class="row i2">☐{{chk_rooftop_yes}}มี / ☐{{chk_rooftop_no}}ไม่มีดาดฟ้า ปลูกอยู่ภายในบริเวณ ☐{{chk_fence_yes}}มี / ☐{{chk_fence_no}} ไม่มี รั้วล้อมรอบ เมื่อหันหน้าเข้า</p>
+<p class="row i2">ด้านหน้าติด <span class="dot">{{ext_front}}</span></p>
+<p class="row i2">ด้านซ้ายติด <span class="dot">{{ext_left}}</span></p>
+<p class="row i2">ด้านขวาติด <span class="dot">{{ext_right}}</span></p>
+<p class="row i2">ด้านหลังติด <span class="dot">{{ext_back}}</span></p>
+
+<p class="sub">6.2 ลักษณะภายใน</p>
+<p class="row i1"><span class="dot">{{interior_detail}}</span></p>
+
+<div class="page-break"></div>
+<!-- PAGE 2 -->
+
+<p class="sub">6.3 บริเวณที่เกิดเหตุ สถานที่เกิดเหตุ</p>
+<p class="row i2"><span class="dot">{{incident_area}}</span></p>
+
+<p class="sec">7. <u>ผลการตรวจสถานที่เกิดเหตุ</u></p>
+<p class="row i1">พฤติการณ์คดี</p>
+<p class="row i1"><span class="dot">{{case_behavior}}</span></p>
+
+<p class="row i1">ผลการตรวจสถานที่เกิดเหตุ</p>
+<p class="sub">7.1 สภาพทั่วไปของสถานที่เกิดเหตุ</p>
+<p class="row i2"><span class="dot">{{scene_condition}}</span></p>
+
+<p class="sub">7.2 ทางเข้าของคนร้าย</p>
+<p class="row i2"><span class="dot">{{criminal_entry}}</span></p>
+
+<p class="sub">7.3 ร่องรอยที่ตรวจพบในแต่ละห้อง</p>
+{{room_rows}}
+
+<div class="page-break"></div>
+<!-- PAGE 3 -->
+
+<p class="sub">7.4 ทรัพย์สินที่ถูกโจรกรรม นาย/นาง/นางสาว/อื่นๆ</p>
+{{stolen_rows}}
+
+<p class="sub">7.5 ตรวจเก็บวัตถุพยาน รอยลายนิ้วมือแฝง</p>
+{{evidence_rows}}
+
+<p class="sub">7.6 การดำเนินการเกี่ยวกับวัตถุพยาน</p>
+<p class="row i2"><span class="dot">{{evidence_action}}</span></p>
+
+<div class="page-break"></div>
+<!-- PAGE 4 -->
+
+<p class="sub">7.7 เจ้าหน้าที่ <span class="dot">{{handover_agency}} {{handover_detail}}</span> ตรวจสถานที่เกิดเหตุเสร็จสิ้น</p>
+<p class="row i2">พร้อมทั้งส่งมอบสถานที่เกิดเหตุคืนให้กับ <span class="dot">{{handover_to}}</span></p>
+<p class="row i2">เมื่อวันที่ <span class="dot">{{handover_date}}</span> เวลาประมาณ <span class="dot">{{handover_time}}</span> น.</p>
+
+<table style="width:100%; margin-top:30pt;">
+    <tr>
+        <td style="width:50%;"></td>
+        <td style="width:50%; text-align:center; line-height:2;">
+            <p>(ลงชื่อ) ............................................................</p>
+            <p>( <span class="dot">{{signer_name}}</span> )</p>
+            <p>(ตำแหน่ง) <span class="dot">{{signer_position}}</span></p>
+            <p>........../.............../.............</p>
+        </td>
+    </tr>
+</table>
+
+</body>
+</html>

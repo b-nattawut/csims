@@ -1,0 +1,455 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>แบบการรับแจ้งเหตุ (F-CS-01)</title>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;600;700&display=swap');
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            font-size: 13px;
+            line-height: 1.5;
+            color: #000;
+            background: #ccc;
+        }
+
+        .page {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 10px auto;
+            padding: 10mm 12mm 16mm 12mm;
+            background: #fff;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.25);
+            position: relative;
+        }
+
+        /* ===== TITLE ===== */
+        .form-title {
+            text-align: center;
+            font-size: 20px;
+            font-weight: 700;
+            text-decoration: underline;
+            margin-bottom: 8px;
+        }
+
+        /* ===== BARCODE เลขที่รับ/เลขรายงาน (มุมซ้ายบน) ===== */
+        .report-barcode {
+            position: absolute;
+            top: 10mm;
+            left: 12mm;
+            text-align: center;
+            z-index: 5;
+        }
+        .report-barcode svg {
+            display: block;
+            width: 42mm;
+            height: 9mm;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+        .report-barcode .bc-text {
+            font-size: 8px;
+            letter-spacing: 0.5px;
+            margin-top: 1px;
+            white-space: nowrap;
+        }
+
+        /* ===== DOC HEADER ===== */
+        .doc-header {
+            display: flex;
+            justify-content: flex-end;
+            margin-bottom: 8px;
+        }
+        .doc-header table { border-collapse: collapse; }
+        .doc-header td {
+            border: 1.5px solid #000;
+            padding: 1px 6px;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        .doc-header .dh {
+            border-bottom: 1px dotted #888;
+            display: inline-block;
+            text-align: center;
+            vertical-align: bottom;
+        }
+
+        /* ===== FLEX FORM LINE — ไข่ปลายืดเต็มบรรทัด ===== */
+        .fr {
+            display: flex;
+            align-items: baseline;
+            flex-wrap: wrap;
+            line-height: 1.5;
+            font-size: 13px;
+            margin-bottom: 6px;
+        }
+        .fr-indent { padding-left: 18px; }
+
+        /* label — ไม่ยืด ไม่หด */
+        .fl {
+            flex-shrink: 0;
+            white-space: nowrap;
+            font-size: 13px;
+        }
+
+        /* ===== DOTTED LINE — ยืดตาม flex ===== */
+        .fd {
+            flex: 1;
+            min-width: 20px;
+            min-height: 20px;
+            line-height: 20px;
+            margin: 0 2px;
+            text-align: center;
+            overflow-wrap: break-word;
+            word-break: break-word;
+            border-bottom: 1px dotted #555;
+        }
+        /* fixed-ratio dotted fields */
+        .fd-s { flex: 0 1 40px; border-bottom: 1px dotted #555; min-width: 15px; max-width: 50px; margin: 0 2px; min-height: 18px; text-align: center; }
+        .fd-m { flex: 1; border-bottom: 1px dotted #555; min-width: 60px; margin: 0 2px; min-height: 18px; text-align: center; overflow-wrap: break-word; word-break: break-word; }
+        .fd-l { flex: 2; min-width: 140px; margin: 0 2px; min-height: 20px; line-height: 20px; text-align: center; overflow-wrap: break-word; word-break: break-word; border-bottom: 1px dotted #555; }
+
+        /* เส้นเต็มบรรทัด */
+        .fd-full {
+            width: 100%;
+            min-height: 24px;
+            padding: 0 4px;
+            line-height: 24px;
+            margin-bottom: 4px;
+            overflow-wrap: break-word;
+            word-break: break-word;
+            border-bottom: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='3' height='24'%3E%3Crect x='0' y='23' width='1' height='1' fill='%23333'/%3E%3C/svg%3E");
+            background-repeat: repeat;
+        }
+        /* เส้นจุดเปล่า */
+        .fd-blank {
+            width: 100%;
+            height: 22px;
+            margin-bottom: 4px;
+            border-bottom: 1px dotted #333;
+        }
+
+        /* ===== CHECKBOX ===== */
+        .ck {
+            display: inline-flex;
+            align-items: center;
+            margin-right: 14px;
+            font-size: 13px;
+            white-space: nowrap;
+            flex-shrink: 0;
+        }
+        .cb {
+            width: 12px; height: 12px;
+            border: 1.5px solid #000;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 2px;
+            flex-shrink: 0;
+            position: relative;
+            top: 0px;
+            font-size: 13px;
+            font-weight: 700;
+            line-height: 0;
+            text-align: center;
+            vertical-align: middle;
+            padding: 0;
+            overflow: hidden;
+        }
+
+        /* ===== SIGNATURE BOX ===== */
+        .sig-box {
+            border: 1.5px solid #000;
+            margin-top: 14px;
+        }
+        .sig-row { display: flex; }
+        .sig-col-left {
+            width: 50%;
+            border-right: 1.5px solid #000;
+            padding: 6px 10px;
+        }
+        .sig-col-right {
+            width: 50%;
+            padding: 6px 10px;
+        }
+        .sl {
+            display: flex;
+            align-items: flex-end;
+            flex-wrap: nowrap;
+            line-height: 1.8;
+            font-size: 12px;
+        }
+        .sl > .fl { font-size: 12px; }
+        .sl > .fd {
+            height: 38px; min-height: 38px; overflow: visible; font-size: 11.5px;
+            background: none !important;
+            border-bottom: 1px dotted #555;
+            position: relative;
+            display: flex;
+            align-items: flex-end;
+            justify-content: center;
+        }
+        .sl-text {
+            line-height: 1.6;
+            font-size: 12px;
+            white-space: nowrap;
+        }
+        .sig-img {
+            position: absolute;
+            bottom: 2px;
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: 140px;
+            max-height: 35px;
+            object-fit: contain;
+        }
+
+        /* ===== BOTTOM BOX ===== */
+        .sig-box-bottom {
+            border: 1.5px solid #000;
+            border-top: none;
+            padding: 6px 10px;
+        }
+        .sig-center {
+            text-align: right;
+            line-height: 1.8;
+            font-size: 12px;
+            padding-right: 30px;
+        }
+        .sig-center .fd-inline {
+            display: inline-flex;
+            align-items: flex-end;
+            justify-content: center;
+            border-bottom: 1px dotted #555;
+            text-align: center;
+            position: relative;
+            min-height: 28px;
+            vertical-align: bottom;
+        }
+
+        /* ===== FOOTER ===== */
+        .form-footer {
+            position: absolute;
+            bottom: 6mm;
+            right: 12mm;
+            font-size: 9.5px;
+            color: #333;
+            text-align: right;
+            line-height: 1.5;
+        }
+
+        /* ===== TOP TOOLBAR ===== */
+        .no-print { text-align: center; padding: 12px; background: #fff; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 6px rgba(0,0,0,0.15); }
+        .no-print button { padding: 8px 24px; font-size: 14px; margin: 0 6px; border: none; border-radius: 6px; cursor: pointer; font-family: 'Sarabun', sans-serif; font-weight: 600; }
+        .no-print button:first-child { background: #0d6efd; color: #fff; }
+        .no-print button.secondary { background: #6c757d; color: #fff; }
+
+        /* ===== PRINT ===== */
+        @page { margin: 0; size: A4 portrait; }
+        @media print {
+            .fd, .fd-full, .fd-l, .fd-fill { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            html, body { margin: 0; padding: 0; background: #fff; width: 210mm; }
+            .no-print { display: none !important; }
+            .page {
+                margin: 0; box-shadow: none;
+                padding: 10mm 12mm 16mm 12mm;
+                width: 210mm; min-height: 297mm;
+                page-break-after: always;
+            }
+            .page:last-child { page-break-after: auto; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== TOP TOOLBAR ===== -->
+<div class="no-print">
+    <button onclick="window.print()">พิมพ์ / ดาวน์โหลด PDF</button>
+    <button class="secondary" onclick="window.close()">ปิดหน้าต่าง</button>
+</div>
+
+<!-- ================================================================ -->
+<!-- ========================= PAGE 1 ============================== -->
+<!-- ================================================================ -->
+<div class="page">
+
+    <!-- BARCODE เลขที่รับ/เลขรายงาน (มุมซ้ายบน) -->
+    {{report_barcode}}
+
+    <!-- ===== TITLE ===== -->
+    <div class="form-title">แบบการรับแจ้งเหตุ</div>
+
+    <!-- ===== DOC HEADER ===== -->
+    <div class="doc-header">
+        <table>
+            <tr>
+                <td>ปจว.ข้อที่<span class="dh" style="min-width:60px;">{{daily_no}}</span></td>
+                <td>เลขที่รับ/เลขรายงาน <span class="dh" style="min-width:105px; padding:0 5px;">{{receiveNotiReportNo}}</span> /25 <span class="dh" style="min-width:28px;">{{reportYear2}}</span></td>
+            </tr>
+        </table>
+    </div>
+
+    <!-- ===== 1. เขียนที่ ===== -->
+    <div class="fr" style="margin-top:18px;">
+        <span class="fl">1. เขียนที่</span>
+        <span class="fd" style="flex:5;">{{location_create}}</span>
+        <span class="fl">เมื่อวันที่</span>
+        <span class="fd-s">{{createDay}}</span>
+        <span class="fl">เดือน</span>
+        <span class="fd-m" style="flex:1.5;">{{createMonth}}</span>
+        <span class="fl">พ.ศ.</span>
+        <span class="fd-s" style="max-width:60px;">{{createYear}}</span>
+        <span class="fl">เวลา</span>
+        <span class="fd-s" style="max-width:60px;">{{createTime}}</span>
+        <span class="fl">น.</span>
+    </div>
+
+    <!-- ===== 2. รับแจ้งเหตุจาก ===== -->
+    <div class="fr">
+        <span class="fl">2. รับแจ้งเหตุจาก สภ./สน.</span>
+        <span class="fd" style="flex:3;">{{complaints_From}}</span>
+        <span class="ck"><span class="cb">{{chk_letter}}</span>ทางหนังสือ</span>
+        <span class="ck"><span class="cb">{{chk_phone}}</span>ทางโทรศัพท์</span>
+        <span class="ck" style="margin-right:0;"><span class="cb">{{chk_radio}}</span>วิทยุสื่อสาร</span>
+    </div>
+    <div class="fr fr-indent">
+        <span class="ck"><span class="cb">{{chk_other_device}}</span>อื่นๆ</span>
+        <span class="fd">{{device_other_text}}</span>
+    </div>
+    {{letter_details_block}}
+
+    <!-- ===== 3. เหตุที่รับแจ้ง ===== -->
+    <div class="fr" style="flex-wrap:wrap;gap:0;">
+        <span class="fl" style="width:100px;">3. เหตุที่รับแจ้ง</span>
+        <span class="ck"><span class="cb">{{chk_type_01}}</span>ทรัพย์</span>
+        <span class="ck"><span class="cb">{{chk_type_02}}</span>ชีวิต</span>
+        <span class="ck"><span class="cb">{{chk_type_03}}</span>ระเบิด</span>
+        <span class="ck"><span class="cb">{{chk_type_04}}</span>เพลิงไหม้</span>
+        <span class="ck"><span class="cb">{{chk_type_05}}</span>จราจร</span>
+        <span class="ck"><span class="cb">{{chk_type_06}}</span>ตรวจเก็บวัตถุพยาน</span>
+    </div>
+    <div class="fr" style="padding-left:100px;">
+        <span class="ck"><span class="cb">{{chk_type_07}}</span>ตรวจเก็บวัตถุพยานที่เกิดเหตุ</span>
+        <span class="ck"><span class="cb">{{chk_type_08}}</span>ตรวจเก็บวัตถุพยานบุคคล</span>
+    </div>
+    <div class="fr" style="padding-left:100px;">
+        <span class="ck"><span class="cb">{{chk_type_09}}</span>อื่นๆ</span>
+        <span class="fd">{{complaints_type_other}}</span>
+    </div>
+
+    <!-- ===== 4. สถานที่เกิดเหตุ ===== -->
+    <div class="fr"><span class="fl">4. สถานที่เกิดเหตุ</span></div>
+    <div class="fd-full" style="text-align:left;">{{location_crime_1}}</div>
+    <div class="fd-full">&nbsp;</div>
+    <div class="fd-full">&nbsp;</div>
+
+    <!-- ===== 5. วัน เวลา ===== -->
+    <div class="fr">
+        <span class="fl">5. วัน เวลา ผู้เสียหายทราบเหตุ/เกิดเหตุ / พงส.ทราบเหตุ</span>
+        <span class="fd" style="flex:3;">{{occurrence_date}}</span>
+        <span class="fl">เวลาประมาณ</span>
+        <span class="fd" style="flex:1.5;">{{occurrence_time}}</span>
+        <span class="fl">น.</span>
+    </div>
+
+    <!-- ===== 6. ข้อมูลเบื้องต้น ===== -->
+    <div class="fr"><span class="fl">6. ข้อมูลเบื้องต้น</span></div>
+    <div class="fd-full" style="text-align:left;">{{basic_info_1}}</div>
+    <div class="fd-full">&nbsp;</div>
+    <div class="fd-full">&nbsp;</div>
+    <div class="fd-full">&nbsp;</div>
+
+    <!-- ===== 7. พนักงานสอบสวน ===== -->
+    <div class="fr" style="margin-top:12px;">
+        <span class="fl" style="display:inline-block;width:130px;">7. พนักงานสอบสวน</span>
+        <span class="fd" style="flex:1;">{{inquiry_official_full_name}}</span>
+        <span class="fl" style="display:inline-block;width:120px;text-align:left;">เบอร์โทรศัพท์ติดต่อ</span>
+        <span class="fd" style="flex:0;min-width:130px;">{{inquiry_official_phone}}</span>
+    </div>
+
+    <!-- ===== 8. ผู้เสียหาย ===== -->
+    <div class="fr">
+        <span class="fl" style="display:inline-block;width:130px;">8. ผู้เสียหาย</span>
+        <span class="fd" style="flex:1;">{{suffer_full_name}}</span>
+        <span class="fl" style="display:inline-block;width:120px;text-align:left;">เบอร์โทรศัพท์ติดต่อ</span>
+        <span class="fd" style="flex:0;min-width:130px;">{{suffer_phone}}</span>
+    </div>
+
+    <!-- ============================================================= -->
+    <!-- ===== SIGNATURE BOX ===== -->
+    <!-- ============================================================= -->
+    <div class="sig-box">
+        <div class="sig-row">
+            <!-- LEFT: เรียน หัวหน้าทีม + ผู้รับแจ้ง -->
+            <div class="sig-col-left">
+                <div class="sl-text"><b>เรียน หัวหน้าทีมตรวจสถานที่เกิดเหตุ</b></div>
+                <div class="sl">
+                    <span class="fl">ลงชื่อ {{sig1_rank}}</span>
+                    <span class="fd">{{sig1_img}}</span>
+                    <span class="fl">ผู้รับแจ้ง</span>
+                </div>
+                <div class="sl">
+                    <span class="fl" style="visibility:hidden;">ลงชื่อ</span>
+                    <span class="fl">(&nbsp;</span>
+                    <span class="fd" style="flex:1;">{{sig1_name}}</span>
+                    <span class="fl">&nbsp;)</span>
+                </div>
+                <div class="sl">
+                    <span class="fl">ตำแหน่ง</span>
+                    <span class="fd">{{sig1_position}}</span>
+                </div>
+            </div>
+            <!-- RIGHT: ทราบ + หัวหน้าทีม -->
+            <div class="sig-col-right">
+                <div class="sl-text">- ทราบ</div>
+                <div class="sl-text" style="font-size:11px;">- เรียน {{review_type_text}}</div>
+                <div class="sl-text" style="font-size:11px;">&nbsp;&nbsp;เพื่อโปรดทราบ และพิจารณาสั่งการ</div>
+                <div class="sl">
+                    <span class="fl">ลงชื่อ {{sig2_rank}}</span>
+                    <span class="fd">{{sig2_img}}</span>
+                    <span class="fl" style="font-size:10.5px;white-space:nowrap;">หัวหน้าทีมตรวจสถานที่เกิดเหตุ</span>
+                </div>
+                <div class="sl">
+                    <span class="fl" style="visibility:hidden;">ลงชื่อ</span>
+                    <span class="fl">(&nbsp;</span>
+                    <span class="fd" style="flex:1;">{{sig2_name}}</span>
+                    <span class="fl">&nbsp;)</span>
+                </div>
+                <div class="sl">
+                    <span class="fl">ตำแหน่ง</span>
+                    <span class="fd">{{sig2_position}}</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ===== BOTTOM BOX (ทราบ/ดำเนินการ) ===== -->
+    <div class="sig-box-bottom">
+        <div class="sl-text">- ทราบ</div>
+        <div class="sl" style="white-space:nowrap;">
+            <span class="fd" style="flex:0;min-width:auto;border-bottom:1px dotted #888;padding:0 15px;white-space:nowrap;">{{sig3_name_top}}</span>
+            <span class="fl">ดำเนินการ</span>
+        </div>
+        <div class="sig-center">
+            ลงชื่อ {{sig3_rank}}<span class="fd-inline" style="min-width:180px;">{{sig3_img}}</span><br>
+            (<span class="fd-inline" style="min-width:180px;">{{sig3_name}}</span>)<br>
+            ตำแหน่ง <span class="fd-inline" style="min-width:200px;">{{approve_type_text}}</span><br>
+            <span class="fd-inline" style="min-width:50px;">{{pdf_day}}</span>/<span class="fd-inline" style="min-width:50px;">{{pdf_month}}</span>/<span class="fd-inline" style="min-width:50px;">{{pdf_year}}</span>
+        </div>
+    </div>
+
+    <!-- ===== FOOTER ===== -->
+    <div class="form-footer">
+        F-CS-01 แก้ไขครั้งที่ 2<br>
+        เริ่มใช้ 18 ส.ค. 64
+    </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,5 @@
+AddType application/vnd.zebra.zpl .zpl
+<FilesMatch "\.zpl$">
+    Header set Content-Disposition "attachment"
+    Header set X-Content-Type-Options "nosniff"
+</FilesMatch>

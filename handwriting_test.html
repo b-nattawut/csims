@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Handwriting Recognition Test</title>
+    <link rel="stylesheet" href="./css/bootstrap.min.css">
+    <link rel="stylesheet" href="./css/font-awesome.all.min.css">
+    <style>
+        body {
+            background: #f0f2f5;
+            font-family: 'Sarabun', sans-serif;
+        }
+        .test-container {
+            max-width: 700px;
+            margin: 60px auto;
+        }
+        .input-hw-wrapper {
+            position: relative;
+        }
+        .input-hw-wrapper .btn-hw-pen {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            border: none;
+            background: linear-gradient(135deg, #6366f1, #8b5cf6);
+            color: #fff;
+            width: 36px;
+            height: 36px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+            box-shadow: 0 2px 6px rgba(99, 102, 241, 0.4);
+        }
+        .input-hw-wrapper .btn-hw-pen:hover {
+            transform: translateY(-50%) scale(1.1);
+            box-shadow: 0 4px 12px rgba(99, 102, 241, 0.5);
+        }
+        .input-hw-wrapper input {
+            padding-right: 52px;
+        }
+
+        /* Canvas area */
+        #hwCanvasArea {
+            position: relative;
+            border: 2px solid #d1d5db;
+            border-radius: 12px;
+            background: #fff;
+            overflow: hidden;
+        }
+        #hwCanvas {
+            display: block;
+            cursor: crosshair;
+            touch-action: none;
+        }
+        .canvas-placeholder {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #d1d5db;
+            font-size: 1.1rem;
+            pointer-events: none;
+            transition: opacity 0.3s;
+        }
+        .canvas-placeholder.hidden {
+            opacity: 0;
+        }
+
+        /* Toolbar */
+        .hw-toolbar {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+        }
+        .hw-toolbar .btn {
+            border-radius: 8px;
+            font-size: 0.85rem;
+        }
+
+        /* Results */
+        .hw-results-area {
+            min-height: 48px;
+        }
+        .hw-result-badge {
+            display: inline-block;
+            padding: 6px 16px;
+            margin: 4px;
+            border-radius: 20px;
+            background: #f3f4f6;
+            border: 1.5px solid #e5e7eb;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: all 0.2s;
+        }
+        .hw-result-badge:hover {
+            background: #6366f1;
+            color: #fff;
+            border-color: #6366f1;
+            transform: scale(1.05);
+        }
+        .hw-result-badge.selected {
+            background: #6366f1;
+            color: #fff;
+            border-color: #6366f1;
+        }
+
+        /* Pen size */
+        .pen-size-group .btn {
+            min-width: 40px;
+        }
+        .pen-size-group .btn.active {
+            background: #6366f1 !important;
+            border-color: #6366f1 !important;
+            color: #fff !important;
+        }
+
+        /* Status */
+        .hw-status {
+            font-size: 0.85rem;
+            min-height: 24px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="test-container">
+    <div class="card shadow-sm border-0">
+        <div class="card-body p-4">
+            <h5 class="mb-1"><i class="fas fa-pen-fancy text-primary me-2"></i>Handwriting Recognition Test</h5>
+            <p class="text-muted small mb-4">ทดสอบการเขียนลายมือแปลงเป็นข้อความ (รองรับภาษาไทย + อังกฤษ)</p>
+
+            <!-- Input fields with pen icon -->
+            <div class="mb-3">
+                <label class="form-label fw-bold">ชื่อ-สกุล</label>
+                <div class="input-hw-wrapper">
+                    <input type="text" class="form-control form-control-lg" id="field_name" placeholder="พิมพ์หรือกดปากกาเขียน...">
+                    <button type="button" class="btn-hw-pen" onclick="openHWModal('field_name')" title="เขียนด้วยลายมือ">
+                        <i class="fas fa-pen"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">ที่อยู่</label>
+                <div class="input-hw-wrapper">
+                    <input type="text" class="form-control form-control-lg" id="field_address" placeholder="พิมพ์หรือกดปากกาเขียน...">
+                    <button type="button" class="btn-hw-pen" onclick="openHWModal('field_address')" title="เขียนด้วยลายมือ">
+                        <i class="fas fa-pen"></i>
+                    </button>
+                </div>
+            </div>
+
+            <div class="mb-3">
+                <label class="form-label fw-bold">หมายเหตุ</label>
+                <div class="input-hw-wrapper">
+                    <input type="text" class="form-control form-control-lg" id="field_remark" placeholder="พิมพ์หรือกดปากกาเขียน...">
+                    <button type="button" class="btn-hw-pen" onclick="openHWModal('field_remark')" title="เขียนด้วยลายมือ">
+                        <i class="fas fa-pen"></i>
+                    </button>
+                </div>
+            </div>
+
+            <hr>
+            <h6 class="text-muted"><i class="fas fa-info-circle me-1"></i> วิธีใช้</h6>
+            <ol class="small text-muted mb-0">
+                <li>กดปุ่ม <i class="fas fa-pen text-primary"></i> ข้างช่อง input</li>
+                <li>เขียนตัวอักษรบน canvas ในป็อปอัพ</li>
+                <li>กด <strong>"แปลงเป็นข้อความ"</strong> → ระบบจะแสดงผลลัพธ์</li>
+                <li>คลิกเลือกข้อความที่ถูกต้อง → จะเติมลงช่อง input ให้</li>
+                <li>เขียนต่อได้เรื่อยๆ ข้อความจะต่อท้ายไปเรื่อยๆ</li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+<!-- Handwriting Modal -->
+<div class="modal fade" id="hwModal" tabindex="-1" data-bs-backdrop="static">
+    <div class="modal-dialog modal-lg modal-dialog-centered">
+        <div class="modal-content border-0 shadow-lg" style="border-radius: 16px; overflow: hidden;">
+            <div class="modal-header" style="background: linear-gradient(135deg, #6366f1, #8b5cf6); border: none;">
+                <h5 class="modal-title text-white">
+                    <i class="fas fa-pen-fancy me-2"></i>เขียนด้วยลายมือ
+                </h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body p-4">
+
+                <!-- Language + Pen size -->
+                <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                    <div class="d-flex align-items-center gap-2">
+                        <label class="small text-muted mb-0">ภาษา:</label>
+                        <select class="form-select form-select-sm" id="hwLang" style="width: 130px;">
+                            <option value="th" selected>ไทย</option>
+                            <option value="en">English</option>
+                            <option value="th,en">ไทย + English</option>
+                        </select>
+                    </div>
+                    <div class="d-flex align-items-center gap-2">
+                        <label class="small text-muted mb-0">ขนาดปากกา:</label>
+                        <div class="btn-group btn-group-sm pen-size-group">
+                            <button type="button" class="btn btn-outline-secondary" data-size="2">S</button>
+                            <button type="button" class="btn btn-outline-secondary active" data-size="4">M</button>
+                            <button type="button" class="btn btn-outline-secondary" data-size="7">L</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Canvas -->
+                <div id="hwCanvasArea" class="mb-3">
+                    <canvas id="hwCanvas" width="660" height="250"></canvas>
+                    <div class="canvas-placeholder" id="hwPlaceholder">
+                        <i class="fas fa-pen-alt me-2"></i>เขียนตัวอักษรที่นี่...
+                    </div>
+                </div>
+
+                <!-- Toolbar -->
+                <div class="hw-toolbar mb-3">
+                    <button type="button" class="btn btn-primary" id="btnRecognize">
+                        <i class="fas fa-magic me-1"></i> แปลงเป็นข้อความ
+                    </button>
+                    <button type="button" class="btn btn-outline-warning" id="btnUndo">
+                        <i class="fas fa-undo me-1"></i> Undo
+                    </button>
+                    <button type="button" class="btn btn-outline-danger" id="btnErase">
+                        <i class="fas fa-eraser me-1"></i> ลบทั้งหมด
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary" id="btnSpace">
+                        <i class="fas fa-arrows-alt-h me-1"></i> เว้นวรรค
+                    </button>
+                </div>
+
+                <!-- Status -->
+                <div class="hw-status text-muted mb-2" id="hwStatus"></div>
+
+                <!-- Results -->
+                <div class="hw-results-area" id="hwResults">
+                    <p class="text-muted small mb-0"><i class="fas fa-arrow-down me-1"></i>ผลลัพธ์จะแสดงที่นี่หลังกด "แปลงเป็นข้อความ"</p>
+                </div>
+
+                <hr>
+
+                <!-- Accumulated text preview -->
+                <div class="d-flex align-items-center gap-2">
+                    <label class="small text-muted mb-0 text-nowrap">ข้อความสะสม:</label>
+                    <input type="text" class="form-control form-control-sm" id="hwAccumulated" readonly
+                           style="background: #f9fafb; font-size: 1.1rem;">
+                    <button type="button" class="btn btn-sm btn-outline-danger" id="btnClearAccum" title="ล้างข้อความ">
+                        <i class="fas fa-times"></i>
+                    </button>
+                </div>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">ยกเลิก</button>
+                <button type="button" class="btn btn-success" id="btnConfirmHW">
+                    <i class="fas fa-check me-1"></i> ยืนยัน ใส่ข้อความ
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Scripts -->
+<script src="./js/bootstrap.bundle.min.js"></script>
+<script src="./js/handwriting.canvas.js"></script>
+<script>
+(function() {
+    var hwCanvasInstance = null;
+    var targetFieldId = null;
+    var accumulatedText = '';
+    var hasDrawn = false;
+
+    // Open modal
+    window.openHWModal = function(fieldId) {
+        targetFieldId = fieldId;
+        accumulatedText = '';
+        hasDrawn = false;
+        document.getElementById('hwAccumulated').value = '';
+        document.getElementById('hwResults').innerHTML = '<p class="text-muted small mb-0"><i class="fas fa-arrow-down me-1"></i>ผลลัพธ์จะแสดงที่นี่หลังกด "แปลงเป็นข้อความ"</p>';
+        document.getElementById('hwStatus').textContent = '';
+        document.getElementById('hwPlaceholder').classList.remove('hidden');
+
+        var modal = new bootstrap.Modal(document.getElementById('hwModal'));
+        modal.show();
+    };
+
+    // Init canvas after modal is shown
+    document.getElementById('hwModal').addEventListener('shown.bs.modal', function() {
+        var canvas = document.getElementById('hwCanvas');
+        var container = document.getElementById('hwCanvasArea');
+
+        // Resize canvas to fit container
+        var w = container.clientWidth;
+        canvas.width = w;
+        canvas.height = 250;
+
+        // Init handwriting.Canvas
+        hwCanvasInstance = new handwriting.Canvas(canvas, 4);
+        hwCanvasInstance.set_Undo_Redo(true, true);
+        hwCanvasInstance.setOptions({
+            language: document.getElementById('hwLang').value,
+            numOfReturn: 5
+        });
+
+        hwCanvasInstance.setCallBack(function(results, err) {
+            document.getElementById('hwStatus').textContent = '';
+            var container = document.getElementById('hwResults');
+
+            if (err) {
+                container.innerHTML = '<span class="text-danger small"><i class="fas fa-exclamation-triangle me-1"></i>' + err.message + '</span>';
+                return;
+            }
+
+            if (!results || results.length === 0) {
+                container.innerHTML = '<span class="text-warning small"><i class="fas fa-question-circle me-1"></i>ไม่พบผลลัพธ์ ลองเขียนใหม่อีกครั้ง</span>';
+                return;
+            }
+
+            // Show result badges
+            var html = '<span class="small text-muted me-2">เลือกผลลัพธ์:</span>';
+            results.forEach(function(text, idx) {
+                html += '<span class="hw-result-badge' + (idx === 0 ? ' selected' : '') + '" data-text="' + escapeAttr(text) + '">' + escapeHtml(text) + '</span>';
+            });
+            container.innerHTML = html;
+
+            // Auto-select first result
+            appendToAccumulated(results[0]);
+
+            // Clear canvas for next word
+            if (hwCanvasInstance) {
+                hwCanvasInstance.erase();
+                hasDrawn = false;
+                document.getElementById('hwPlaceholder').classList.remove('hidden');
+            }
+        });
+    });
+
+    // Hide placeholder when drawing starts
+    document.getElementById('hwCanvas').addEventListener('mousedown', function() {
+        document.getElementById('hwPlaceholder').classList.add('hidden');
+        hasDrawn = true;
+    });
+    document.getElementById('hwCanvas').addEventListener('touchstart', function() {
+        document.getElementById('hwPlaceholder').classList.add('hidden');
+        hasDrawn = true;
+    });
+
+    // Recognize button
+    document.getElementById('btnRecognize').addEventListener('click', function() {
+        if (!hwCanvasInstance || !hasDrawn) {
+            document.getElementById('hwStatus').innerHTML = '<span class="text-warning"><i class="fas fa-info-circle me-1"></i>กรุณาเขียนก่อนกดแปลง</span>';
+            return;
+        }
+        // Update language option
+        hwCanvasInstance.setOptions({
+            language: document.getElementById('hwLang').value,
+            numOfReturn: 5
+        });
+        document.getElementById('hwStatus').innerHTML = '<i class="fas fa-spinner fa-spin me-1"></i>กำลังแปลง...';
+        hwCanvasInstance.recognize();
+    });
+
+    // Undo
+    document.getElementById('btnUndo').addEventListener('click', function() {
+        if (hwCanvasInstance) hwCanvasInstance.undo();
+    });
+
+    // Erase
+    document.getElementById('btnErase').addEventListener('click', function() {
+        if (hwCanvasInstance) hwCanvasInstance.erase();
+        hasDrawn = false;
+        document.getElementById('hwPlaceholder').classList.remove('hidden');
+    });
+
+    // Space
+    document.getElementById('btnSpace').addEventListener('click', function() {
+        accumulatedText += ' ';
+        document.getElementById('hwAccumulated').value = accumulatedText;
+    });
+
+    // Clear accumulated
+    document.getElementById('btnClearAccum').addEventListener('click', function() {
+        accumulatedText = '';
+        document.getElementById('hwAccumulated').value = '';
+    });
+
+    // Click result badge
+    document.getElementById('hwResults').addEventListener('click', function(e) {
+        var badge = e.target.closest('.hw-result-badge');
+        if (!badge) return;
+
+        // Remove old accumulated for auto-select, add new one
+        var allBadges = document.querySelectorAll('#hwResults .hw-result-badge');
+        var previousSelected = document.querySelector('#hwResults .hw-result-badge.selected');
+
+        // Remove previous auto-selected text from accumulated
+        if (previousSelected) {
+            var prevText = previousSelected.getAttribute('data-text');
+            if (accumulatedText.endsWith(prevText)) {
+                accumulatedText = accumulatedText.slice(0, -prevText.length);
+            }
+        }
+
+        // Mark new selection
+        allBadges.forEach(function(b) { b.classList.remove('selected'); });
+        badge.classList.add('selected');
+
+        // Add selected text
+        appendToAccumulated(badge.getAttribute('data-text'));
+    });
+
+    // Pen size
+    document.querySelectorAll('.pen-size-group .btn').forEach(function(btn) {
+        btn.addEventListener('click', function() {
+            document.querySelectorAll('.pen-size-group .btn').forEach(function(b) { b.classList.remove('active'); });
+            btn.classList.add('active');
+            if (hwCanvasInstance) hwCanvasInstance.setLineWidth(parseInt(btn.getAttribute('data-size')));
+        });
+    });
+
+    // Confirm button → put text into target field
+    document.getElementById('btnConfirmHW').addEventListener('click', function() {
+        if (targetFieldId && accumulatedText.trim()) {
+            var field = document.getElementById(targetFieldId);
+            if (field) {
+                // Append to existing value
+                var existing = field.value.trim();
+                field.value = existing ? existing + accumulatedText : accumulatedText;
+            }
+        }
+        var modal = bootstrap.Modal.getInstance(document.getElementById('hwModal'));
+        if (modal) modal.hide();
+    });
+
+    function appendToAccumulated(text) {
+        accumulatedText += text;
+        document.getElementById('hwAccumulated').value = accumulatedText;
+    }
+
+    function escapeHtml(str) {
+        var div = document.createElement('div');
+        div.appendChild(document.createTextNode(str));
+        return div.innerHTML;
+    }
+
+    function escapeAttr(str) {
+        return str.replace(/"/g, '&quot;').replace(/'/g, '&#39;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+    }
+})();
+</script>
+</body>
+</html>

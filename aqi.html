@@ -1,0 +1,1159 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Air Quality Index Dashboard ✨</title>
+    <link href="css/bootstrap.min.css" rel="stylesheet">
+    <script src="js/chart.umd.min.js"></script>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <style>
+        @font-face {
+            font-family: 'Sarabun';
+            src: url('fonts/Sarabun/Sarabun-Regular.ttf') format('truetype');
+            font-weight: normal;
+            font-style: normal;
+        }
+
+        @font-face {
+            font-family: 'Sarabun';
+            src: url('fonts/Sarabun/Sarabun-Bold.ttf') format('truetype');
+            font-weight: bold;
+            font-style: normal;
+        }
+
+        h1,
+        h2 {
+            font-family: 'Sarabun', sans-serif;
+            font-weight: bold;
+        }
+
+        body {
+            font-family: 'Sarabun', sans-serif;
+            background-color: #f7f9fc;
+            color: #333333;
+        }
+
+        .container {
+            max-width: 1200px;
+        }
+
+        .card {
+            background-color: #ffffff;
+            border: 1px solid #e0e6ed;
+            border-radius: 12px;
+        }
+
+        .aqi-card {
+            transition: transform 0.3s ease-in-out, box-shadow 0.3s ease-in-out;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .aqi-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .aqi-header {
+            background-color: #f0f4f7;
+            color: #1a1a2e;
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            padding: 1rem;
+            font-weight: 600;
+            border-bottom: 1px solid #e0e6ed;
+        }
+
+        h1 {
+            color: #1a1a2e;
+            font-weight: 700;
+        }
+
+        .aqi-status {
+            font-weight: bold;
+            font-size: 1.2em;
+            padding: 5px 10px;
+            border-radius: 5px;
+            color: white !important;
+        }
+
+        /* City Name */
+        #city-name {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: #28a745 !important;
+            margin-bottom: 15px;
+        }
+
+        /* AQI Table Styles (Native Table) */
+        #aqi-definition-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 0;
+        }
+
+        #aqi-definition-table th,
+        #aqi-definition-table td {
+            text-align: center;
+            vertical-align: middle;
+            padding: 12px 5px;
+            border: none;
+        }
+
+        #aqi-definition-table thead th {
+            font-weight: 700;
+            background-color: #e9ecef !important;
+            color: #1a1a2e;
+            border-bottom: 2px solid #e0e6ed;
+        }
+
+        /* Color Classes (กำหนดสีพื้นหลังเฉพาะ) */
+        .color-good {
+            background-color: #6aa84f;
+            color: white;
+        }
+
+        .color-moderate {
+            background-color: #ffc107;
+            color: #333;
+        }
+
+        .color-unhealthy-sensitive {
+            background-color: #f99f36;
+            color: #333;
+        }
+
+        .color-unhealthy {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .color-very-unhealthy {
+            background-color: #9c27b0;
+            color: white;
+        }
+
+        .color-hazardous {
+            background-color: #7d0000;
+            color: white;
+        }
+
+        /* Card มลภาวะรายตัว */
+        .pollutant-card {
+            border-left: 5px solid transparent;
+            padding: 15px;
+            text-align: center;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: background-color 0.3s, border-left-color 0.3s;
+        }
+
+        .pollutant-title {
+            font-size: 1.1em;
+            color: #333333;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .pollutant-value {
+            font-size: 2.5em;
+            font-weight: 700;
+            line-height: 1;
+            color: #1a1a2e;
+        }
+
+        .pollutant-unit {
+            font-size: 0.85em;
+            color: #6c757d;
+        }
+
+        /* Unique Background Colors for Pollutant Cards */
+        #pm25-card {
+            background-color: #f5eef7;
+        }
+
+        #pm10-card {
+            background-color: #f0f7e0;
+        }
+
+        #co-card {
+            background-color: #e9f7ff;
+        }
+
+        #no2-card {
+            background-color: #fff1e0;
+        }
+
+        #o3-card {
+            background-color: #fae0f2;
+        }
+
+        #so2-card {
+            background-color: #e6f9f0;
+        }
+
+        /* Border Colors for Pollutant Cards (Keep logic to show level) */
+        .pollutant-card.pm25-level-good {
+            border-left-color: #6aa84f;
+        }
+
+        .pollutant-card.pm25-level-moderate {
+            border-left-color: #ffc107;
+        }
+
+        .pollutant-card.pm25-level-unhealthy-sensitive {
+            border-left-color: #f99f36;
+        }
+
+        .pollutant-card.pm25-level-unhealthy {
+            border-left-color: #dc3545;
+        }
+
+        .pollutant-card.pm25-level-very-unhealthy {
+            border-left-color: #9c27b0;
+        }
+
+        .pollutant-card.pm25-level-hazardous {
+            border-left-color: #7d0000;
+        }
+
+        .pollutant-card.pm10-level-good {
+            border-left-color: #6aa84f;
+        }
+
+        .pollutant-card.pm10-level-moderate {
+            border-left-color: #ffc107;
+        }
+
+        .pollutant-card.pm10-level-unhealthy-sensitive {
+            border-left-color: #f99f36;
+        }
+
+        .pollutant-card.pm10-level-unhealthy {
+            border-left-color: #dc3545;
+        }
+
+        .pollutant-card.pm10-level-very-unhealthy {
+            border-left-color: #9c27b0;
+        }
+
+        .pollutant-card.pm10-level-hazardous {
+            border-left-color: #7d0000;
+        }
+
+        .pollutant-card.co-level-good {
+            border-left-color: #6aa84f;
+        }
+
+        .pollutant-card.co-level-moderate {
+            border-left-color: #ffc107;
+        }
+
+        .pollutant-card.co-level-unhealthy-sensitive {
+            border-left-color: #f99f36;
+        }
+
+        .pollutant-card.co-level-unhealthy {
+            border-left-color: #dc3545;
+        }
+
+        .pollutant-card.co-level-very-unhealthy {
+            border-left-color: #9c27b0;
+        }
+
+        .pollutant-card.co-level-hazardous {
+            border-left-color: #7d0000;
+        }
+
+        .pollutant-card.no2-level-good {
+            border-left-color: #6aa84f;
+        }
+
+        .pollutant-card.no2-level-moderate {
+            border-left-color: #ffc107;
+        }
+
+        .pollutant-card.no2-level-unhealthy-sensitive {
+            border-left-color: #f99f36;
+        }
+
+        .pollutant-card.no2-level-unhealthy {
+            border-left-color: #dc3545;
+        }
+
+        .pollutant-card.no2-level-very-unhealthy {
+            border-left-color: #9c27b0;
+        }
+
+        .pollutant-card.no2-level-hazardous {
+            border-left-color: #7d0000;
+        }
+
+        .pollutant-card.o3-level-good {
+            border-left-color: #6aa84f;
+        }
+
+        .pollutant-card.o3-level-moderate {
+            border-left-color: #ffc107;
+        }
+
+        .pollutant-card.o3-level-unhealthy-sensitive {
+            border-left-color: #f99f36;
+        }
+
+        .pollutant-card.o3-level-unhealthy {
+            border-left-color: #dc3545;
+        }
+
+        .pollutant-card.o3-level-very-unhealthy {
+            border-left-color: #9c27b0;
+        }
+
+        .pollutant-card.o3-level-hazardous {
+            border-left-color: #7d0000;
+        }
+
+        .pollutant-card.so2-level-good {
+            border-left-color: #6aa84f;
+        }
+
+        .pollutant-card.so2-level-moderate {
+            border-left-color: #ffc107;
+        }
+
+        .pollutant-card.so2-level-unhealthy-sensitive {
+            border-left-color: #f99f36;
+        }
+
+        .pollutant-card.so2-level-unhealthy {
+            border-left-color: #dc3545;
+        }
+
+        .pollutant-card.so2-level-very-unhealthy {
+            border-left-color: #9c27b0;
+        }
+
+        .pollutant-card.so2-level-hazardous {
+            border-left-color: #7d0000;
+        }
+
+
+        /* Light Cyan/Light Blue for Manual Location Card (unchanged) */
+        #manual-location-form {
+            background-color: #e0f7fa;
+            border-left: 5px solid #00bcd4;
+        }
+
+        /* Light gradient background for AQI Summary Card (unchanged) */
+        .aqi-summary-card {
+            background-image: linear-gradient(135deg, #ffffff 0%, #f0f8ff 100%);
+            border: 1px solid #cce5ff;
+            box-shadow: 0 4px 15px rgba(0, 123, 255, 0.1);
+        }
+
+        /* Weather Cards (unchanged) */
+        .weather-card {
+            text-align: center;
+            padding: 15px 10px;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            border-left: 5px solid transparent;
+        }
+
+        .weather-title {
+            font-size: 1em;
+            color: #1a1a2e;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .weather-value {
+            font-size: 2.2em;
+            font-weight: 700;
+            line-height: 1;
+            color: #1a1a2e;
+        }
+
+        .weather-unit {
+            font-size: 0.85em;
+            color: #6c757d;
+        }
+
+        /* Specific Weather Card Colors (unchanged) */
+        .temp-card {
+            background-color: #fff3e0;
+            border-left-color: #ff9800;
+        }
+
+        .humid-card {
+            background-color: #e1f5fe;
+            border-left-color: #03a9f4;
+        }
+
+        .press-card {
+            background-color: #e0f2f1;
+            border-left-color: #009688;
+        }
+
+        .wind-card {
+            background-color: #ede7f6;
+            border-left-color: #673ab7;
+        }
+
+        /* AQI Value Card (unchanged) */
+        #aqi-value-card {
+            text-align: center;
+            padding: 20px;
+            color: #1a1a2e;
+            transition: background-color 0.5s ease;
+        }
+
+        .main-aqi-value {
+            font-size: 4.5em;
+            font-weight: 900;
+            line-height: 1;
+            margin-bottom: 0px;
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.1);
+        }
+
+        .main-aqi-label {
+            font-size: 1.5em;
+            font-weight: 600;
+            margin-bottom: 15px;
+        }
+
+        /* AQI Value Card Colors (unchanged) */
+        .aqi-value-card-good {
+            background-color: #6aa84f;
+            color: white;
+        }
+
+        .aqi-value-card-moderate {
+            background-color: #ffc107;
+            color: #1a1a2e;
+        }
+
+        .aqi-value-card-unhealthy-sensitive {
+            background-color: #f99f36;
+            color: #1a1a2e;
+        }
+
+        .aqi-value-card-unhealthy {
+            background-color: #dc3545;
+            color: white;
+        }
+
+        .aqi-value-card-very-unhealthy {
+            background-color: #9c27b0;
+            color: white;
+        }
+
+        .aqi-value-card-hazardous {
+            background-color: #7d0000;
+            color: white;
+        }
+
+        .aqi-summary-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+        }
+
+        /* 🚨 NEW: Map Style */
+        #mapid {
+            height: 400px;
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+
+        .contact-card {
+            /* border-left: 5px solid transparent;  */
+            padding: 15px;
+            text-align: center;
+            min-height: 120px;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            transition: background-color 0.3s, border-left-color 0.3s;
+        }
+
+        .contact-card:hover {
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.15);
+            background-color: rgb(228, 227, 227);
+        }
+
+        .navbar a {
+            color: #fff;
+            text-decoration: none;
+        }
+
+        .navbar .dropdown-item, #contact a, #footer a {
+            color: #000;
+            text-decoration: none;
+        }
+
+        .navbar a:hover, #contact a:hover {
+            color: #02b3df;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        #footer a {
+            color: #ebe9e9;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-sm sticky-top navbar-light bg-secondary px-5 py-2 justify-content-center">
+        <div class="container-fluid">
+            <span class="navbar-brand mb-0 h1 text-white">✨ AQI Dashboard ✨</span>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+                data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+                aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon text-white"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarSupportedContent">
+                <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="#manual-location-form">ระบุพิกัดด้วยตนเอง</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#mapid">ตำแหน่งสถานีตรวจวัดคุณภาพอากาศ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#aqi-value-card">ดัชนีคุณภาพอากาศ</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#city-name">สรุปข้อมูลสถานีใกล้คุณและมลภาวะหลัก</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            ข้อมูลเพิ่มเติม
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#temperature">อุณหภูมิ</a></li>
+                            <li><a class="dropdown-item" href="#humidity">ความชื้น</a></li>
+                            <li><a class="dropdown-item" href="#pressure">ความกดอากาศ</a></li>
+                            <li><a class="dropdown-item" href="#wind-speed">ความเร็วลม</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#aqi-definition-table">คำจำกัดความระดับ AQI</a>
+                    </li>
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            ระดับมลภาวะรายตัว
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#pm25">ค่า PM2.5</a></li>
+                            <li><a class="dropdown-item" href="#pm10">ค่า PM10</a></li>
+                            <li><a class="dropdown-item" href="#co">คาร์บอนมอนอกไซด์ CO</a></li>
+                            <li><a class="dropdown-item" href="#no2">ไนโตรเจนไดออกไซด์ NO2</a></li>
+                            <li><a class="dropdown-item" href="#o3">โอโซน O3</a></li>
+                            <li><a class="dropdown-item" href="#so2">ซัลเฟอร์ไดออกไซด์ SO2</a></li>
+                        </ul>
+                    </li>
+
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button"
+                            data-bs-toggle="dropdown" aria-expanded="false">
+                            พยากรณ์
+                        </a>
+                        <ul class="dropdown-menu" aria-labelledby="navbarDropdown">
+                            <li><a class="dropdown-item" href="#pm25Chart">พยากรณ์ PM2.5</a></li>
+                            <li><a class="dropdown-item" href="#pm10Chart">พยากรณ์ PM10</a></li>
+                            <li><a class="dropdown-item" href="#uviChart">พยากรณ์ค่ารังสี UVI</a></li>
+                        </ul>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#attributions">แหล่งข้อมูล (Attributions)</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="#contact">ช่องทางการติดต่อ (Contact)</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+    <!-- <a href="#manual-location-form">ระบุพิกัด</a>
+        <a href="#mapid">ตำแหน่งสถานี</a>
+        <a href="#aqi-value-card">AQI</a>
+        <a href="#city-name">สรุป</a>
+    </nav> -->
+    <div class="container my-5">
+        <h1 class="text-center mb-5">✨ ดัชนีคุณภาพอากาศ (AQI) Dashboard ✨</h1>
+        <div id="error-message" class="error-message text-center mb-4"></div>
+
+        <div id="manual-location-form" class="card mb-4 aqi-card">
+            <div class="card-body">
+                <h5 class="card-title text-dark">ระบุพิกัดด้วยตนเอง</h5>
+                <form id="location-form">
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="latitude" class="form-label">ละติจูด</label>
+                            <input type="number" step="any" class="form-control" id="latitude"
+                                placeholder="เช่น 13.7054879" required>
+                        </div>
+                        <div class="col-md-6 mb-3">
+                            <label for="longitude" class="form-label">ลองจิจูด</label>
+                            <input type="number" step="any" class="form-control" id="longitude"
+                                placeholder="เช่น 100.315622" required>
+                        </div>
+                    </div>
+                    <button type="submit" class="btn btn-primary mt-2">ดึงข้อมูล</button>
+                </form>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card aqi-card">
+                    <div class="card-header aqi-header">
+                        <h5 class="mb-0">ตำแหน่งสถานีตรวจวัดคุณภาพอากาศ 📍</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="mapid"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <div class="card aqi-card shadow-lg" id="aqi-value-card">
+                    <div class="main-aqi-label">ดัชนีคุณภาพอากาศ (AQI)</div>
+                    <div class="main-aqi-value" id="large-aqi-value">N/A</div>
+                    <div class="main-aqi-status" id="large-aqi-status"></div>
+                </div>
+            </div>
+
+            <div class="col-md-8 mb-3">
+                <div class="card aqi-card aqi-summary-card">
+                    <div class="card-header aqi-header">
+                        <h5 class="mb-0">สรุปข้อมูลสถานีใกล้คุณและมลภาวะหลัก</h5>
+                    </div>
+                    <div class="card-body row">
+                        <div class="col-md-12 aqi-summary-content">
+                            <h6 id="city-name" class="card-title">ไม่ทราบพิกัด</h6>
+
+                            <p class="card-text"><strong>มลภาวะหลัก:</strong> <span id="dominant-pol"
+                                    class="text-secondary"></span></p>
+                            <p class="card-text"><strong>เวลาอัพเดท:</strong> <span id="time"></span></p>
+                            <p class="card-text"><strong>ข้อมูลเพิ่มเติม:</strong> <span
+                                    class="badge bg-success me-2 mb-2"><a id="city-url" href="#" target="_blank"
+                                        style="color: white; text-decoration: none;">ดูใน AQICN</a></span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card weather-card shadow-sm temp-card">
+                    <div class="weather-title">อุณหภูมิ</div>
+                    <div class="weather-value" id="temperature">N/A</div>
+                    <div class="weather-unit">°C</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card weather-card shadow-sm humid-card">
+                    <div class="weather-title">ความชื้น</div>
+                    <div class="weather-value" id="humidity">N/A</div>
+                    <div class="weather-unit">%</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card weather-card shadow-sm press-card">
+                    <div class="weather-title">ความกดอากาศ</div>
+                    <div class="weather-value" id="pressure">N/A</div>
+                    <div class="weather-unit">hPa</div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card weather-card shadow-sm wind-card">
+                    <div class="weather-title">ความเร็วลม</div>
+                    <div class="weather-value" id="wind-speed">N/A</div>
+                    <div class="weather-unit">m/s</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card aqi-card">
+                    <div class="card-header aqi-header">
+                        <h5 class="mb-0">คำจำกัดความระดับ AQI 🌈</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <table id="aqi-definition-table">
+                            <thead>
+                                <tr>
+                                    <th>AQI Range</th>
+                                    <th>ระดับคุณภาพอากาศ</th>
+                                    <th>ความหมาย</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr class="color-good">
+                                    <td>0 - 50</td>
+                                    <td>ดี</td>
+                                    <td>คุณภาพอากาศดี ปลอดภัยต่อทุกคน</td>
+                                </tr>
+                                <tr class="color-moderate">
+                                    <td>51 - 100</td>
+                                    <td>พอใช้</td>
+                                    <td>คุณภาพอากาศปานกลาง กลุ่มเสี่ยงอาจได้รับผลกระทบเล็กน้อย</td>
+                                </tr>
+                                <tr class="color-unhealthy-sensitive">
+                                    <td>101 - 150</td>
+                                    <td>ไม่ดีต่อกลุ่มเสี่ยง</td>
+                                    <td>บุคคลที่เป็นโรคทางเดินหายใจ/หัวใจควรลดกิจกรรมกลางแจ้ง</td>
+                                </tr>
+                                <tr class="color-unhealthy">
+                                    <td>151 - 200</td>
+                                    <td>ไม่ดีต่อสุขภาพ</td>
+                                    <td>ทุกคนอาจเริ่มรู้สึกถึงผลกระทบต่อสุขภาพ</td>
+                                </tr>
+                                <tr class="color-very-unhealthy">
+                                    <td>201 - 300</td>
+                                    <td>แย่มาก</td>
+                                    <td>เตือนภัยสุขภาพ: ทุกคนควรหลีกเลี่ยงกิจกรรมกลางแจ้ง</td>
+                                </tr>
+                                <tr class="color-hazardous">
+                                    <td>301+</td>
+                                    <td>อันตรายร้ายแรง</td>
+                                    <td>ภาวะฉุกเฉินทางสุขภาพ: ทุกคนควรอยู่ในอาคาร</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card aqi-card">
+                    <div class="card-header aqi-header">
+                        <h5 class="mb-0">ระดับมลภาวะรายตัว</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-lg-4 col-md-6 mb-3">
+                                <div class="card pollutant-card shadow-sm" id="pm25-card">
+                                    <div class="pollutant-title">ค่า PM2.5</div>
+                                    <div class="pollutant-value" id="pm25">N/A</div>
+                                    <div class="pollutant-unit">µg/m³</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6 mb-3">
+                                <div class="card pollutant-card shadow-sm" id="pm10-card">
+                                    <div class="pollutant-title">ค่า PM10</div>
+                                    <div class="pollutant-value" id="pm10">N/A</div>
+                                    <div class="pollutant-unit">µg/m³</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6 mb-3">
+                                <div class="card pollutant-card shadow-sm" id="co-card">
+                                    <div class="pollutant-title">คาร์บอนมอนอกไซด์ CO</div>
+                                    <div class="pollutant-value" id="co">N/A</div>
+                                    <div class="pollutant-unit">ppm</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6 mb-3">
+                                <div class="card pollutant-card shadow-sm" id="no2-card">
+                                    <div class="pollutant-title">ไนโตรเจนไดออกไซด์ NO2</div>
+                                    <div class="pollutant-value" id="no2">N/A</div>
+                                    <div class="pollutant-unit">ppb</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6 mb-3">
+                                <div class="card pollutant-card shadow-sm" id="o3-card">
+                                    <div class="pollutant-title">โอโซน O3</div>
+                                    <div class="pollutant-value" id="o3">N/A</div>
+                                    <div class="pollutant-unit">ppb</div>
+                                </div>
+                            </div>
+                            <div class="col-lg-4 col-md-6 mb-3">
+                                <div class="card pollutant-card shadow-sm" id="so2-card">
+                                    <div class="pollutant-title">ซัลเฟอร์ไดออกไซด์ SO2</div>
+                                    <div class="pollutant-value" id="so2">N/A</div>
+                                    <div class="pollutant-unit">ppb</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-10 mb-4 text-center">
+                <div class="card aqi-card">
+                    <div class="card-header aqi-header">
+                        <h5 class="mb-0">พยากรณ์ PM2.5</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="pm25Chart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-10 mb-4 text-center">
+                <div class="card aqi-card">
+                    <div class="card-header aqi-header">
+                        <h5 class="mb-0">พยากรณ์ PM10</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="pm10Chart"></canvas>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-10 mb-4 text-center">
+                <div class="card aqi-card">
+                    <div class="card-header aqi-header">
+                        <h5 class="mb-0">พยากรณ์ ค่ารังสี UVI</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="uviChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-12">
+                <div class="card aqi-card">
+                    <div class="card-header aqi-header">
+                        <h5 class="mb-0">แหล่งข้อมูล (Attributions)</h5>
+                    </div>
+                    <div class="card-body">
+                        <div id="attributions"></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4 justify-content-center">
+            <div class="col-md-8">
+                <div class="card aqi-card">
+                    <div class="card-header aqi-header">
+                        <h5 class="mb-0">ช่องทางการติดต่อ (Contact) </h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="col-md-12 mb-3">
+                            <div class="card contact-card shadow-sm" id="contact">
+                                <a href="https://www.pcd.go.th/map/" target="_blank">
+                                    <img class="rounded-start mb-2" src="./image/pollution-control-dept.png"
+                                        alt="pollution-control-department-logo" width="100" height="100">
+                                    <h6 class="mb-0">กรมควบคุมมลพิษ (Pollution Control Department)</h6>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+
+    <footer class="bg-secondary text-center text-lg" id="footer">
+        <div class="text-muted p-3">© 2025 Copyright: <span class="fw-bold"><a href="https://www.pondpol.com/">Pondpol.com</a></span></div>
+    </footer>
+
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script>
+        // API Token
+        const token = 'ffa637ab0a6f8226fe1240a41c83b64d7f227cdb';
+
+        // 🚨 NEW: Global Map Variables
+        let map = null;
+        let marker = null;
+        const initialCoords = [13.7563, 100.5018]; // Default to Bangkok or a central location
+
+        // --- AQI Level and Color Definitions (unchanged) ---
+        function getAQIStatus(aqi) {
+            if (!aqi) return { text: 'N/A', className: 'aqi-value-card-default' };
+            if (aqi <= 50) return { text: 'ดี', className: 'aqi-value-card-good' };
+            if (aqi <= 100) return { text: 'พอใช้', className: 'aqi-value-card-moderate' };
+            if (aqi <= 150) return { text: 'ไม่ดีต่อกลุ่มเสี่ยง', className: 'aqi-value-card-unhealthy-sensitive' };
+            if (aqi <= 200) return { text: 'ไม่ดีต่อสุขภาพ', className: 'aqi-value-card-unhealthy' };
+            if (aqi <= 300) return { text: 'แย่มาก', className: 'aqi-value-card-very-unhealthy' };
+            return { text: 'อันตรายร้ายแรง', className: 'aqi-value-card-hazardous' };
+        }
+
+        // Get specific class for Pollutant Card (Name + Level) - (unchanged)
+        function getPollutantStatus(pollutant, value) {
+            if (value === null || value === undefined) return pollutant + '-level-NA';
+
+            let level = 'good';
+
+            switch (pollutant) {
+                case 'pm25':
+                    if (value > 55.4) level = 'unhealthy';
+                    else if (value > 35.4) level = 'unhealthy-sensitive';
+                    else if (value > 12.0) level = 'moderate';
+                    break;
+                case 'pm10':
+                    if (value > 154) level = 'unhealthy';
+                    else if (value > 54) level = 'unhealthy-sensitive';
+                    else if (value > 0) level = 'moderate';
+                    break;
+                case 'co':
+                    if (value > 12.4) level = 'unhealthy';
+                    else if (value > 9.4) level = 'unhealthy-sensitive';
+                    else if (value > 4.4) level = 'moderate';
+                    break;
+                case 'no2':
+                case 'o3':
+                case 'so2':
+                    if (value > 150) level = 'unhealthy';
+                    else if (value > 100) level = 'unhealthy-sensitive';
+                    else if (value > 50) level = 'moderate';
+                    break;
+            }
+            return pollutant + '-level-' + level;
+        }
+
+        // 🚨 NEW: Map Initialization Function
+        function initializeMap(lat, lng, zoom = 13) {
+            if (map !== null) {
+                map.remove(); // Remove existing map instance if it exists
+            }
+            // Initialize map
+            map = L.map('mapid').setView([lat, lng], zoom);
+
+            // Add OpenStreetMap tile layer
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            }).addTo(map);
+
+            // Add initial marker
+            marker = L.marker([lat, lng]).addTo(map)
+                .bindPopup("ตำแหน่งที่ตั้ง/สถานีตรวจวัดคุณภาพอากาศ").openPopup();
+        }
+
+        // 🚨 NEW: Update Map Marker Function
+        function updateMap(lat, lng, cityName, aqi) {
+            const popupContent = `<b>${cityName}</b><br>AQI: ${aqi ?? 'N/A'}`;
+
+            if (map) {
+                const newLatLng = new L.LatLng(lat, lng);
+                map.setView(newLatLng, 13); // Center the map on the new location
+
+                if (marker) {
+                    marker.setLatLng(newLatLng).bindPopup(popupContent).openPopup();
+                } else {
+                    marker = L.marker(newLatLng).addTo(map)
+                        .bindPopup(popupContent).openPopup();
+                }
+            } else {
+                // If map hasn't been initialized (e.g., initial load failed geolocation)
+                initializeMap(lat, lng);
+                marker.bindPopup(popupContent).openPopup();
+            }
+        }
+
+
+        // Function to fetch AQI data (UPDATED to call updateMap)
+        function fetchAQI(lat, lng) {
+            const url = `https://api.waqi.info/feed/geo:${lat};${lng}/?token=${token}`;
+
+            if (window.pm25Chart && typeof window.pm25Chart.destroy === 'function') window.pm25Chart.destroy();
+            if (window.pm10Chart && typeof window.pm10Chart.destroy === 'function') window.pm10Chart.destroy();
+            if (window.uviChart && typeof window.uviChart.destroy === 'function') window.uviChart.destroy();
+
+            // Set a default view while fetching (can use lat/lng from input)
+            // 🚨 NEW: Update map with *input* coords immediately (or use initialCoords)
+            const mapLat = lat ?? initialCoords[0];
+            const mapLng = lng ?? initialCoords[1];
+            if (map === null) {
+                initializeMap(mapLat, mapLng);
+            } else {
+                updateMap(mapLat, mapLng, 'กำลังโหลด...', '...'); // Update map with current search/geo location
+            }
+
+
+            fetch(url)
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'ok') {
+                        document.getElementById('error-message').style.display = 'none';
+                        displayAQI(data.data);
+
+                        // 🚨 NEW: Final map update with *station* coords and data
+                        const stationLat = data.data.city?.geo?.[0] ?? mapLat;
+                        const stationLng = data.data.city?.geo?.[1] ?? mapLng;
+                        const cityName = data.data.city?.name || 'Unknown Location';
+                        const aqiValue = data.data.aqi || null;
+                        updateMap(stationLat, stationLng, cityName, aqiValue);
+
+                    } else {
+                        document.getElementById('error-message').style.display = 'block';
+                        document.getElementById('error-message').textContent = 'Error: ' + (data.data || 'Unknown API error');
+                        // 🚨 NEW: Fallback map update if API fails
+                        if (map) map.setView([mapLat, mapLng], 13);
+                    }
+                })
+                .catch(error => {
+                    document.getElementById('error-message').style.display = 'block';
+                    document.getElementById('error-message').textContent = 'Failed to fetch AQI data: ' + error.message;
+                    // 🚨 NEW: Fallback map update if fetch fails
+                    if (map) map.setView([mapLat, mapLng], 13);
+                });
+        }
+
+        // Function to try Geolocation (UPDATED to initialize map if successful)
+        function tryGeolocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    position => {
+                        const lat = position.coords.latitude;
+                        const lng = position.coords.longitude;
+                        fetchAQI(lat, lng);
+                        document.getElementById('manual-location-form').style.display = 'none';
+                    },
+                    error => {
+                        document.getElementById('error-message').style.display = 'block';
+                        document.getElementById('error-message').textContent = 'Geolocation error: ' + error.message + '. Please enter location manually.';
+                        document.getElementById('manual-location-form').style.display = 'block';
+                        // 🚨 NEW: Initialize map with default coords if geolocation fails
+                        initializeMap(initialCoords[0], initialCoords[1]);
+                    }
+                );
+            } else {
+                document.getElementById('error-message').style.display = 'block';
+                document.getElementById('error-message').textContent = 'Geolocation is not supported by this browser. Please enter location manually.';
+                document.getElementById('manual-location-form').style.display = 'block';
+                // 🚨 NEW: Initialize map with default coords if geolocation not supported
+                initializeMap(initialCoords[0], initialCoords[1]);
+            }
+        }
+
+        // Function to display AQI data (unchanged logic)
+        function displayAQI(data) {
+            // Summary Card
+            document.getElementById('city-name').textContent = data.city?.name || 'Unknown Location';
+
+            const aqi = data.aqi || null;
+            const aqiStatus = getAQIStatus(aqi);
+
+            // Large AQI Value Card
+            const aqiCardElement = document.getElementById('aqi-value-card');
+            const largeAqiValueElement = document.getElementById('large-aqi-value');
+            const largeAqiStatusElement = document.getElementById('large-aqi-status');
+
+            aqiCardElement.className = 'card aqi-card shadow-lg ' + aqiStatus.className;
+            largeAqiValueElement.textContent = aqi || 'N/A';
+            largeAqiStatusElement.textContent = aqiStatus.text;
+            largeAqiStatusElement.style.color = aqiStatus.className.includes('good') || aqiStatus.className.includes('unhealthy') || aqiStatus.className.includes('very-unhealthy') || aqiStatus.className.includes('hazardous') ? 'white' : '#1a1a2e';
+
+            // Other summary data
+            document.getElementById('dominant-pol').textContent = data.dominentpol?.toUpperCase() || 'N/A';
+            document.getElementById('time').textContent = data.time?.iso || 'N/A';
+            document.getElementById('city-url').href = data.city?.url || '#';
+
+            // Weather Cards
+            document.getElementById('temperature').textContent = data.iaqi?.t?.v ?? 'N/A';
+            document.getElementById('humidity').textContent = data.iaqi?.h?.v ?? 'N/A';
+            document.getElementById('pressure').textContent = data.iaqi?.p?.v ?? 'N/A';
+            document.getElementById('wind-speed').textContent = data.iaqi?.w?.v ?? 'N/A';
+
+
+            // Pollutant Levels 
+            const pm25Value = data.iaqi?.pm25?.v ?? 'N/A';
+            document.getElementById('pm25').textContent = pm25Value;
+            document.getElementById('pm25-card').className = 'card pollutant-card shadow-sm ' + getPollutantStatus('pm25', pm25Value);
+
+            const pm10Value = data.iaqi?.pm10?.v ?? 'N/A';
+            document.getElementById('pm10').textContent = pm10Value;
+            document.getElementById('pm10-card').className = 'card pollutant-card shadow-sm ' + getPollutantStatus('pm10', pm10Value);
+
+            const coValue = data.iaqi?.co?.v ?? 'N/A';
+            document.getElementById('co').textContent = coValue;
+            document.getElementById('co-card').className = 'card pollutant-card shadow-sm ' + getPollutantStatus('co', coValue);
+
+            const no2Value = data.iaqi?.no2?.v ?? 'N/A';
+            document.getElementById('no2').textContent = no2Value;
+            document.getElementById('no2-card').className = 'card pollutant-card shadow-sm ' + getPollutantStatus('no2', no2Value);
+
+            const o3Value = data.iaqi?.o3?.v ?? 'N/A';
+            document.getElementById('o3').textContent = o3Value;
+            document.getElementById('o3-card').className = 'card pollutant-card shadow-sm ' + getPollutantStatus('o3', o3Value);
+
+            const so2Value = data.iaqi?.so2?.v ?? 'N/A';
+            document.getElementById('so2').textContent = so2Value;
+            document.getElementById('so2-card').className = 'card pollutant-card shadow-sm ' + getPollutantStatus('so2', so2Value);
+
+
+            // 🚨 EDITED: Attributions (Now uses badges) 🚨
+            const attributionsDiv = document.getElementById('attributions');
+            if (data.attributions && data.attributions.length > 0) {
+                attributionsDiv.innerHTML = data.attributions.map(attr =>
+                    `<span class="badge bg-success me-2 mb-2">
+                        <a href="${attr.url}" target="_blank" style="color: white; text-decoration: none;">
+                            ${attr.name} 🔗
+                        </a>
+                    </span>`
+                ).join('');
+            } else {
+                attributionsDiv.textContent = 'ไม่มีแหล่งข้อมูลอ้างอิง.';
+            }
+
+
+            // Charting (unchanged)
+            const days = data.forecast?.daily?.pm25?.map(item => item.day) ?? [];
+            const pm25Data = data.forecast?.daily?.pm25?.map(item => item.avg) ?? [];
+            const pm10Data = data.forecast?.daily?.pm10?.map(item => item.avg) ?? [];
+            const uviData = data.forecast?.daily?.uvi?.map(item => item.avg) ?? [];
+
+            const chartOptions = {
+                responsive: true,
+                scales: {
+                    y: { beginAtZero: true, title: { display: true, text: 'Concentration (µg/m³ / ppb)' } },
+                    x: { title: { display: true, text: 'Date' } }
+                }
+            };
+
+            const pm25Ctx = document.getElementById('pm25Chart').getContext('2d');
+            window.pm25Chart = new Chart(pm25Ctx, { type: 'line', data: { labels: days, datasets: [{ label: 'PM2.5 (µg/m³)', data: pm25Data, borderColor: '#dc3545', backgroundColor: 'rgba(220, 53, 69, 0.2)', fill: true, tension: 0.4 }] }, options: chartOptions });
+
+            const pm10Ctx = document.getElementById('pm10Chart').getContext('2d');
+            window.pm10Chart = new Chart(pm10Ctx, { type: 'line', data: { labels: days, datasets: [{ label: 'PM10 (µg/m³)', data: pm10Data, borderColor: '#ffc107', backgroundColor: 'rgba(255, 193, 7, 0.2)', fill: true, tension: 0.4 }] }, options: chartOptions });
+
+            const uviCtx = document.getElementById('uviChart').getContext('2d');
+            window.uviChart = new Chart(uviCtx, { type: 'line', data: { labels: days, datasets: [{ label: 'UVI', data: uviData, borderColor: '#007bff', backgroundColor: 'rgba(0, 123, 255, 0.2)', fill: true, tension: 0.4 }] }, options: { responsive: true, scales: { y: { beginAtZero: true, title: { display: true, text: 'UVI' } }, x: { title: { display: true, text: 'Date' } } } } });
+        }
+
+        // Handle manual location form submission (UPDATED logic)
+        document.getElementById('location-form')?.addEventListener('submit', function (e) {
+            e.preventDefault();
+            const lat = parseFloat(document.getElementById('latitude').value);
+            const lng = parseFloat(document.getElementById('longitude').value);
+            if (isNaN(lat) || isNaN(lng)) {
+                document.getElementById('error-message').style.display = 'block';
+                document.getElementById('error-message').textContent = 'Please enter valid latitude and longitude values.';
+                return;
+            }
+            document.getElementById('manual-location-form').style.display = 'none';
+            fetchAQI(lat, lng);
+        });
+
+        // Initialize the page (unchanged logic)
+        window.onload = tryGeolocation;
+    </script>
+</body>
+
+</html>
