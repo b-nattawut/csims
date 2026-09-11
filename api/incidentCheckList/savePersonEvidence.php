@@ -9,6 +9,7 @@ ini_set('memory_limit', '256M');
 header('Content-Type: application/json; charset=utf-8');
 
 require_once '../../db_config.php';
+require_once __DIR__ . '/lab_unit_helper.php';
 
 function jsonResponse($success, $message, $data = null, $httpCode = 200) {
     http_response_code($httpCode);
@@ -230,7 +231,7 @@ try {
     for ($i = 0; $i < $maxEv; $i++) {
         $detail = trim((string)($evDescs[$i] ?? ''));
         $qty = trim((string)($evQtys[$i] ?? ''));
-        $lab = trim((string)($evLabs[$i] ?? ''));
+        $lab = labUnitsNormalize($evLabs[$i] ?? '');
         // ต้องมีรายละเอียดหรือจำนวน ถึงจะบันทึก (lab_unit dropdown อย่างเดียวไม่นับ)
         if ($detail === '' && $qty === '') continue;
         $checklistData['evidences'][] = [

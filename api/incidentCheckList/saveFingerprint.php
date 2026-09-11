@@ -9,6 +9,7 @@ ini_set('memory_limit', '256M');
 header('Content-Type: application/json; charset=utf-8');
 
 require_once '../../db_config.php';
+require_once __DIR__ . '/lab_unit_helper.php';
 
 // ============================================
 // Helper Functions
@@ -230,7 +231,8 @@ try {
     $hasMultipleSets = count($sectionSets) > 1;
     foreach ($sectionSets as $setIndex => $set) {
         $setNumber = (int)($set['set_index'] ?? ($setIndex + 1));
-        $setLabUnit = $set['lab_unit'] ?? 'fingerprint';
+        $setLabUnit = labUnitsNormalize($set['lab_unit'] ?? 'fingerprint');
+        if (empty($setLabUnit)) $setLabUnit = ['fingerprint'];
 
         $evidenceItems = is_array($set['evidence_items'] ?? null) ? $set['evidence_items'] : [];
         if (!empty($evidenceItems)) {
@@ -253,7 +255,7 @@ try {
                 $normalizedEvidences[] = [
                     'no' => $item['no'] ?? $evidenceNo++,
                     'detail' => $detail,
-                    'lab_unit' => ($item['lab_unit'] ?? $setLabUnit)
+                    'lab_unit' => (isset($item['lab_unit']) && labUnitsNormalize($item['lab_unit'])) ? labUnitsNormalize($item['lab_unit']) : $setLabUnit
                 ];
             }
             continue;

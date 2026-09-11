@@ -72,8 +72,38 @@ if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
     jsonResponse(false, 'Method not allowed', null, 405);
 }
 
-// รับข้อมูล
+function ev7AsList($value): array
+{
+    if ($value === null || $value === '') return [];
+    if (!is_array($value)) return [$value];
+    return array_values($value);
+}
+
+function ev7AsText($value): string
+{
+    if ($value === null || $value === false) return '';
+    if (is_array($value)) {
+        if (isset($value['description']) || isset($value['detail']) || isset($value['item'])) {
+            return trim((string)($value['description'] ?? $value['detail'] ?? $value['item'] ?? ''));
+        }
+        $parts = [];
+        foreach ($value as $item) {
+            $t = ev7AsText($item);
+            if ($t !== '') $parts[] = $t;
+        }
+        return implode(', ', $parts);
+    }
+    return trim((string)$value);
+}
+
+// รับข้อมูล — ถ้ามี payload_json ให้ใช้เป็นหลัก (array ของรายการของกลาง/กลุ่มงานไม่ถูกแบนเป็น string)
 $data = $_POST;
+if (!empty($_POST['payload_json'])) {
+    $decodedPayload = json_decode($_POST['payload_json'], true);
+    if (is_array($decodedPayload)) {
+        $data = array_merge($data, $decodedPayload);
+    }
+}
 $mergedIncidentLocation = buildMergedLocation($data);
 
 // ค้นหา incident_id
@@ -154,6 +184,7 @@ try {
             'details' => [],
             'other_evidence' => [],
             'other_evidence_text' => $data['sevpf_other_evidence_text'] ?? '',
+            'lab_units' => [],
         ],
         'evidence_handling' => [
             'witness_name' => $data['ev7_witness_name'] ?? ($data['sevpf_witness_name'] ?? ''),
@@ -209,50 +240,59 @@ try {
         'evidences' => [],
     ];
 
-    // evidence_items (dynamic array)
-    $ev_items = $data['ev7_evidence_item'] ?? ($data['sevpf_evidence_item'] ?? []);
-    $ev_lab_units_raw = $data['ev7_lab_unit'] ?? ($data['sevpf_lab_unit'] ?? []);
-    if (is_array($ev_items)) {
-        foreach ($ev_items as $idx => $item) {
-            if (!empty(trim($item))) {
-                $detail = trim($item);
-                $lu = labUnitsNormalize($ev_lab_units_raw[$idx] ?? '');
-                $checklistData['evidence_items'][] = ['description' => $detail];
-                $checklistData['evidences'][] = ['detail' => $detail, 'item' => $detail, 'lab_unit' => $lu];
+    // evidence_items — รับได้ทั้ง string และ array ต่อแถว (กลุ่มงานหลายค่า)
+    $ev_items = ev7AsList($data['ev7_evidence_item'] ?? ($data['sevpf_evidence_item'] ?? []));
+    $ev_lab_units_raw = ev7AsList($data['ev7_lab_unit'] ?? ($data['sevpf_lab_unit'] ?? []));
+    $ev_rows = ev7AsList($data['ev7_evidence_rows'] ?? []);
+    if ($ev_rows) {
+        foreach ($ev_rows as $row) {
+            if (!is_array($row)) {
+                $detail = ev7AsText($row);
+                $lu = [];
+            } else {
+                $detail = ev7AsText($row['description'] ?? $row['detail'] ?? $row['item'] ?? '');
+                $lu = labUnitsNormalize($row['lab_unit'] ?? ($row['lab_units'] ?? []));
             }
+            if ($detail === '') continue;
+            $checklistData['evidence_items'][] = ['description' => $detail];
+            $checklistData['evidences'][] = ['detail' => $detail, 'item' => $detail, 'lab_unit' => $lu];
+            $checklistData['collected_evidence']['lab_units'][] = $lu;
+        }
+    } else {
+        foreach ($ev_items as $idx => $item) {
+            $detail = ev7AsText($item);
+            if ($detail === '') continue;
+            $lu = labUnitsNormalize($ev_lab_units_raw[$idx] ?? (is_array($item) ? ($item['lab_unit'] ?? []) : []));
+            $checklistData['evidence_items'][] = ['description' => $detail];
+            $checklistData['evidences'][] = ['detail' => $detail, 'item' => $detail, 'lab_unit' => $lu];
+            $checklistData['collected_evidence']['lab_units'][] = $lu;
         }
     }
 
     // exhibit_descriptions
-    $ex_descs = $data['ev7_exhibit_desc'] ?? ($data['sevpf_exhibit_desc'] ?? []);
-    if (is_array($ex_descs)) {
-        foreach ($ex_descs as $desc) {
-            if (!empty(trim($desc))) $checklistData['exhibit_descriptions'][] = ['description' => trim($desc)];
-        }
+    $ex_descs = ev7AsList($data['ev7_exhibit_desc'] ?? ($data['sevpf_exhibit_desc'] ?? []));
+    foreach ($ex_descs as $desc) {
+        $text = ev7AsText($desc);
+        if ($text !== '') $checklistData['exhibit_descriptions'][] = ['description' => $text];
     }
 
     // collect details
-    $col_details = $data['ev7_collect_detail'] ?? ($data['sevpf_collect_detail'] ?? []);
-    if (is_array($col_details)) {
-        foreach ($col_details as $d) {
-            if (!empty(trim($d))) $checklistData['collected_evidence']['details'][] = trim($d);
-        }
+    $col_details = ev7AsList($data['ev7_collect_detail'] ?? ($data['sevpf_collect_detail'] ?? []));
+    foreach ($col_details as $d) {
+        $text = ev7AsText($d);
+        if ($text !== '') $checklistData['collected_evidence']['details'][] = $text;
     }
 
     // other evidence
-    $other_ev = $data['ev7_other_evidence'] ?? [];
-    if (is_array($other_ev)) {
-        foreach ($other_ev as $oe) {
-            if (!empty(trim($oe))) $checklistData['collected_evidence']['other_evidence'][] = trim($oe);
-        }
+    $other_ev = ev7AsList($data['ev7_other_evidence'] ?? []);
+    foreach ($other_ev as $oe) {
+        $text = ev7AsText($oe);
+        if ($text !== '') $checklistData['collected_evidence']['other_evidence'][] = $text;
     }
 
-    // lab units (การตรวจพิสูจน์) — เก็บทุกค่ารวม empty เพื่อรักษา index ให้ตรงกับ evidence_items
-    $lab_units = $data['ev7_lab_unit'] ?? ($data['sevpf_lab_unit'] ?? []);
-    if (is_array($lab_units)) {
-        $checklistData['collected_evidence']['lab_units'] = [];
-        foreach ($lab_units as $lu) {
-            // แต่ละ index = 1 แถวของกลาง, ค่าเป็น array ของกลุ่มงาน (อาจว่างได้)
+    // ถ้ายังไม่มี lab_units จากแถวของกลาง ให้เก็บจากฟิลด์รวม (รักษา index)
+    if (empty($checklistData['collected_evidence']['lab_units']) && $ev_lab_units_raw) {
+        foreach ($ev_lab_units_raw as $lu) {
             $checklistData['collected_evidence']['lab_units'][] = labUnitsNormalize($lu);
         }
     }

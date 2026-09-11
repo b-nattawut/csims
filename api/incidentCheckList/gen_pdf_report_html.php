@@ -13,6 +13,7 @@ error_reporting(E_ALL);
 
 require_once __DIR__ . '/../../db_config.php';
 require_once __DIR__ . '/../../helpers/report_no.php';
+require_once __DIR__ . '/lab_unit_helper.php';
 
 // ==========================================
 // 1. HELPER FUNCTIONS
@@ -826,7 +827,8 @@ if (!empty($evidenceList)) {
         $evidenceNo = getVal($evidence, 'no', $index);
         $evidenceDetail = trim((string)getVal($evidence, 'detail'));
         $labUnit = getVal($evidence, 'lab_unit');
-        if ($labUnit === 'traffic') {
+        $labUnits = labUnitsNormalize($labUnit);
+        if (in_array('traffic', $labUnits, true)) {
             $labUnit = getVal($forensicResults, 'lab_unit', '');
         }
 
@@ -834,8 +836,8 @@ if (!empty($evidenceList)) {
             continue;
         }
 
-        $labUnitText = $labUnitMap[$labUnit] ?? $labUnit;
-        if (empty($labUnitText)) {
+        $labUnitText = labUnitsToText($labUnit);
+        if ($labUnitText === '') {
             $labUnitText = '-';
         }
 

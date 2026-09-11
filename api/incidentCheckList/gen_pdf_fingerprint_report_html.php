@@ -13,6 +13,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 require_once __DIR__ . '/../../db_config.php';
+require_once __DIR__ . '/lab_unit_helper.php';
 require_once __DIR__ . '/../../helpers/report_no.php';
 
 // ==========================================
@@ -328,7 +329,7 @@ foreach ($evDescriptions as $idx => $desc) {
     $qty = h($evQuantities[$idx] ?? '');
     $label = h($evLabelNos[$idx] ?? '');
     $labKey = $evLabUnits[$idx] ?? '';
-    $labText = $labUnitMap[$labKey] ?? $labKey;
+    $labText = labUnitsToText($labKey);
 
     $evidence_rows_html .= '<div class="fr i1"><span class="fl">รายการที่ <b>' . $no . '</b></span><span class="fl" style="margin-left:4px;">เป็น</span><span class="fd">' . h($desc) . '</span></div>' . "\n";
 

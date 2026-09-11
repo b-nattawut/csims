@@ -9,6 +9,7 @@ ini_set('memory_limit', '256M');
 header('Content-Type: application/json; charset=utf-8');
 
 require_once '../../db_config.php';
+require_once __DIR__ . '/lab_unit_helper.php';
 
 // ============================================
 // Helper Functions
@@ -145,7 +146,8 @@ $userId = isset($_SESSION['user_id']) ? (int) $_SESSION['user_id'] : null;
 try {
     $pdo->beginTransaction();
 
-    $trafficLabUnit = trim((string)($data['forensic_lab_unit'] ?? ''));
+    // การตรวจพิสูจน์ระดับคดี — เลือกได้หลายกลุ่มงาน (เก็บเป็น array)
+    $trafficLabUnit = labUnitsNormalize($data['forensic_lab_unit'] ?? '');
 
     // --- ดึงข้อมูลเดิมเพื่อเตรียมลบไฟล์เก่า ---
     $stmtOld = $pdo->prepare("SELECT incident_checklist_data FROM incident_checklist_transaction WHERE incident_id = ? LIMIT 1");

@@ -13,6 +13,7 @@ ini_set('memory_limit', '256M');
 header('Content-Type: application/json; charset=utf-8');
 
 require_once '../../db_config.php';
+require_once __DIR__ . '/lab_unit_helper.php';
 
 // ============================================
 // Helper Functions
@@ -232,7 +233,7 @@ try {
                     'azimuth' => $data['evidence_azimuth_bomb'][$i] ?? '', // 10. วัตถุพยานหรือร่องรอยที่ตรวจพบ - Azimuth (ทิศ/อ้าง/ระยะ)
                     'remark' => $data['evidence_remark_bomb'][$i] ?? '', // 10. วัตถุพยานหรือร่องรอยที่ตรวจพบ - หมายเหตุ
                     // ★ lab_unit ดึงจาก evidence_lab_unit_bomb โดยตรง (ไม่ cross-sync กับ measurement)
-                    'lab_unit' => $data['evidence_lab_unit_bomb'][$i] ?? '',
+                    'lab_unit' => labUnitsNormalize($data['evidence_lab_unit_bomb'][$i] ?? ''),
                 ];
             }
         }
@@ -263,7 +264,7 @@ try {
                         'other_text'  => $data['measurement_action_other_text'][$idx] ?? '' // 12. รายการวัตถุพยาน (บันทึกการตรวจเก็บวัตถุพยาน) - การดำเนินการ ( อื่น ๆ - detail )
                     ],
                     'remark' => $data['measurement_remark_bomb'][$idx] ?? '', // 12. รายการวัตถุพยาน (บันทึกการตรวจเก็บวัตถุพยาน) - หมายเหตุ
-                    'forensic_unit' => $data['measurement_forensic_unit_bomb'][$idx] ?? '' // 12. การตรวจพิสูจน์
+                    'forensic_unit' => labUnitsNormalize($data['measurement_forensic_unit_bomb'][$idx] ?? '') // 12. การตรวจพิสูจน์
                 ];
             }
         }
@@ -490,7 +491,7 @@ try {
             return [
                 'no' => $i + 1,
                 'detail' => $ev['item'] ?? '',
-                'lab_unit' => $ev['lab_unit'] ?? ''
+                'lab_unit' => labUnitsNormalize($ev['lab_unit'] ?? '')
             ];
         }, $evFound, array_keys($evFound)),
         'evidences_found' => $evFound, // 10. วัตถุพยานหรือร่องรอยที่ตรวจพบ - รายการวัตถุพยาน 

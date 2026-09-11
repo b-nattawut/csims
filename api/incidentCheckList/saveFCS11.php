@@ -7,6 +7,7 @@
 header('Content-Type: application/json; charset=utf-8');
 
 require_once __DIR__ . '/../../db_config.php';
+require_once __DIR__ . '/lab_unit_helper.php';
 
 // ==========================================
 // MAIN
@@ -161,8 +162,8 @@ try {
                 'no' => $ev['no'] ?? (count($measurements) + 1),
                 'item' => $ev['item'] ?? '',
                 'detail' => $ev['item'] ?? '',
-                'forensic_unit' => $ev['test'] ?? '',
-                'lab_unit' => $ev['test'] ?? ''
+                'forensic_unit' => labUnitsNormalize($ev['test'] ?? ''),
+                'lab_unit' => labUnitsNormalize($ev['test'] ?? '')
             ];
         }
         $existingData['measurements'] = $measurements;

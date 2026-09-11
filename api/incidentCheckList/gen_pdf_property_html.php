@@ -650,7 +650,7 @@ $scene_sketch_img = '';
 if (is_array($scene_sketch_img_data) && !empty($scene_sketch_img_data['file_id'])) {
     $sketchBase64 = loadBlobAsBase64($pdo, $scene_sketch_img_data['file_id']);
     if (!empty($sketchBase64)) {
-        $scene_sketch_img = '<img src="' . $sketchBase64 . '" style="max-width:95%; max-height:95%; object-fit:contain;" alt="แผนผังสังเขป">';
+        $scene_sketch_img = '<img src="' . $sketchBase64 . '" style="width:100%; height:100%; object-fit:contain; display:block;" alt="แผนผังสังเขป">';
     }
 }
 // ถ้าไม่ได้จาก BLOB → ลอง base64 inline
@@ -662,7 +662,7 @@ if (empty($scene_sketch_img) && !empty($scene_sketch_img_data)) {
         $sketchBase64 = $scene_sketch_img_data;
     }
     if (!empty($sketchBase64) && strpos($sketchBase64, 'data:image') !== false) {
-        $scene_sketch_img = '<img src="' . $sketchBase64 . '" style="max-width:95%; max-height:95%; object-fit:contain;" alt="แผนผังสังเขป">';
+        $scene_sketch_img = '<img src="' . $sketchBase64 . '" style="width:100%; height:100%; object-fit:contain; display:block;" alt="แผนผังสังเขป">';
     }
 }
 

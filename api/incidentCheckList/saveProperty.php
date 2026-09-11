@@ -12,6 +12,7 @@ ini_set('memory_limit', '256M');
 header('Content-Type: application/json; charset=utf-8');
 
 require_once '../../db_config.php';
+require_once __DIR__ . '/lab_unit_helper.php';
 
 // ============================================
 // Helper Functions
@@ -155,7 +156,10 @@ try {
         'case_behavior_info'    => $data['case_behavior_info'] ?? [],
         'inspectors'            => $data['inspectors'] ?? [],
         'trace_points'          => $data['trace_points'] ?? [],
-        'evidences'             => $data['evidences'] ?? [],
+        'evidences'             => array_map(function ($ev) {
+            if (is_array($ev)) $ev['lab_unit'] = labUnitsNormalize($ev['lab_unit'] ?? '');
+            return $ev;
+        }, is_array($data['evidences'] ?? null) ? $data['evidences'] : []),
         'stolen_property'       => $data['stolen_property'] ?? '',
         'handover'              => $data['handover'] ?? [],
         'attachments_meta'      => $data['attachments_meta'] ?? [],
@@ -194,7 +198,7 @@ try {
                 'action_return_text' => $m['action_return_text'] ?? '',
                 'action_other' => !empty($m['action_other']),
                 'action_other_text' => $m['action_other_text'] ?? '',
-                'forensic_unit' => $m['forensic_unit'] ?? ''
+                'forensic_unit' => labUnitsNormalize($m['forensic_unit'] ?? '')
             ];
         }
     }
@@ -234,7 +238,7 @@ try {
                 'action_return_text' => $actReturnText,
                 'action_other' => $actOther,
                 'action_other_text' => $actOtherText,
-                'forensic_unit' => $data['measurement_forensic_unit_property'][$i] ?? ''
+                'forensic_unit' => labUnitsNormalize($data['measurement_forensic_unit_property'][$i] ?? '')
             ];
         }
     }

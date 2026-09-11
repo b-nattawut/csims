@@ -7,6 +7,7 @@
 header('Content-Type: application/json; charset=utf-8');
 
 require_once __DIR__ . '/../../db_config.php';
+require_once __DIR__ . '/lab_unit_helper.php';
 
 // ==========================================
 // HELPER FUNCTIONS
@@ -263,7 +264,7 @@ try {
             $detail = trim((string)($ev['item'] ?? ($ev['detail'] ?? '')));
             if ($detail === '') continue;
             $labUnit = $ev['forensic_unit'] ?? ($ev['lab_unit'] ?? '');
-            $labUnitText = $labUnitMap[$labUnit] ?? $labUnit;
+            $labUnitText = labUnitsToText($labUnit);
             $evidenceList[] = [
                 'no' => $ev['no'] ?? ($i + 1),
                 'item' => $detail,
@@ -279,7 +280,7 @@ try {
             $detail = trim((string)($ev['detail'] ?? ($ev['item'] ?? '')));
             if ($detail === '') continue;
             $labUnit = $ev['lab_unit'] ?? ($ev['forensic_unit'] ?? '');
-            $labUnitText = $labUnitMap[$labUnit] ?? $labUnit;
+            $labUnitText = labUnitsToText($labUnit);
             $evidenceList[] = [
                 'no' => $ev['no'] ?? ($i + 1),
                 'item' => $detail,
