@@ -399,7 +399,7 @@ if (isset($pdo)) {
             </div>
             <div class="fr">
                 <span class="fl">การตรวจพิสูจน์</span>
-                <select class="fppf-select" name="rlf_ev_lab_unit[]" style="max-width:280px;">
+                <select class="fppf-select lab-unit-multi" multiple size="3" title="เลือกได้มากกว่า 1 กลุ่มงาน" style="max-width:280px;">
                     <option value="bio_dna">กลุ่มงานตรวจชีววิทยา</option>
                     <option value="chemical">กลุ่มงานตรวจทางเคมีฟิสิกส์</option>
                     <option value="fingerprint" selected>กลุ่มงานตรวจลายนิ้วมือแฝง</option>
@@ -407,6 +407,7 @@ if (isset($pdo)) {
                     <option value="gun">กลุ่มงานตรวจอาวุธปืนและเครื่องกระสุน</option>
                     <option value="document">กลุ่มงานตรวจเอกสาร</option>
                 </select>
+                <input type="hidden" class="lab-unit-value" name="rlf_ev_lab_unit[]" value="fingerprint">
             </div>
         </div>
     </div>
@@ -555,7 +556,7 @@ if (isset($pdo)) {
             '<span class="fl">cm. ส.</span><input type="text" class="fppf-inp fppf-inp-s" name="rlf_ev_height[]"><span class="fl">cm.</span>' +
             '<span class="fl" style="margin-left:8px;">จำนวน</span><input type="text" class="fppf-inp fppf-inp-s" name="rlf_ev_quantity[]">' +
             '<span class="fl" style="margin-left:8px;">ป้ายหมายเลข</span><input type="text" class="fppf-inp" name="rlf_ev_label_no[]" style="max-width:100px;"></div>' +
-            '<div class="fr"><span class="fl">การตรวจพิสูจน์</span><select class="fppf-select" name="rlf_ev_lab_unit[]" style="max-width:280px;">' + labOpts + '</select></div>' +
+            '<div class="fr"><span class="fl">การตรวจพิสูจน์</span><select class="fppf-select lab-unit-multi" multiple size="3" title="เลือกได้มากกว่า 1 กลุ่มงาน" style="max-width:280px;">' + labOpts + '</select><input type="hidden" class="lab-unit-value" name="rlf_ev_lab_unit[]" value=""></div>' +
             '</div>';
         container.insertAdjacentHTML('beforeend', html);
     });

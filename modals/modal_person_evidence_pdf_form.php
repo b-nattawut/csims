@@ -927,8 +927,8 @@ $pepfTodayTime = date('H:i');
                             </div>
                             <div class="pepf-ed-line2">
                                 <span class="pepf-fl">กลุ่มตรวจ</span>
-                                <select class="pepf-sel pepf-lab-unit-sel" name="pepf_lab_unit[]" title="-- กลุ่มตรวจพิสูจน์ --">
-                                    <option value="">-- กลุ่มตรวจพิสูจน์ --</option>
+                                <select class="pepf-sel pepf-lab-unit-sel lab-unit-multi" multiple size="3" title="-- กลุ่มตรวจพิสูจน์ (เลือกได้หลายข้อ) --">
+                                    <option value="">-- กลุ่มตรวจพิสูจน์ (เลือกได้หลายข้อ) --</option>
                                     <option value="bio_dna">กลุ่มงานตรวจชีววิทยา</option>
                                     <option value="chemical">กลุ่มงานตรวจทางเคมีฟิสิกส์</option>
                                     <option value="fingerprint">กลุ่มงานตรวจลายนิ้วมือแฝง</option>
@@ -937,6 +937,7 @@ $pepfTodayTime = date('H:i');
                                     <option value="document">กลุ่มงานตรวจเอกสาร</option>
                                     <option value="digital">กลุ่มงานตรวจพิสูจน์หลักฐานดิจิทัล</option><option value="computer">กลุ่มงานตรวจพิสูจน์อาชญากรรมคอมพิวเตอร์</option>
                                 </select>
+                                <input type="hidden" class="lab-unit-value" name="pepf_lab_unit[]" value="">
                                 <span class="pepf-fl" style="margin-left:4px;">จำนวน</span>
                                 <input type="text" class="pepf-inp-s" name="pepf_evidence_qty[]" style="max-width:40px;">
                             </div>
@@ -1362,7 +1363,7 @@ $pepfTodayTime = date('H:i');
 
     // ===== Evidence details (3.2) =====
     var pepfEvidenceDetailIdx = 1;
-    var pepfLabUnitOptions = '<option value="">-- กลุ่มตรวจพิสูจน์ --</option>' +
+    var pepfLabUnitOptions = '<option value="">-- กลุ่มตรวจพิสูจน์ (เลือกได้หลายข้อ) --</option>' +
         '<option value="bio_dna">กลุ่มงานตรวจชีววิทยา</option>' +
         '<option value="chemical">กลุ่มงานตรวจทางเคมีฟิสิกส์</option>' +
         '<option value="fingerprint">กลุ่มงานตรวจลายนิ้วมือแฝง</option>' +
@@ -1382,7 +1383,8 @@ $pepfTodayTime = date('H:i');
             '</div>' +
             '<div class="pepf-ed-line2">' +
                 '<span class="pepf-fl">กลุ่มตรวจ</span>' +
-                '<select class="pepf-sel pepf-lab-unit-sel" name="pepf_lab_unit[]" title="-- กลุ่มตรวจพิสูจน์ --">' + pepfLabUnitOptions + '</select>' +
+                '<select class="pepf-sel pepf-lab-unit-sel lab-unit-multi" multiple size="3" title="-- กลุ่มตรวจพิสูจน์ (เลือกได้หลายข้อ) --">' + pepfLabUnitOptions + '</select>' +
+                '<input type="hidden" class="lab-unit-value" name="pepf_lab_unit[]" value="">' +
                 '<span class="pepf-fl" style="margin-left:4px;">จำนวน</span>' +
                 '<input type="text" class="pepf-inp-s" name="pepf_evidence_qty[]" style="max-width:40px;">' +
                 '<button type="button" class="pepf-del-btn" onclick="this.closest(\'.pepf-evidence-detail-row\').remove(); pepfRenumberEvidenceDetails();">×</button>' +
@@ -1391,9 +1393,9 @@ $pepfTodayTime = date('H:i');
     };
 
     // Show full selected text on hover for long group names
-    $(document).on('change', '#personEvidenceFormPdfModal select[name="pepf_lab_unit[]"]', function() {
-        var txt = $(this).find('option:selected').text() || '-- กลุ่มตรวจพิสูจน์ --';
-        $(this).attr('title', txt);
+    $(document).on('change', '#personEvidenceFormPdfModal select.pepf-lab-unit-sel', function() {
+        var txts = $(this).find('option:selected').map(function() { return $(this).text(); }).get();
+        $(this).attr('title', txts.length ? txts.join(', ') : '-- กลุ่มตรวจพิสูจน์ --');
     });
     window.pepfRenumberEvidenceDetails = function() {
         var rows = document.querySelectorAll('#pepf_evidence_detail_container .pepf-evidence-detail-row');
@@ -1704,7 +1706,7 @@ $pepfTodayTime = date('H:i');
     document.getElementById('personEvidenceFormPdfModal').addEventListener('shown.bs.modal', function() {
         initPepfCanvas('pepf_sig_receiver');
         initPepfCanvas('pepf_sig_sender');
-        $('#personEvidenceFormPdfModal select[name="pepf_lab_unit[]"]').trigger('change');
+        $('#personEvidenceFormPdfModal select.pepf-lab-unit-sel').trigger('change');
         pepfToggleNotifyOther();
         pepfSyncReportNo();
         if (typeof window.pepfRefreshAutoWrapGroups === 'function') window.pepfRefreshAutoWrapGroups();

@@ -658,7 +658,7 @@ $todayTimeFP = date('H:i');
                             </div>
                             <div class="fpf-fr">
                                 <span class="fpf-fl">การตรวจพิสูจน์</span>
-                                <select class="fpf-sel" name="fp_ev_lab_unit[]" style="max-width:280px;">
+                                <select class="fpf-sel lab-unit-multi" multiple size="3" title="เลือกได้มากกว่า 1 กลุ่มงาน" style="max-width:280px;">
                                     <option value="bio_dna">กลุ่มงานตรวจชีววิทยา</option>
                                     <option value="chemical">กลุ่มงานตรวจทางเคมีฟิสิกส์</option>
                                     <option value="fingerprint" selected>กลุ่มงานตรวจลายนิ้วมือแฝง</option>
@@ -666,6 +666,7 @@ $todayTimeFP = date('H:i');
                                     <option value="gun">กลุ่มงานตรวจอาวุธปืนและเครื่องกระสุน</option>
                                     <option value="document">กลุ่มงานตรวจเอกสาร</option>
                                 </select>
+                                <input type="hidden" class="lab-unit-value" name="fp_ev_lab_unit[]" value="fingerprint">
                             </div>
                         </div>
                     </div>
@@ -1089,7 +1090,7 @@ $todayTimeFP = date('H:i');
             </div>
             <div class="fpf-fr">
                 <span class="fpf-fl">การตรวจพิสูจน์</span>
-                <select class="fpf-sel" name="fp_ev_lab_unit[]" style="max-width:280px;">
+                <select class="fpf-sel lab-unit-multi" multiple size="3" title="เลือกได้มากกว่า 1 กลุ่มงาน" style="max-width:280px;">
                     <option value="bio_dna">กลุ่มงานตรวจชีววิทยา</option>
                     <option value="chemical">กลุ่มงานตรวจทางเคมีฟิสิกส์</option>
                     <option value="fingerprint" selected>กลุ่มงานตรวจลายนิ้วมือแฝง</option>
@@ -1097,6 +1098,7 @@ $todayTimeFP = date('H:i');
                     <option value="gun">กลุ่มงานตรวจอาวุธปืนและเครื่องกระสุน</option>
                     <option value="document">กลุ่มงานตรวจเอกสาร</option>
                 </select>
+                <input type="hidden" class="lab-unit-value" name="fp_ev_lab_unit[]" value="fingerprint">
             </div>`;
         document.getElementById('fp_evidence_container').appendChild(card);
     });
@@ -1324,7 +1326,7 @@ $todayTimeFP = date('H:i');
                             </div>
                             <div class="fpf-fr">
                                 <span class="fpf-fl">การตรวจพิสูจน์</span>
-                                <select class="fpf-sel" name="fp_ev_lab_unit[]" style="max-width:280px;">
+                                <select class="fpf-sel lab-unit-multi" multiple size="3" title="เลือกได้มากกว่า 1 กลุ่มงาน" style="max-width:280px;">
                                     <option value="bio_dna">กลุ่มงานตรวจชีววิทยา</option>
                                     <option value="chemical">กลุ่มงานตรวจทางเคมีฟิสิกส์</option>
                                     <option value="fingerprint" selected>กลุ่มงานตรวจลายนิ้วมือแฝง</option>
@@ -1332,6 +1334,7 @@ $todayTimeFP = date('H:i');
                                     <option value="gun">กลุ่มงานตรวจอาวุธปืนและเครื่องกระสุน</option>
                                     <option value="document">กลุ่มงานตรวจเอกสาร</option>
                                 </select>
+                                <input type="hidden" class="lab-unit-value" name="fp_ev_lab_unit[]" value="fingerprint">
                             </div>
                         </div>
                     </div>
@@ -1433,7 +1436,7 @@ $todayTimeFP = date('H:i');
                 </div>
                 <div class="fpf-fr">
                     <span class="fpf-fl">การตรวจพิสูจน์</span>
-                    <select class="fpf-sel" name="fp_ev_lab_unit[]" style="max-width:280px;">
+                    <select class="fpf-sel lab-unit-multi" multiple size="3" title="เลือกได้มากกว่า 1 กลุ่มงาน" style="max-width:280px;">
                         <option value="bio_dna">กลุ่มงานตรวจชีววิทยา</option>
                         <option value="chemical">กลุ่มงานตรวจทางเคมีฟิสิกส์</option>
                         <option value="fingerprint" selected>กลุ่มงานตรวจลายนิ้วมือแฝง</option>
@@ -1441,6 +1444,7 @@ $todayTimeFP = date('H:i');
                         <option value="gun">กลุ่มงานตรวจอาวุธปืนและเครื่องกระสุน</option>
                         <option value="document">กลุ่มงานตรวจเอกสาร</option>
                     </select>
+                    <input type="hidden" class="lab-unit-value" name="fp_ev_lab_unit[]" value="fingerprint">
                 </div>
                 `;
             container.appendChild(card);
@@ -1622,7 +1626,7 @@ $todayTimeFP = date('H:i');
                     height: (card.querySelector('[name="fp_ev_height[]"]') || {}).value || '',
                     quantity: (card.querySelector('[name="fp_ev_quantity[]"]') || {}).value || '',
                     label_no: (card.querySelector('[name="fp_ev_label_no[]"]') || {}).value || '',
-                    lab_unit: (card.querySelector('[name="fp_ev_lab_unit[]"]') || {}).value || 'fingerprint',
+                    lab_unit: window.getLabUnits(card.querySelector('[name="fp_ev_lab_unit[]"]')),
                     methods: []
                 };
                 card.querySelectorAll('.fp-method-row').forEach(row => {

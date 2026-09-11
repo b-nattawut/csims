@@ -331,7 +331,7 @@ ob_start();
 <!-- Include Modal สำหรับ F-CS-11 (แบบการตรวจเก็บและส่งมอบวัตถุพยาน) -->
 <?php include './modals/modal_fcs11_pdf_form.php'; ?>
 
-<script src="js/sketch-tools.js"></script>
+<script src="js/sketch-tools.js?v=10"></script>
 <script src="js/report_no_th.js"></script>
 
 <script>
@@ -3190,7 +3190,7 @@ ob_start();
             const area = $card.find('input[name="measurement_area_life[]"]').val() || '';
             const labelNo = $card.find('input[name="measurement_label_number_life[]"]').val() || '';
             const remarkM = $card.find('input[name="measurement_remark_life[]"]').val() || '';
-            const forensicUnit = $card.find('select[name="measurement_forensic_unit_life[]"]').val() || '';
+            const forensicUnit = window.getLabUnitsString($card.find('[name="measurement_forensic_unit_life[]"]'));
 
             // checkboxes
             const pkgPlastic = $card.find('input[name^="measurement_package_plastic_check_"]').is(':checked');
@@ -3212,9 +3212,10 @@ ob_start();
                 '<td><input type="checkbox" name="measurement_action_return_check_' + idx + '" value="1"' + (actReturn ? ' checked' : '') + '></td>' +
                 '<td><input type="checkbox" name="measurement_action_other_check_' + idx + '" value="1"' + (actOther ? ' checked' : '') + '></td>' +
                 '<td><input type="text" name="measurement_remark_life[]" value="' + remarkM.replace(/"/g, '&quot;') + '"><button type="button" class="btn btn-sm btn-hw-open btn-hw-dynamic" title="HW"><i class="fas fa-pen"></i></button></td>' +
-                '<td><select name="measurement_forensic_unit_life[]" style="font-size:9px; padding:1px; width:100%;"><option value="">--</option><option value="fingerprint"' + (forensicUnit === 'fingerprint' ? ' selected' : '') + '>ลายนิ้วมือแฝง</option><option value="bio_dna"' + (forensicUnit === 'bio_dna' ? ' selected' : '') + '>ชีววิทยา/ดีเอ็นเอ</option><option value="chemical"' + (forensicUnit === 'chemical' ? ' selected' : '') + '>เคมีฟิสิกส์</option><option value="drug"' + (forensicUnit === 'drug' ? ' selected' : '') + '>ยาเสพติด</option><option value="gun"' + (forensicUnit === 'gun' ? ' selected' : '') + '>อาวุธปืน</option><option value="document"' + (forensicUnit === 'document' ? ' selected' : '') + '>เอกสาร</option><option value="digital"' + (forensicUnit === 'digital' ? ' selected' : '') + '>ดิจิทัล</option><option value="computer"' + (forensicUnit === 'computer' ? ' selected' : '') + '>คอมพิวเตอร์</option></select></td>' +
+                '<td><select class="lab-unit-multi" multiple size="3" title="เลือกได้มากกว่า 1 กลุ่มงาน" style="font-size:9px; padding:1px; width:100%;"><option value="">--</option><option value="fingerprint">ลายนิ้วมือแฝง</option><option value="bio_dna">ชีววิทยา/ดีเอ็นเอ</option><option value="chemical">เคมีฟิสิกส์</option><option value="drug">ยาเสพติด</option><option value="gun">อาวุธปืน</option><option value="document">เอกสาร</option><option value="digital">ดิจิทัล</option><option value="computer">คอมพิวเตอร์</option></select><input type="hidden" class="lab-unit-value" name="measurement_forensic_unit_life[]" value=""></td>' +
                 '<td><button type="button" class="lpf-del-btn" onclick="lpfDelRow(this)">×</button></td>';
             tbody.appendChild(tr);
+            window.setLabUnits($(tr).find('[name="measurement_forensic_unit_life[]"]'), forensicUnit);
         });
     }
 
@@ -3366,18 +3367,17 @@ ob_start();
             const item = row ? (row.querySelector('input[name="evidence_item_life[]"]') || {}).value || '' : '';
             const azimuth = row ? (row.querySelector('input[name="evidence_azimuth_life[]"]') || {}).value || '' : '';
             const remark = row ? (row.querySelector('input[name="evidence_remark_life[]"]') || {}).value || '' : '';
-            const labUnitSel = row ? row.querySelector('select[name="evidence_lab_unit_life[]"]') : null;
-            const labUnit = labUnitSel ? labUnitSel.value || '' : '';
+            const labUnit = row ? window.getLabUnitsString(row.querySelector('[name="evidence_lab_unit_life[]"]')) : '';
             const lv1 = row ? ((row.querySelector('input[name^="evidence_level_1_life_"]') || {}).value || '') : '';
             const lv2 = row ? ((row.querySelector('input[name^="evidence_level_2_life_"]') || {}).value || '') : '';
             const lv3 = row ? ((row.querySelector('input[name^="evidence_level_3_life_"]') || {}).value || '') : '';
             const lv4 = row ? ((row.querySelector('input[name^="evidence_level_4_life_"]') || {}).value || '') : '';
 
             const labUnitOptionsStd = [
-                {v:'',t:'-- เลือก --'},{v:'fingerprint',t:'ลายนิ้วมือแฝง'},{v:'bio_dna',t:'ชีววิทยา/ดีเอ็นเอ'},
+                {v:'',t:'-- เลือก (เลือกได้หลายข้อ) --'},{v:'fingerprint',t:'ลายนิ้วมือแฝง'},{v:'bio_dna',t:'ชีววิทยา/ดีเอ็นเอ'},
                 {v:'chemical',t:'เคมีฟิสิกส์'},{v:'drug',t:'ยาเสพติด'},{v:'gun',t:'อาวุธปืน'},
                 {v:'document',t:'เอกสาร'},{v:'digital',t:'ดิจิทัล'},{v:'computer',t:'คอมพิวเตอร์'}
-            ].map(o => '<option value="' + o.v + '"' + (o.v === labUnit ? ' selected' : '') + '>' + o.t + '</option>').join('');
+            ].map(o => '<option value="' + o.v + '">' + o.t + '</option>').join('');
 
             const cardHtml = `
                 <div class="evidence-card-life card mb-3 shadow-sm">
@@ -3426,7 +3426,8 @@ ob_start();
                             </div>
                             <div class="col-md-4">
                                 <label class="form-label small text-muted">การตรวจพิสูจน์</label>
-                                <select class="form-select" name="evidence_lab_unit_life[]">${labUnitOptionsStd}</select>
+                                <select class="form-select lab-unit-multi" multiple size="4" title="เลือกได้มากกว่า 1 กลุ่มงาน">${labUnitOptionsStd}</select>
+                                <input type="hidden" class="lab-unit-value" name="evidence_lab_unit_life[]" value="">
                             </div>
                             <div class="col-12">
                                 <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeEvidenceCardLife(this)">
@@ -3437,6 +3438,7 @@ ob_start();
                     </div>
                 </div>`;
             $(container).append(cardHtml);
+            window.setLabUnits($(container).find('.evidence-card-life').last().find('[name="evidence_lab_unit_life[]"]'), labUnit);
         }
 
         evidenceIndexLife = count;
@@ -3459,7 +3461,7 @@ ob_start();
             const area = row ? (row.querySelector('input[name="measurement_area_life[]"]') || {}).value || '' : '';
             const labelNo = row ? (row.querySelector('input[name="measurement_label_number_life[]"]') || {}).value || '' : '';
             const remark = row ? (row.querySelector('input[name="measurement_remark_life[]"]') || {}).value || '' : '';
-            const forensicUnit = row ? (row.querySelector('select[name="measurement_forensic_unit_life[]"]') || {}).value || '' : '';
+            const forensicUnit = row ? window.getLabUnitsString(row.querySelector('[name="measurement_forensic_unit_life[]"]')) : '';
 
             const pkgPlastic = row ? !!(row.querySelector('input[name^="measurement_package_plastic_check_"]') || {}).checked : false;
             const pkgPaper = row ? !!(row.querySelector('input[name^="measurement_package_paper_check_"]') || {}).checked : false;
@@ -3553,17 +3555,18 @@ ob_start();
                             </div>
                             <div class="col-md-12">
                                 <label class="form-label small text-muted">8. การตรวจพิสูจน์</label>
-                                <select class="form-select" name="measurement_forensic_unit_life[]">
-                                    <option value="" ${!forensicUnit ? 'selected' : ''}>-- กรุณาเลือก --</option>
-                                    <option value="fingerprint" ${forensicUnit === 'fingerprint' ? 'selected' : ''}>กลุ่มงานตรวจลายนิ้วมือแฝง</option>
-                                    <option value="bio_dna" ${forensicUnit === 'bio_dna' ? 'selected' : ''}>กลุ่มงานตรวจชีววิทยาและดีเอ็นเอ</option>
-                                    <option value="chemical" ${forensicUnit === 'chemical' ? 'selected' : ''}>กลุ่มงานตรวจทางเคมีฟิสิกส์</option>
-                                    <option value="drug" ${forensicUnit === 'drug' ? 'selected' : ''}>กลุ่มงานตรวจยาเสพติด</option>
-                                    <option value="gun" ${forensicUnit === 'gun' ? 'selected' : ''}>กลุ่มงานตรวจอาวุธปืนและเครื่องกระสุน</option>
-                                    <option value="document" ${forensicUnit === 'document' ? 'selected' : ''}>กลุ่มงานตรวจเอกสาร</option>
-                                    <option value="digital" ${forensicUnit === 'digital' ? 'selected' : ''}>กลุ่มงานตรวจพิสูจน์หลักฐานดิจิทัล</option>
-                                    <option value="computer" ${forensicUnit === 'computer' ? 'selected' : ''}>กลุ่มงานตรวจพิสูจน์อาชญากรรมคอมพิวเตอร์</option>
+                                <select class="form-select lab-unit-multi" multiple size="4" title="เลือกได้มากกว่า 1 กลุ่มงาน">
+                                    <option value="">-- กรุณาเลือก (เลือกได้หลายข้อ) --</option>
+                                    <option value="fingerprint">กลุ่มงานตรวจลายนิ้วมือแฝง</option>
+                                    <option value="bio_dna">กลุ่มงานตรวจชีววิทยาและดีเอ็นเอ</option>
+                                    <option value="chemical">กลุ่มงานตรวจทางเคมีฟิสิกส์</option>
+                                    <option value="drug">กลุ่มงานตรวจยาเสพติด</option>
+                                    <option value="gun">กลุ่มงานตรวจอาวุธปืนและเครื่องกระสุน</option>
+                                    <option value="document">กลุ่มงานตรวจเอกสาร</option>
+                                    <option value="digital">กลุ่มงานตรวจพิสูจน์หลักฐานดิจิทัล</option>
+                                    <option value="computer">กลุ่มงานตรวจพิสูจน์อาชญากรรมคอมพิวเตอร์</option>
                                 </select>
+                                <input type="hidden" class="lab-unit-value" name="measurement_forensic_unit_life[]" value="">
                             </div>
                             <div class="col-12">
                                 <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeMeasurementCardLife(this)">
@@ -3574,6 +3577,7 @@ ob_start();
                     </div>
                 </div>`;
             $(container).append(cardHtml);
+            window.setLabUnits($(container).find('.measurement-card-life').last().find('[name="measurement_forensic_unit_life[]"]'), forensicUnit);
         }
 
         measurementIndexLife = count;
@@ -4097,6 +4101,8 @@ ob_start();
         const toForm = document.getElementById(toFormId);
         if (!fromForm || !toForm) return;
 
+        if (window.LabUnitMulti) window.LabUnitMulti.syncAll(fromForm);
+
         const fromElements = fromForm.querySelectorAll('input, select, textarea');
         const dataMap = {};
 
@@ -4145,6 +4151,30 @@ ob_start();
             }
         });
     }
+
+    // ช่อง "การตรวจพิสูจน์" เก็บค่าที่เลือกหลายรายการไว้ใน hidden input (class lab-unit-value)
+    // ฟังก์ชัน sync ทุกตัวด้านบน copy ค่าตาม name อยู่แล้ว จึงแค่ต้อง sync select -> hidden
+    // ก่อน copy และ hidden -> select ของฟอร์มปลายทางหลัง copy
+    ['syncFireFormData', 'syncFingerprintFormData', 'syncBombFormData',
+        'syncLifeFormData', 'syncTrafficFormData', 'syncPropertyFormData'
+    ].forEach(function(fnName) {
+        const original = window[fnName];
+        if (typeof original !== 'function' || original.__labUnitWrapped) return;
+        const wrapped = function(fromFormId, toFormId) {
+            if (window.LabUnitMulti) {
+                const f = document.getElementById(fromFormId);
+                if (f) window.LabUnitMulti.syncAll(f);
+            }
+            const result = original.apply(this, arguments);
+            if (window.LabUnitMulti) {
+                const t = document.getElementById(toFormId);
+                if (t) window.LabUnitMulti.refreshFromHidden(t);
+            }
+            return result;
+        };
+        wrapped.__labUnitWrapped = true;
+        window[fnName] = wrapped;
+    });
 
     // ---------- PROPERTY: Inspector sync helpers ----------
     function _syncPropertyInspectorToPdf() {
@@ -4374,7 +4404,7 @@ ob_start();
                 var evidenceName = detailVal || '';
                 var azimuth = card.querySelector('input[name*="[azimuth]"]') ? card.querySelector('input[name*="[azimuth]"]').value : '';
                 var remark = card.querySelector('textarea[name*="[remark]"]') ? card.querySelector('textarea[name*="[remark]"]').value : '';
-                var labUnit = card.querySelector('select[name*="[lab_unit]"]') ? card.querySelector('select[name*="[lab_unit]"]').value : '';
+                var labUnit = window.getLabUnitsString(card.querySelector('[name*="[lab_unit]"]'));
 
                 // เช็ค ref point distances
                 var refValues = ['', '', '', ''];
@@ -4400,10 +4430,10 @@ ob_start();
                     '<td><input type="text" name="evidence_level_4[]" style="width:28px;" value="' + refValues[3] + '"></td>' +
                     '<td><div style="display:flex; align-items:center; gap:2px;"><input type="text" name="evidence_azimuth[]" value="' + azimuth.replace(/"/g, '&quot;') + '" style="flex:1; min-width:0;"><button type="button" class="btn btn-hw-open btn-hw-dynamic" title="HW" style="padding:0 3px; font-size:0.65rem; line-height:1; flex-shrink:0;"><i class="fas fa-pen"></i></button></div></td>' +
                     '<td><div style="display:flex; align-items:center; gap:2px;"><input type="text" name="evidence_remark[]" value="' + remark.replace(/"/g, '&quot;') + '" style="flex:1; min-width:0;"><button type="button" class="btn btn-hw-open btn-hw-dynamic" title="HW" style="padding:0 3px; font-size:0.65rem; line-height:1; flex-shrink:0;"><i class="fas fa-pen"></i></button></div></td>' +
-                    '<td><select name="evidence_lab_unit[]" style="font-size:9px; padding:1px; width:100%;"><option value="">--</option><option value="fingerprint">ลายนิ้วมือแฝง</option><option value="bio_dna">ชีววิทยา/ดีเอ็นเอ</option><option value="chemical">เคมีฟิสิกส์</option><option value="drug">ยาเสพติด</option><option value="gun">อาวุธปืน</option><option value="document">เอกสาร</option><option value="digital">ดิจิทัล</option><option value="computer">คอมพิวเตอร์</option></select></td>' +
+                    '<td><select class="lab-unit-multi" multiple size="3" title="เลือกได้มากกว่า 1 กลุ่มงาน" style="font-size:9px; padding:1px; width:100%;"><option value="">--</option><option value="fingerprint">ลายนิ้วมือแฝง</option><option value="bio_dna">ชีววิทยา/ดีเอ็นเอ</option><option value="chemical">เคมีฟิสิกส์</option><option value="drug">ยาเสพติด</option><option value="gun">อาวุธปืน</option><option value="document">เอกสาร</option><option value="digital">ดิจิทัล</option><option value="computer">คอมพิวเตอร์</option></select><input type="hidden" class="lab-unit-value" name="evidence_lab_unit[]" value=""></td>' +
                     '<td><button type="button" class="ppf-del-btn" onclick="ppfDelRow(this)">×</button></td>';
                 locTbody.appendChild(tr);
-                if (labUnit) $(tr).find('select[name="evidence_lab_unit[]"]').val(labUnit);
+                window.setLabUnits($(tr).find('[name="evidence_lab_unit[]"]'), labUnit);
             });
             if (typeof ppfEvLocRowIdx !== 'undefined') ppfEvLocRowIdx = cards.length - 1;
 
@@ -4510,8 +4540,7 @@ ob_start();
                 evidenceName = locRow.querySelector('input[name="evidence_name[]"]') ? locRow.querySelector('input[name="evidence_name[]"]').value : '';
                 azimuth = locRow.querySelector('input[name="evidence_azimuth[]"]') ? locRow.querySelector('input[name="evidence_azimuth[]"]').value : '';
                 remark = locRow.querySelector('input[name="evidence_remark[]"]') ? locRow.querySelector('input[name="evidence_remark[]"]').value : '';
-                var labUnitSel = locRow.querySelector('select[name="evidence_lab_unit[]"]');
-                labUnit = labUnitSel ? labUnitSel.value || '' : '';
+                labUnit = window.getLabUnitsString(locRow.querySelector('[name="evidence_lab_unit[]"]'));
                 for (var r = 0; r < 4; r++) {
                     var lvlInput = locRow.querySelector('input[name="evidence_level_' + (r + 1) + '[]"]');
                     if (lvlInput && lvlInput.value) refValues[r] = lvlInput.value;
@@ -4616,7 +4645,7 @@ ob_start();
 
             // remark
             if (remark) $card.find('textarea[name*="[remark]"]').val(remark);
-            if (labUnit) $card.find('select[name*="[lab_unit]"]').val(labUnit);
+            window.setLabUnits($card.find('[name*="[lab_unit]"]'), labUnit);
         }
 
         // === sync ผู้จดบันทึก & วัน/เวลา จาก PDF → มาตรฐาน ===
@@ -4647,7 +4676,7 @@ ob_start();
             var area = (card.querySelector('input[name="measurement_area_property[]"]') || {}).value || '';
             var labelNo = (card.querySelector('input[name="measurement_label_number_property[]"]') || {}).value || '';
             var remark = (card.querySelector('input[name="measurement_remark_property[]"]') || {}).value || '';
-            var forensicUnit = (card.querySelector('select[name="measurement_forensic_unit_property[]"]') || {}).value || '';
+            var forensicUnit = window.getLabUnitsString(card.querySelector('[name="measurement_forensic_unit_property[]"]'));
 
             var pkgPlastic = !!(card.querySelector('input[name^="measurement_package_plastic_check_prop_"]') || {}).checked;
             var pkgPaper = !!(card.querySelector('input[name^="measurement_package_paper_check_prop_"]') || {}).checked;
@@ -4668,9 +4697,10 @@ ob_start();
                 '<td><input type="checkbox" name="collection_return_' + idx + '" value="1"' + (actReturn ? ' checked' : '') + '></td>' +
                 '<td><input type="checkbox" name="collection_action_other_' + idx + '" value="1"' + (actOther ? ' checked' : '') + '></td>' +
                 '<td><div style="display:flex; align-items:center; gap:2px;"><input type="text" name="collection_remark[]" value="' + remark.replace(/"/g, '&quot;') + '" style="flex:1; min-width:0;"><button type="button" class="btn btn-hw-open btn-hw-dynamic" title="HW" style="padding:0 3px; font-size:0.65rem; line-height:1; flex-shrink:0;"><i class="fas fa-pen"></i></button></div></td>' +
-                '<td><select name="collection_forensic_unit[]" style="font-size:9px; padding:1px; width:100%;"><option value="">--</option><option value="fingerprint"' + (forensicUnit === 'fingerprint' ? ' selected' : '') + '>ลายนิ้วมือแฝง</option><option value="bio_dna"' + (forensicUnit === 'bio_dna' ? ' selected' : '') + '>ชีววิทยา/ดีเอ็นเอ</option><option value="chemical"' + (forensicUnit === 'chemical' ? ' selected' : '') + '>เคมีฟิสิกส์</option><option value="drug"' + (forensicUnit === 'drug' ? ' selected' : '') + '>ยาเสพติด</option><option value="gun"' + (forensicUnit === 'gun' ? ' selected' : '') + '>อาวุธปืน</option><option value="document"' + (forensicUnit === 'document' ? ' selected' : '') + '>เอกสาร</option><option value="digital"' + (forensicUnit === 'digital' ? ' selected' : '') + '>ดิจิทัล</option><option value="computer"' + (forensicUnit === 'computer' ? ' selected' : '') + '>คอมพิวเตอร์</option></select></td>' +
+                '<td><select class="lab-unit-multi" multiple size="3" title="เลือกได้มากกว่า 1 กลุ่มงาน" style="font-size:9px; padding:1px; width:100%;"><option value="">--</option><option value="fingerprint">ลายนิ้วมือแฝง</option><option value="bio_dna">ชีววิทยา/ดีเอ็นเอ</option><option value="chemical">เคมีฟิสิกส์</option><option value="drug">ยาเสพติด</option><option value="gun">อาวุธปืน</option><option value="document">เอกสาร</option><option value="digital">ดิจิทัล</option><option value="computer">คอมพิวเตอร์</option></select><input type="hidden" class="lab-unit-value" name="collection_forensic_unit[]" value=""></td>' +
                 '<td><button type="button" class="ppf-del-btn" onclick="ppfDelRow(this)">×</button></td>';
             collTbody.appendChild(tr);
+            window.setLabUnits($(tr).find('[name="collection_forensic_unit[]"]'), forensicUnit);
         });
         if (typeof ppfCollRowIdx !== 'undefined') ppfCollRowIdx = measurementCards.length - 1;
     }
@@ -4711,7 +4741,7 @@ ob_start();
             var pkgOther = !!(row.querySelector('input[name^="collection_pack_other_"]') || {}).checked;
             var actReturn = !!(row.querySelector('input[name^="collection_return_"]') || {}).checked;
             var actOther = !!(row.querySelector('input[name^="collection_action_other_"]') || {}).checked;
-            var forensicUnit = (row.querySelector('select[name="collection_forensic_unit[]"]') || {}).value || '';
+            var forensicUnit = window.getLabUnitsString(row.querySelector('[name="collection_forensic_unit[]"]'));
 
             // ใช้ idx เป็น index ของ checkbox suffix
             var html =
@@ -4751,20 +4781,22 @@ ob_start();
                         '<div class="input-group"><input type="text" class="form-control" name="measurement_remark_property[]" value="' + remark.replace(/"/g, '&quot;') + '">' +
                         '<button type="button" class="btn btn-outline-primary btn-hw-open btn-hw-dynamic" title="เขียนด้วยลายมือ"><i class="fas fa-pen"></i></button></div></div>' +
                     '<div class="col-md-12"><label class="form-label small text-muted">8. การตรวจพิสูจน์</label>' +
-                        '<select class="form-select" name="measurement_forensic_unit_property[]">' +
-                            '<option value=""' + (!forensicUnit ? ' selected' : '') + '>-- กรุณาเลือก --</option>' +
-                            '<option value="fingerprint"' + (forensicUnit === 'fingerprint' ? ' selected' : '') + '>กลุ่มงานตรวจลายนิ้วมือแฝง</option>' +
-                            '<option value="bio_dna"' + (forensicUnit === 'bio_dna' ? ' selected' : '') + '>กลุ่มงานตรวจชีววิทยาและดีเอ็นเอ</option>' +
-                            '<option value="chemical"' + (forensicUnit === 'chemical' ? ' selected' : '') + '>กลุ่มงานตรวจทางเคมีฟิสิกส์</option>' +
-                            '<option value="drug"' + (forensicUnit === 'drug' ? ' selected' : '') + '>กลุ่มงานตรวจยาเสพติด</option>' +
-                            '<option value="gun"' + (forensicUnit === 'gun' ? ' selected' : '') + '>กลุ่มงานตรวจอาวุธปืนและเครื่องกระสุน</option>' +
-                            '<option value="document"' + (forensicUnit === 'document' ? ' selected' : '') + '>กลุ่มงานตรวจเอกสาร</option>' +
-                            '<option value="digital"' + (forensicUnit === 'digital' ? ' selected' : '') + '>กลุ่มงานตรวจพิสูจน์หลักฐานดิจิทัล</option>' +
-                            '<option value="computer"' + (forensicUnit === 'computer' ? ' selected' : '') + '>กลุ่มงานตรวจพิสูจน์อาชญากรรมคอมพิวเตอร์</option>' +
-                        '</select></div>' +
+                        '<select class="form-select lab-unit-multi" multiple size="4" title="เลือกได้มากกว่า 1 กลุ่มงาน">' +
+                            '<option value="">-- กรุณาเลือก (เลือกได้หลายข้อ) --</option>' +
+                            '<option value="fingerprint">กลุ่มงานตรวจลายนิ้วมือแฝง</option>' +
+                            '<option value="bio_dna">กลุ่มงานตรวจชีววิทยาและดีเอ็นเอ</option>' +
+                            '<option value="chemical">กลุ่มงานตรวจทางเคมีฟิสิกส์</option>' +
+                            '<option value="drug">กลุ่มงานตรวจยาเสพติด</option>' +
+                            '<option value="gun">กลุ่มงานตรวจอาวุธปืนและเครื่องกระสุน</option>' +
+                            '<option value="document">กลุ่มงานตรวจเอกสาร</option>' +
+                            '<option value="digital">กลุ่มงานตรวจพิสูจน์หลักฐานดิจิทัล</option>' +
+                            '<option value="computer">กลุ่มงานตรวจพิสูจน์อาชญากรรมคอมพิวเตอร์</option>' +
+                        '</select>' +
+                        '<input type="hidden" class="lab-unit-value" name="measurement_forensic_unit_property[]" value=""></div>' +
                     '<div class="col-12"><button type="button" class="btn btn-sm btn-outline-danger" onclick="removeMeasurementCardProperty(this)"><i class="fas fa-trash me-1"></i> ลบรายการนี้</button></div>' +
                 '</div></div></div>';
             $(container).append(html);
+            window.setLabUnits($(container).find('.measurement-card-property').last().find('[name="measurement_forensic_unit_property[]"]'), forensicUnit);
         });
 
         if (typeof measurementCounterProperty !== 'undefined') {
@@ -5279,8 +5311,8 @@ ob_start();
                     </div>
                     <div class="col-md-4">
                         <label class="form-label small text-secondary fw-bold mb-1">การตรวจพิสูจน์</label>
-                        <select class="form-select" name="evidence[${id}][lab_unit]">
-                            <option value="">-- เลือก --</option>
+                        <select class="form-select lab-unit-multi" multiple size="4" title="เลือกได้มากกว่า 1 กลุ่มงาน">
+                            <option value="">-- เลือก (เลือกได้หลายข้อ) --</option>
                             <option value="fingerprint">ลายนิ้วมือแฝง</option>
                             <option value="bio_dna">ชีววิทยา/ดีเอ็นเอ</option>
                             <option value="chemical">เคมีฟิสิกส์</option>
@@ -5289,6 +5321,7 @@ ob_start();
                             <option value="document">เอกสาร</option>
                             <option value="digital">ดิจิทัล</option>
                         </select>
+                        <input type="hidden" class="lab-unit-value" name="evidence[${id}][lab_unit]" value="">
                     </div>
                 </div>
 
@@ -6844,7 +6877,7 @@ ob_start();
                         }
 
                         // หน่วยส่งตรวจ
-                        if (ev.lab_unit) $card.find('select[name*="[lab_unit]"]').val(ev.lab_unit);
+                        window.setLabUnits($card.find('[name*="[lab_unit]"]'), ev.lab_unit);
 
                         // การบรรจุหีบห่อ
                         if (ev.packaging) {
@@ -6915,7 +6948,7 @@ ob_start();
                             $card.find('input[name="measurement_area_property[]"]').val(m.area || '');
                             $card.find('input[name="measurement_label_number_property[]"]').val(m.label_number || '');
                             $card.find('input[name="measurement_remark_property[]"]').val(m.remark || '');
-                            $card.find('select[name="measurement_forensic_unit_property[]"]').val(m.forensic_unit || '');
+                            window.setLabUnits($card.find('[name="measurement_forensic_unit_property[]"]'), m.forensic_unit);
 
                             // checkboxes + texts
                             if (m.package_plastic) {
@@ -8060,7 +8093,7 @@ ob_start();
                             // Azimuth & หมายเหตุ & การตรวจพิสูจน์
                             if (ev.azimuth) $card.find('input[name="evidence_azimuth_life[]"]').val(ev.azimuth);
                             if (ev.remark) $card.find('input[name="evidence_remark_life[]"]').val(ev.remark);
-                            if (ev.lab_unit) $card.find('select[name="evidence_lab_unit_life[]"]').val(ev.lab_unit);
+                            window.setLabUnits($card.find('[name="evidence_lab_unit_life[]"]'), ev.lab_unit);
                         }
 
                         // PDF form - add row
@@ -8079,7 +8112,7 @@ ob_start();
                             if (evDist4) $pdfRow.find('input[name="evidence_level_4_life_' + idx + '"]').val(evDist4);
                             if (ev.azimuth) $pdfRow.find('input[name="evidence_azimuth_life[]"]').val(ev.azimuth);
                             if (ev.remark) $pdfRow.find('input[name="evidence_remark_life[]"]').val(ev.remark);
-                            if (ev.lab_unit) $pdfRow.find('select[name="evidence_lab_unit_life[]"]').val(ev.lab_unit);
+                            window.setLabUnits($pdfRow.find('[name="evidence_lab_unit_life[]"]'), ev.lab_unit);
                         }
                     });
                 }
@@ -8226,7 +8259,7 @@ ob_start();
                             if (m.area) $card.find('input[name="measurement_area_life[]"]').val(m.area);
                             if (m.label_number) $card.find('input[name="measurement_label_number_life[]"]').val(m.label_number);
                             if (m.remark) $card.find('input[name="measurement_remark_life[]"]').val(m.remark);
-                            if (m.forensic_unit) $card.find('select[name="measurement_forensic_unit_life[]"]').val(m.forensic_unit);
+                            window.setLabUnits($card.find('[name="measurement_forensic_unit_life[]"]'), m.forensic_unit);
 
                             // การบรรจุหีบ
                             const mIdx = idx;
@@ -8289,9 +8322,10 @@ ob_start();
                                 '<td><input type="checkbox" name="measurement_action_return_check_' + idx + '" value="1"' + (m.action_return ? ' checked' : '') + '></td>' +
                                 '<td><input type="checkbox" name="measurement_action_other_check_' + idx + '" value="1"' + (m.action_other ? ' checked' : '') + '></td>' +
                                 '<td><input type="text" name="measurement_remark_life[]" value="' + (m.remark || '').replace(/"/g, '&quot;') + '"><button type="button" class="btn btn-sm btn-hw-open btn-hw-dynamic" title="HW"><i class="fas fa-pen"></i></button></td>' +
-                                '<td><select name="measurement_forensic_unit_life[]" style="font-size:9px; padding:1px; width:100%;"><option value="">--</option><option value="fingerprint"' + (m.forensic_unit === 'fingerprint' ? ' selected' : '') + '>ลายนิ้วมือแฝง</option><option value="bio_dna"' + (m.forensic_unit === 'bio_dna' ? ' selected' : '') + '>ชีววิทยา/ดีเอ็นเอ</option><option value="chemical"' + (m.forensic_unit === 'chemical' ? ' selected' : '') + '>เคมีฟิสิกส์</option><option value="drug"' + (m.forensic_unit === 'drug' ? ' selected' : '') + '>ยาเสพติด</option><option value="gun"' + (m.forensic_unit === 'gun' ? ' selected' : '') + '>อาวุธปืน</option><option value="document"' + (m.forensic_unit === 'document' ? ' selected' : '') + '>เอกสาร</option><option value="digital"' + (m.forensic_unit === 'digital' ? ' selected' : '') + '>ดิจิทัล</option></select></td>' +
+                                '<td><select class="lab-unit-multi" multiple size="3" title="เลือกได้มากกว่า 1 กลุ่มงาน" style="font-size:9px; padding:1px; width:100%;"><option value="">--</option><option value="fingerprint">ลายนิ้วมือแฝง</option><option value="bio_dna">ชีววิทยา/ดีเอ็นเอ</option><option value="chemical">เคมีฟิสิกส์</option><option value="drug">ยาเสพติด</option><option value="gun">อาวุธปืน</option><option value="document">เอกสาร</option><option value="digital">ดิจิทัล</option></select><input type="hidden" class="lab-unit-value" name="measurement_forensic_unit_life[]" value=""></td>' +
                                 '<td><button type="button" class="lpf-del-btn" onclick="lpfDelRow(this)">×</button></td>';
                             pdfTbody.appendChild(tr);
+                            window.setLabUnits($(tr).find('[name="measurement_forensic_unit_life[]"]'), m.forensic_unit);
                         }
                     });
                 }
@@ -11203,7 +11237,7 @@ ob_start();
                                         card.find('[name="fpn_ev_height[]"]').val(item.height || '');
                                         card.find('[name="fpn_ev_quantity[]"]').val(item.quantity || '');
                                         card.find('[name="fpn_ev_label_no[]"]').val(item.label_no || '');
-                                        card.find('[name="fpn_ev_lab_unit[]"]').val(item.lab_unit || 'fingerprint');
+                                        window.setLabUnits(card.find('[name="fpn_ev_lab_unit[]"]'), window.labUnitsToString(item.lab_unit) || 'fingerprint');
                                     });
                                 }
 
@@ -11406,7 +11440,7 @@ ob_start();
                                         fpCard.find('[name="fp_ev_height[]"]').val(item.height || '');
                                         fpCard.find('[name="fp_ev_quantity[]"]').val(item.quantity || '');
                                         fpCard.find('[name="fp_ev_label_no[]"]').val(item.label_no || '');
-                                        fpCard.find('[name="fp_ev_lab_unit[]"]').val(item.lab_unit || 'fingerprint');
+                                        window.setLabUnits(fpCard.find('[name="fp_ev_lab_unit[]"]'), window.labUnitsToString(item.lab_unit) || 'fingerprint');
                                     });
                                 }
 
@@ -14959,18 +14993,19 @@ ob_start();
                         }
                         if (fr.inspection_target) $('[name="forensic_inspection_target"]').val(fr.inspection_target);
                         if (fr.inspection_location) $('[name="forensic_inspection_location"]').val(fr.inspection_location);
-                        var trafficLabUnit = fr.lab_unit || '';
+                        var trafficLabUnit = window.labUnitsToString(fr.lab_unit);
                         if (!trafficLabUnit && Array.isArray(d.evidences)) {
                             d.evidences.some(function(ev) {
-                                var candidate = (ev && ev.lab_unit) ? String(ev.lab_unit).trim() : '';
-                                if (candidate && candidate !== 'traffic') {
-                                    trafficLabUnit = candidate;
+                                var candidate = window.labUnitsToArray(ev && ev.lab_unit)
+                                    .filter(function(k) { return k !== 'traffic'; });
+                                if (candidate.length) {
+                                    trafficLabUnit = candidate.join(',');
                                     return true;
                                 }
                                 return false;
                             });
                         }
-                        if (trafficLabUnit) $('[name="forensic_lab_unit"]').val(trafficLabUnit);
+                        window.setLabUnits($('[name="forensic_lab_unit"]'), trafficLabUnit);
                         if (fr.inspection_date) $('[name="forensic_inspect_date"]').val(fr.inspection_date);
                         if (fr.inspection_time) $('[name="forensic_inspect_time"]').val(fr.inspection_time);
 
@@ -15341,7 +15376,8 @@ ob_start();
                     }
 
                     // --- Evidence Items (dynamic rows) — lab_unit ฝังใน row เดียวกัน ---
-                    if (d.evidence_items && d.evidence_items.length > 0) {
+                    var ev7Items = (d.evidence_items && d.evidence_items.length) ? d.evidence_items : ((d.evidences && d.evidences.length) ? d.evidences : []);
+                    if (ev7Items.length > 0) {
                         var labUnits = (d.collected_evidence && d.collected_evidence.lab_units) ? d.collected_evidence.lab_units : [];
                         // fallback: ดึงจาก evidences[].lab_unit ถ้า collected_evidence.lab_units ไม่มี
                         if (!labUnits.length && d.evidences && d.evidences.length) {
@@ -15349,19 +15385,19 @@ ob_start();
                                 return ev.lab_unit || '';
                             });
                         }
-                        d.evidence_items.forEach(function(item, idx) {
+                        ev7Items.forEach(function(item, idx) {
                             if (idx > 0 && typeof addEvidenceItemEV7 === 'function') addEvidenceItemEV7();
                             var rows = $('[name="ev7_evidence_item[]"]');
-                            if (rows.eq(idx).length) rows.eq(idx).val(item.description || '');
+                            if (rows.eq(idx).length) rows.eq(idx).val((item && (item.description || item.detail || item.item)) || (typeof item === 'string' ? item : ''));
                             // set lab_unit inline
                             var stdLabRows = $('[name="ev7_lab_unit[]"]');
-                            if (stdLabRows.eq(idx).length && labUnits[idx]) stdLabRows.eq(idx).val(labUnits[idx]);
+                            if (stdLabRows.eq(idx).length) window.setLabUnits(stdLabRows.eq(idx), labUnits[idx]);
                             // PDF form
                             if (idx > 0 && typeof sevpfAddEvidenceItem === 'function') sevpfAddEvidenceItem();
                             var pdfRows = $('[name="sevpf_evidence_item[]"]');
-                            if (pdfRows.eq(idx).length) pdfRows.eq(idx).val(item.description || '');
+                            if (pdfRows.eq(idx).length) pdfRows.eq(idx).val((item && (item.description || item.detail || item.item)) || (typeof item === 'string' ? item : ''));
                             var pdfLabRows = $('[name="sevpf_lab_unit[]"]');
-                            if (pdfLabRows.eq(idx).length && labUnits[idx]) pdfLabRows.eq(idx).val(labUnits[idx]);
+                            if (pdfLabRows.eq(idx).length) window.setLabUnits(pdfLabRows.eq(idx), labUnits[idx]);
                         });
                     }
 
@@ -15804,7 +15840,7 @@ ob_start();
                 evidences.forEach(function(ev) {
                     var detail = (ev.detail || ev.item || '').toString().trim();
                     if (detail && !ev._summary_only) {
-                        items.push({ detail: detail, lab_unit: (ev.lab_unit || '') });
+                        items.push({ detail: detail, lab_unit: window.labUnitsToString(ev.lab_unit) });
                     }
                 });
                 if (items.length === 0) return;
@@ -15828,7 +15864,7 @@ ob_start();
                     var stdItems = $('[name="ev7_evidence_item[]"]');
                     if (stdItems.eq(idx).length) stdItems.eq(idx).val(item.detail);
                     var stdLabs = $('[name="ev7_lab_unit[]"]');
-                    if (stdLabs.eq(idx).length) stdLabs.eq(idx).val(item.lab_unit);
+                    if (stdLabs.eq(idx).length) window.setLabUnits(stdLabs.eq(idx), item.lab_unit);
                 });
 
                 // เติมข้อมูลลงฟอร์ม PDF (sevpf)
@@ -15837,7 +15873,7 @@ ob_start();
                     var pdfItems = $('[name="sevpf_evidence_item[]"]');
                     if (pdfItems.eq(idx).length) pdfItems.eq(idx).val(item.detail);
                     var pdfLabs = $('[name="sevpf_lab_unit[]"]');
-                    if (pdfLabs.eq(idx).length) pdfLabs.eq(idx).val(item.lab_unit);
+                    if (pdfLabs.eq(idx).length) window.setLabUnits(pdfLabs.eq(idx), item.lab_unit);
                 });
             },
             error: function(xhr, status, error) {
@@ -15997,24 +16033,51 @@ ob_start();
             return primaryValues;
         };
 
-        payload['ev7_evidence_item'] = chooseBestValues('[name="ev7_evidence_item[]"]', '[name="sevpf_evidence_item[]"]');
         payload['ev7_exhibit_desc'] = chooseBestValues('[name="ev7_exhibit_desc[]"]', '[name="sevpf_exhibit_desc[]"]');
         payload['ev7_collect_detail'] = chooseBestValues('[name="ev7_collect_detail[]"]', '[name="sevpf_collect_detail[]"]');
         payload['ev7_other_evidence'] = collectValues('[name="ev7_other_evidence[]"]');
-        // Lab unit ส่งทุกค่า (รวม empty) เพื่อให้ index ตรงกับ evidence_item
-        payload['ev7_lab_unit'] = (function() {
-            var stdVals = [];
-            var pdfVals = [];
-            $('[name="ev7_lab_unit[]"]').each(function() {
-                stdVals.push($.trim($(this).val() || ''));
+        if (window.LabUnitMulti) {
+            window.LabUnitMulti.syncAll(document.getElementById('sceneEvidenceFormPdf') || document);
+            window.LabUnitMulti.syncAll(document.getElementById('incidentCheckListFormSceneEvidence') || document);
+        }
+        var readLabUnitValue = function(el) {
+            if (!el) return [];
+            try {
+                if (typeof window.getLabUnits === 'function') {
+                    var arr = window.getLabUnits(el);
+                    if (arr && arr.length) return arr;
+                }
+            } catch (e) {}
+            var raw = $(el).val();
+            if (Array.isArray(raw)) return raw.filter(Boolean);
+            if (typeof window.labUnitsToArray === 'function') return window.labUnitsToArray(raw);
+            return String(raw || '').split(',').map(function(s) { return $.trim(s); }).filter(Boolean);
+        };
+        var collectEvidenceRows = function(rowSelector, itemName, labName) {
+            var items = [];
+            var labs = [];
+            var rows = [];
+            $(rowSelector).each(function() {
+                var $row = $(this);
+                var itemEl = $row.find('[name="' + itemName + '"]').get(0);
+                var labEl = $row.find('[name="' + labName + '"]').get(0) || $row.find('select.lab-unit-multi').get(0);
+                var item = $.trim($(itemEl).val() || '');
+                var lab = readLabUnitValue(labEl);
+                if (!item && !lab.length) return;
+                items.push(item);
+                labs.push(lab);
+                rows.push({ description: item, detail: item, lab_unit: lab });
             });
-            $('[name="sevpf_lab_unit[]"]').each(function() {
-                pdfVals.push($.trim($(this).val() || ''));
-            });
-            var stdFilled = stdVals.filter(Boolean).length;
-            var pdfFilled = pdfVals.filter(Boolean).length;
-            return pdfFilled > stdFilled ? pdfVals : stdVals;
-        })();
+            return { items: items, labs: labs, rows: rows };
+        };
+        var pdfEv = collectEvidenceRows('#sevpf_evidence_items_container .sevpf-evidence-item-row', 'sevpf_evidence_item[]', 'sevpf_lab_unit[]');
+        var stdEv = collectEvidenceRows('#ev7_evidence_items_container .ev7-evidence-item-row', 'ev7_evidence_item[]', 'ev7_lab_unit[]');
+        var chosenEv = (pdfEv.items.length > stdEv.items.length || (pdfEv.items.length === stdEv.items.length && pdfEv.items.join('\n').length >= stdEv.items.join('\n').length))
+            ? pdfEv : stdEv;
+        if (!chosenEv.items.length && stdEv.items.length) chosenEv = stdEv;
+        payload['ev7_evidence_item'] = chosenEv.items;
+        payload['ev7_lab_unit'] = chosenEv.labs;
+        payload['ev7_evidence_rows'] = chosenEv.rows;
 
         // Keep visual multiline inputs but save as one full text + per-line array
         var handoverLines = [];
@@ -16038,11 +16101,18 @@ ob_start();
         const submitData = new FormData();
         submitData.append('payload_json', JSON.stringify(payload));
 
-        // Flatten payload into FormData
+        // Flatten payload into FormData (array ซ้อนส่งเป็น comma string — ค่าจริงอยู่ใน payload_json)
         for (const [key, val] of Object.entries(payload)) {
+            if (key === 'ev7_evidence_rows') continue;
             if (Array.isArray(val)) {
                 val.forEach(function(v) {
-                    submitData.append(key + '[]', v);
+                    if (Array.isArray(v)) {
+                        submitData.append(key + '[]', v.filter(Boolean).join(','));
+                    } else if (v && typeof v === 'object') {
+                        submitData.append(key + '[]', v.description || v.detail || '');
+                    } else {
+                        submitData.append(key + '[]', v == null ? '' : v);
+                    }
                 });
             } else {
                 submitData.append(key, val || '');
@@ -16783,7 +16853,7 @@ ob_start();
             payload.evidences.push({
                 no: $card.find('.evidence-no-input').val(), // ลำดับที่ (auto-generated) | Ex: "0001", "0002"
                 type: evidenceTypeVal, // ประเภทวัตถุพยาน | Ex: "blood" (เลือด), "dna" (ดีเอ็นเอ)
-                lab_unit: $card.find('select[name*="[lab_unit]"]').val(), // หน่วยงานที่ส่งตรวจ | Ex: "bio_dna" (กลุ่มงานตรวจชีววิทยาและดีเอ็นเอ)
+                lab_unit: window.getLabUnits($card.find('[name*="[lab_unit]"]')), // หน่วยงานที่ส่งตรวจ (array) | Ex: ["bio_dna","fingerprint"]
                 detail: evidenceDetailVal, // รายละเอียดวัตถุพยาน | Ex: "คราบเลือดบนเสื้อเชิ้ตสีขาว"
                 area_found: $card.find('textarea[name*="[area_found]"]').val(), // บริเวณที่พบ | Ex: "บนพื้นห้องนอน"
                 label_no: $card.find('input[name*="[label_no]"]').val(), // ป้ายหมายเลข | Ex: "1", "2"
@@ -16823,10 +16893,10 @@ ob_start();
             const area = $card.find('input[name="measurement_area_property[]"]').val() || '';
             const labelNumber = $card.find('input[name="measurement_label_number_property[]"]').val() || '';
             const remark = $card.find('input[name="measurement_remark_property[]"]').val() || '';
-            const forensicUnit = $card.find('select[name="measurement_forensic_unit_property[]"]').val() || '';
+            const forensicUnit = window.getLabUnits($card.find('[name="measurement_forensic_unit_property[]"]'));
 
             // ข้าม card ที่ไม่มีข้อมูลเลย
-            if (!item && !quantity && !area && !labelNumber && !remark && !forensicUnit) return;
+            if (!item && !quantity && !area && !labelNumber && !remark && !forensicUnit.length) return;
 
             payload.measurements.push({
                 item: item,
@@ -16854,7 +16924,7 @@ ob_start();
             if (!ev._summary_only) {
                 // หา measurement ที่ idx เดียวกัน (ข้าม blood summary)
                 const realIdx = payload.evidences.slice(0, idx).filter(e => !e._summary_only).length;
-                if (payload.measurements[realIdx] && payload.measurements[realIdx].forensic_unit) {
+                if (payload.measurements[realIdx] && payload.measurements[realIdx].forensic_unit && payload.measurements[realIdx].forensic_unit.length) {
                     ev.lab_unit = payload.measurements[realIdx].forensic_unit;
                 }
             }
@@ -16926,7 +16996,8 @@ ob_start();
                 let propSketchHandled = false;
                 if (preferPdf) {
                     const ppfSketchHasContent = (window._ppfSketchPages || []).some(function(p) {
-                        if (p.bgImage) return true;
+                        if (p.bgImage || p._bgImgEl) return true;
+                        if (typeof window.sketchHasInk === 'function' && window.sketchHasInk(p.canvasId)) return true;
                         const c = document.getElementById(p.canvasId);
                         if (!c || !c.width || !c.height) return false;
                         try {
@@ -16937,6 +17008,7 @@ ob_start();
                         } catch (e) { /* skip */ }
                         return false;
                     });
+                    if (typeof ppfCollectSketchPagesData === 'function') ppfCollectSketchPagesData();
                     const ppfSketchInp = document.getElementById('ppf_scene_sketch_data');
                     const ppfSketchVal = ppfSketchInp ? (ppfSketchInp.value || '') : '';
                     if (ppfSketchHasContent && ppfSketchVal.indexOf('data:image') === 0) {
@@ -18008,4 +18080,4 @@ ob_start();
 <?php
 $extra_scripts = ob_get_clean();
 include 'layout.php';
-?>                                                                                                         
+?>

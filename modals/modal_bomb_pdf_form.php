@@ -2998,65 +2998,11 @@ if (typeof window._sketchPenSize === 'undefined') window._sketchPenSize = {};
         bgImage: null, bgImageData: null, _bgImgEl: null
     });
 
-    // ----- Initialize drawing on a canvas (raw 2d context) -----
+    // ----- Initialize drawing on a canvas (undo + กันฝ่ามือ อยู่ใน sketch-tools.js) -----
     function _initSketchDraw(canvasId) {
-        var canvas = document.getElementById(canvasId);
-        if (!canvas || canvas.dataset.sketchInit === '1') return;
-        canvas.dataset.sketchInit = '1';
-
-        var ctx = canvas.getContext('2d');
-        var drawing = false;
-        var currentStroke = null;
-
-        window._sketchColor[canvasId] = window._sketchColor[canvasId] || '#000';
-        window._sketchOrigColor[canvasId] = '#000';
-        window._sketchPenSize[canvasId] = window._sketchPenSize[canvasId] || 2;
-        window._sketchEraser[canvasId] = false;
-
-        if (!window._bpfSketchStrokes) window._bpfSketchStrokes = {};
-        if (!window._bpfSketchStrokes[canvasId]) window._bpfSketchStrokes[canvasId] = [];
-
-        function getPos(e) {
-            var rect = canvas.getBoundingClientRect();
-            var sx = canvas.width / rect.width, sy = canvas.height / rect.height;
-            var t = e.touches ? e.touches[0] : e;
-            return { x: (t.clientX - rect.left) * sx, y: (t.clientY - rect.top) * sy };
+        if (typeof window.initFreehandCanvas === 'function') {
+            window.initFreehandCanvas(canvasId);
         }
-        function start(e) {
-            e.preventDefault(); drawing = true;
-            var p = getPos(e);
-            var isEraser = !!window._sketchEraser[canvasId];
-            var color = window._sketchColor[canvasId] || '#000';
-            var w = window._sketchPenSize[canvasId] || 2;
-            currentStroke = { eraser: isEraser, color: color, width: isEraser ? 20 : w, points: [p] };
-            ctx.beginPath(); ctx.moveTo(p.x, p.y);
-            ctx.globalCompositeOperation = isEraser ? 'destination-out' : 'source-over';
-            if (!isEraser) ctx.strokeStyle = color;
-            ctx.lineWidth = isEraser ? 20 : w;
-            ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-        }
-        function move(e) {
-            if (!drawing) return; e.preventDefault();
-            var p = getPos(e);
-            if (currentStroke) currentStroke.points.push(p);
-            ctx.lineTo(p.x, p.y); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(p.x, p.y);
-        }
-        function end() {
-            if (!drawing) return; drawing = false;
-            ctx.globalCompositeOperation = 'source-over';
-            if (currentStroke && currentStroke.points.length > 0) {
-                window._bpfSketchStrokes[canvasId].push(currentStroke);
-            }
-            currentStroke = null;
-        }
-        canvas.addEventListener('mousedown', start);
-        canvas.addEventListener('mousemove', move);
-        canvas.addEventListener('mouseup', end);
-        canvas.addEventListener('mouseleave', end);
-        canvas.addEventListener('touchstart', start, { passive: false });
-        canvas.addEventListener('touchmove', move, { passive: false });
-        canvas.addEventListener('touchend', end);
     }
 
     // ----- Redraw from strokes (for undo) -----
@@ -3081,19 +3027,6 @@ if (typeof window._sketchPenSize === 'undefined') window._sketchPenSize = {};
     function _findPage(pid) {
         return window._bpfSketchPages.find(function(p) { return p.id === pid; });
     }
-
-    // ----- Override sketchUndo for sketch canvases -----
-    var _origSketchUndo = window.sketchUndo;
-    window.sketchUndo = function(canvasId) {
-        if (window._bpfSketchStrokes && window._bpfSketchStrokes[canvasId]) {
-            var strokes = window._bpfSketchStrokes[canvasId];
-            if (strokes.length === 0) return;
-            strokes.pop();
-            _redrawFromStrokes(canvasId);
-            return;
-        }
-        if (typeof _origSketchUndo === 'function') _origSketchUndo(canvasId);
-    };
 
     // ----- Public: Add a whole new sketch page (full bpf-page) -----
     window.bpfSketchAddPage = function() {
@@ -3258,6 +3191,7 @@ if (typeof window._sketchPenSize === 'undefined') window._sketchPenSize = {};
             ctx.clearRect(0, 0, canvas.width, canvas.height);
         }
         if (window._bpfSketchStrokes) window._bpfSketchStrokes[pageData.canvasId] = [];
+        if (typeof window.sketchResetHistory === 'function') window.sketchResetHistory(pageData.canvasId);
         window._sketchEraser[pageData.canvasId] = false;
         _updateEraserBtn(pageData.canvasId, false);
     };
@@ -3266,17 +3200,51 @@ if (typeof window._sketchPenSize === 'undefined') window._sketchPenSize = {};
     window.bpfCollectSketchPagesData = function() {
         var pagesData = [];
         window._bpfSketchPages.forEach(function(p) {
-            var canvas = document.getElementById(p.canvasId);
-            var dataUrl = '';
-            if (canvas) {
-                var merged = document.createElement('canvas');
-                merged.width = canvas.width; merged.height = canvas.height;
-                var mCtx = merged.getContext('2d');
-                if (p._bgImgEl) mCtx.drawImage(p._bgImgEl, 0, 0, canvas.width, canvas.height);
-                mCtx.drawImage(canvas, 0, 0);
-                dataUrl = merged.toDataURL('image/png');
+            var bg = p._bgImgEl || null;
+            var dataUrl = (typeof window.exportSketchDataUrl === 'function')
+                ? window.exportSketchDataUrl(p.canvasId, bg)
+                : '';
+            if (!dataUrl) {
+                var canvas = document.getElementById(p.canvasId);
+                if (canvas) {
+                    try {
+                        var merged = document.createElement('canvas');
+                        merged.width = canvas.width; merged.height = canvas.height;
+                        var mCtx = merged.getContext('2d');
+                        mCtx.fillStyle = '#fff';
+                        mCtx.fillRect(0, 0, merged.width, merged.height);
+                        if (bg) mCtx.drawImage(bg, 0, 0, canvas.width, canvas.height);
+                        mCtx.drawImage(canvas, 0, 0);
+                        dataUrl = merged.toDataURL('image/png');
+                    } catch (e) { dataUrl = ''; }
+                }
             }
             pagesData.push({
                 id: p.id, dataUrl: dataUrl,
                 bgImageData: p.bgImageData || null,
-                bgImageName
+                bgImageName: p.bgImage || null
+            });
+        });
+        var inp = document.getElementById('bpf_scene_sketch_pages_data');
+        if (inp) inp.value = JSON.stringify(pagesData);
+        var legacyInp = document.getElementById('bpf_scene_sketch_data');
+        if (legacyInp && pagesData.length > 0) legacyInp.value = pagesData[0].dataUrl || '';
+        var stdInp = document.getElementById('scene_sketch_data_bomb');
+        if (stdInp && pagesData.length > 0) stdInp.value = pagesData[0].dataUrl || '';
+        return pagesData;
+    };
+
+    // ----- Init first page canvas on modal open -----
+    var _sketchInitDone = false;
+    var sketchModalEl = document.getElementById('bombFormPdfModal');
+    if (sketchModalEl) {
+        sketchModalEl.addEventListener('shown.bs.modal', function() {
+            if (!_sketchInitDone) {
+                _sketchInitDone = true;
+                _initSketchDraw('bpf_sketch_page_1_canvas');
+            }
+        });
+    }
+
+})();
+</script>

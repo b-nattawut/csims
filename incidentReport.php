@@ -261,17 +261,9 @@ ob_start();
                                     </td>
                                     <td class="text-center doc-cell">
                                         <?php if ($canPdf): ?>
-                                            <div class="d-inline-flex flex-wrap justify-content-center" style="gap:4px;">
-                                                <button type="button" class="btn btn-sm btn-draft-doc" style="background:#2563eb; box-shadow:0 2px 6px rgba(37,99,235,.3); color:#fff; border:none; border-radius:6px; font-size:11px; white-space:nowrap; padding:4px 12px; font-weight:500; letter-spacing:.3px; transition:all .2s ease;" data-doc-id="<?= $row['id']; ?>" data-doc-type="<?= $row['complaints_type']; ?>" data-doc-location="<?= $locationType; ?>" title="ดาวน์โหลด Word (เนื้อหา + ภาพประกอบ)">
-                                                    <i class="fas fa-file-word me-1"></i>DOCX
-                                                </button>
-                                                <button type="button" class="btn btn-sm btn-draft-doc" style="background:#1d4ed8; box-shadow:0 2px 6px rgba(29,78,216,.3); color:#fff; border:none; border-radius:6px; font-size:11px; white-space:nowrap; padding:4px 10px; font-weight:500; letter-spacing:.3px; transition:all .2s ease;" data-doc-id="<?= $row['id']; ?>" data-doc-type="<?= $row['complaints_type']; ?>" data-doc-location="<?= $locationType; ?>" data-doc-photos="none" title="ดาวน์โหลด Word เฉพาะเนื้อหา">
-                                                    <i class="fas fa-file-word me-1"></i>Word (เนื้อหา)
-                                                </button>
-                                                <button type="button" class="btn btn-sm btn-draft-doc" style="background:#0ea5e9; box-shadow:0 2px 6px rgba(14,165,233,.3); color:#fff; border:none; border-radius:6px; font-size:11px; white-space:nowrap; padding:4px 10px; font-weight:500; letter-spacing:.3px; transition:all .2s ease;" data-doc-id="<?= $row['id']; ?>" data-doc-type="<?= $row['complaints_type']; ?>" data-doc-location="<?= $locationType; ?>" data-doc-photos="only" title="ดาวน์โหลด Word เฉพาะภาพประกอบ (เริ่มนับหน้าใหม่)">
-                                                    <i class="fas fa-images me-1"></i>Word (ภาพประกอบ)
-                                                </button>
-                                            </div>
+                                            <button type="button" class="btn btn-sm btn-draft-doc" style="background:#2563eb; box-shadow:0 2px 6px rgba(37,99,235,.3); color:#fff; border:none; border-radius:6px; font-size:11px; white-space:nowrap; padding:4px 12px; font-weight:500; letter-spacing:.3px; transition:all .2s ease;" data-doc-id="<?= $row['id']; ?>" data-doc-type="<?= $row['complaints_type']; ?>" data-doc-location="<?= $locationType; ?>" title="ดาวน์โหลดร่างรายงาน Word (เนื้อหาและรูปในไฟล์เดียวกัน เลขหน้านับรวมทั้งหมด)">
+                                                <i class="fas fa-file-word me-1"></i>DOCX
+                                            </button>
                                         <?php else: ?>
                                             <button type="button" class="btn btn-sm btn-secondary btn-no-action" style="background:#9ca3af; box-shadow:none; color:#fff; border:none; border-radius:6px; font-size:11px; white-space:nowrap; padding:4px 12px; font-weight:500; letter-spacing:.3px; cursor:not-allowed; opacity:.55;" disabled title="ยังไม่มีข้อมูล">
                                                 <i class="fas fa-file-word me-1"></i>DOCX
@@ -495,17 +487,9 @@ $(document).ready(function() {
                     pdfButton = `<button type="button" class="btn btn-sm btn-draft-pdf" style="background:#7c3aed; box-shadow:0 2px 6px rgba(124,58,237,.3); color:#fff; border:none; border-radius:6px; font-size:11px; white-space:nowrap; padding:4px 12px; font-weight:500; letter-spacing:.3px; transition:all .2s ease;" data-pdf-id="${row.id}" data-pdf-type="${row.complaints_type}" data-pdf-location="${locationType}" title="ดาวน์โหลด PDF">
                         <i class="fas fa-file-pdf me-1"></i>PDF
                     </button>`;
-                    docButton = `<div class="d-inline-flex flex-wrap justify-content-center" style="gap:4px;">
-                        <button type="button" class="btn btn-sm btn-draft-doc" style="background:#2563eb; box-shadow:0 2px 6px rgba(37,99,235,.3); color:#fff; border:none; border-radius:6px; font-size:11px; white-space:nowrap; padding:4px 12px; font-weight:500; letter-spacing:.3px; transition:all .2s ease;" data-doc-id="${row.id}" data-doc-type="${row.complaints_type}" data-doc-location="${locationType}" title="ดาวน์โหลด Word (เนื้อหา + ภาพประกอบ)">
-                            <i class="fas fa-file-word me-1"></i>DOCX
-                        </button>
-                        <button type="button" class="btn btn-sm btn-draft-doc" style="background:#1d4ed8; box-shadow:0 2px 6px rgba(29,78,216,.3); color:#fff; border:none; border-radius:6px; font-size:11px; white-space:nowrap; padding:4px 10px; font-weight:500; letter-spacing:.3px; transition:all .2s ease;" data-doc-id="${row.id}" data-doc-type="${row.complaints_type}" data-doc-location="${locationType}" data-doc-photos="none" title="ดาวน์โหลด Word เฉพาะเนื้อหา">
-                            <i class="fas fa-file-word me-1"></i>Word (เนื้อหา)
-                        </button>
-                        <button type="button" class="btn btn-sm btn-draft-doc" style="background:#0ea5e9; box-shadow:0 2px 6px rgba(14,165,233,.3); color:#fff; border:none; border-radius:6px; font-size:11px; white-space:nowrap; padding:4px 10px; font-weight:500; letter-spacing:.3px; transition:all .2s ease;" data-doc-id="${row.id}" data-doc-type="${row.complaints_type}" data-doc-location="${locationType}" data-doc-photos="only" title="ดาวน์โหลด Word เฉพาะภาพประกอบ (เริ่มนับหน้าใหม่)">
-                            <i class="fas fa-images me-1"></i>Word (ภาพประกอบ)
-                        </button>
-                    </div>`;
+                    docButton = `<button type="button" class="btn btn-sm btn-draft-doc" style="background:#2563eb; box-shadow:0 2px 6px rgba(37,99,235,.3); color:#fff; border:none; border-radius:6px; font-size:11px; white-space:nowrap; padding:4px 12px; font-weight:500; letter-spacing:.3px; transition:all .2s ease;" data-doc-id="${row.id}" data-doc-type="${row.complaints_type}" data-doc-location="${locationType}" title="ดาวน์โหลดร่างรายงาน Word (เนื้อหาและรูปในไฟล์เดียวกัน เลขหน้านับรวมทั้งหมด)">
+                        <i class="fas fa-file-word me-1"></i>DOCX
+                    </button>`;
                     memoButton = `<button type="button" class="btn btn-sm btn-draft-memo" style="background:#0891b2; box-shadow:0 2px 6px rgba(8,145,178,.3); color:#fff; border:none; border-radius:6px; font-size:11px; white-space:nowrap; padding:4px 12px; font-weight:500; letter-spacing:.3px; transition:all .2s ease;" data-memo-id="${row.id}" data-memo-type="${row.complaints_type}" data-memo-location="${locationType}" title="ดาวน์โหลดบันทึกข้อความ (Word)">
                         <i class="fas fa-file-word me-1"></i>บันทึกข้อความ
                     </button>`;
@@ -2267,14 +2251,10 @@ $(document).on('click', '#btn_save_report_bomb_outdoor_pdf', function() {
         const type = $(this).data('doc-type');
         const location = $(this).data('doc-location') || '';
         const reportNo = $(this).closest('.report-row').data('report-no') || '';
-        // ไม่ระบุ = 'all' (พฤติกรรมเดิม), 'none' = เฉพาะเนื้อหา, 'only' = เฉพาะภาพประกอบ
-        const photos = $(this).data('doc-photos') || '';
-        let url = '/csims/api/incidentCheckList/gen_word_report.php?incident_id=' + id +
+        // ร่างรายงาน = ไฟล์เดียว (เนื้อหา + รูป) เลขหน้านับรวมทั้งฉบับ
+        const url = '/csims/api/incidentCheckList/gen_word_report.php?incident_id=' + id +
             '&type=' + encodeURIComponent(type) + '&location=' + encodeURIComponent(location) +
-            '&report_no=' + encodeURIComponent(reportNo);
-        if (photos) {
-            url += '&photos=' + encodeURIComponent(photos);
-        }
+            '&report_no=' + encodeURIComponent(reportNo) + '&photos=all';
         window.location.href = url;
     });
 
@@ -2302,7 +2282,7 @@ $(document).on('click', '#btn_save_report_bomb_outdoor_pdf', function() {
         const type = $pdfBtn.data('pdf-type');
         const location = $pdfBtn.data('pdf-location') || '';
         if (!$row.find('.doc-cell .btn-draft-doc').length) {
-            $row.find('.doc-cell').html(`<div class="d-inline-flex flex-wrap justify-content-center" style="gap:4px;"><button type="button" class="btn btn-sm btn-draft-doc" style="background:#2563eb; box-shadow:0 2px 6px rgba(37,99,235,.3); color:#fff; border:none; border-radius:6px; font-size:11px; white-space:nowrap; padding:4px 12px; font-weight:500; letter-spacing:.3px; transition:all .2s ease;" data-doc-id="${id}" data-doc-type="${type}" data-doc-location="${location}" title="ดาวน์โหลด Word (เนื้อหา + ภาพประกอบ)"><i class="fas fa-file-word me-1"></i>DOCX</button><button type="button" class="btn btn-sm btn-draft-doc" style="background:#1d4ed8; box-shadow:0 2px 6px rgba(29,78,216,.3); color:#fff; border:none; border-radius:6px; font-size:11px; white-space:nowrap; padding:4px 10px; font-weight:500; letter-spacing:.3px; transition:all .2s ease;" data-doc-id="${id}" data-doc-type="${type}" data-doc-location="${location}" data-doc-photos="none" title="ดาวน์โหลด Word เฉพาะเนื้อหา"><i class="fas fa-file-word me-1"></i>Word (เนื้อหา)</button><button type="button" class="btn btn-sm btn-draft-doc" style="background:#0ea5e9; box-shadow:0 2px 6px rgba(14,165,233,.3); color:#fff; border:none; border-radius:6px; font-size:11px; white-space:nowrap; padding:4px 10px; font-weight:500; letter-spacing:.3px; transition:all .2s ease;" data-doc-id="${id}" data-doc-type="${type}" data-doc-location="${location}" data-doc-photos="only" title="ดาวน์โหลด Word เฉพาะภาพประกอบ (เริ่มนับหน้าใหม่)"><i class="fas fa-images me-1"></i>Word (ภาพประกอบ)</button></div>`);
+            $row.find('.doc-cell').html(`<button type="button" class="btn btn-sm btn-draft-doc" style="background:#2563eb; box-shadow:0 2px 6px rgba(37,99,235,.3); color:#fff; border:none; border-radius:6px; font-size:11px; white-space:nowrap; padding:4px 12px; font-weight:500; letter-spacing:.3px; transition:all .2s ease;" data-doc-id="${id}" data-doc-type="${type}" data-doc-location="${location}" title="ดาวน์โหลดร่างรายงาน Word (เนื้อหาและรูปในไฟล์เดียวกัน เลขหน้านับรวมทั้งหมด)"><i class="fas fa-file-word me-1"></i>DOCX</button>`);
         }
         if (!$row.find('.memo-cell .btn-draft-memo').length) {
             $row.find('.memo-cell').html(`<button type="button" class="btn btn-sm btn-draft-memo" style="background:#0891b2; box-shadow:0 2px 6px rgba(8,145,178,.3); color:#fff; border:none; border-radius:6px; font-size:11px; white-space:nowrap; padding:4px 12px; font-weight:500; letter-spacing:.3px; transition:all .2s ease;" data-memo-id="${id}" data-memo-type="${type}" data-memo-location="${location}" title="ดาวน์โหลดบันทึกข้อความ (Word)"><i class="fas fa-file-word me-1"></i>บันทึกข้อความ</button>`);
@@ -4413,9 +4393,10 @@ function openSceneEvidenceReportModal(incidentId, docNo, reportNo) {
                 });
             }
 
-            // Sync standard → PDF and show PDF modal
+            // อย่า sync มาตรฐาน → PDF ตรงนี้: ฟอร์มมาตรฐานยังว่าง
+            // จะทับรายการของกลางที่เพิ่ง prefill ลงฟอร์มรายงาน
             if (typeof syncSceneEvidenceFormData === 'function') {
-                syncSceneEvidenceFormData('incidentCheckListFormSceneEvidence', 'sceneEvidenceFormPdf');
+                syncSceneEvidenceFormData('sceneEvidenceFormPdf', 'incidentCheckListFormSceneEvidence');
             }
             if (typeof sevpfSyncReportNo === 'function') sevpfSyncReportNo();
             if (typeof sevpfRenderPhotosFromStore === 'function') sevpfRenderPhotosFromStore();
@@ -4441,8 +4422,11 @@ function ev7ResetDynamicContainers() {
         for (var i = evRows.length - 1; i > 0; i--) evRows[i].remove();
         var firstEvInput = evContainer.querySelector('[name="sevpf_evidence_item[]"]');
         if (firstEvInput) firstEvInput.value = '';
-        var firstLabSelect = evContainer.querySelector('[name="sevpf_lab_unit[]"]');
-        if (firstLabSelect) firstLabSelect.selectedIndex = 0;
+        var firstLabHidden = evContainer.querySelector('[name="sevpf_lab_unit[]"]');
+        if (firstLabHidden) {
+            if (typeof window.setLabUnits === 'function') window.setLabUnits(firstLabHidden, []);
+            else firstLabHidden.value = '';
+        }
     }
     if (typeof sevpfRenumberEvidenceItems === 'function') sevpfRenumberEvidenceItems();
 
@@ -4628,22 +4612,36 @@ function ev7PrefillFromChecklistData(data, incidentId, docNo, reportNo) {
         $('[name="ev7_handover_method"][value="' + handling.handover_method + '"]').prop('checked', true);
     }
 
-    // Dynamic: Evidence items
-    var evidences = data.evidences || data.evidence_items || [];
-    var labUnits = (collected.lab_units || []);
+    // Dynamic: Evidence items — ใช้ชุดที่มีข้อมูล (evidences ว่าง [] ยังเป็น truthy อย่าข้าม evidence_items)
+    var evidences = [];
+    if (data.evidences && data.evidences.length) evidences = data.evidences;
+    else if (data.evidence_items && data.evidence_items.length) evidences = data.evidence_items;
+    var labUnits = (collected.lab_units && collected.lab_units.length) ? collected.lab_units : [];
+    var evidenceText = function(ev) {
+        if (ev == null) return '';
+        if (typeof ev === 'string') return ev;
+        return ev.detail || ev.item || ev.description || '';
+    };
     if (evidences.length > 0) {
-        var evPdfContainer = document.getElementById('sevpf_evidence_items_container');
         for (var i = 1; i < evidences.length; i++) {
             if (typeof sevpfAddEvidenceItem === 'function') sevpfAddEvidenceItem();
+            if (typeof addEvidenceItemEV7 === 'function') addEvidenceItemEV7();
         }
         $('[name="sevpf_evidence_item[]"]').each(function(idx) {
-            if (evidences[idx]) {
-                this.value = evidences[idx].detail || evidences[idx].item || evidences[idx].description || '';
-            }
+            this.value = evidenceText(evidences[idx]);
+        });
+        $('[name="ev7_evidence_item[]"]').each(function(idx) {
+            this.value = evidenceText(evidences[idx]);
         });
         $('[name="sevpf_lab_unit[]"]').each(function(idx) {
-            if (evidences[idx] && evidences[idx].lab_unit) this.value = evidences[idx].lab_unit;
-            else if (labUnits[idx]) this.value = labUnits[idx];
+            var lu = (evidences[idx] && evidences[idx].lab_unit) ? evidences[idx].lab_unit : (labUnits[idx] || '');
+            if (typeof window.setLabUnits === 'function') window.setLabUnits(this, lu);
+            else this.value = Array.isArray(lu) ? lu.join(',') : (lu || '');
+        });
+        $('[name="ev7_lab_unit[]"]').each(function(idx) {
+            var lu = (evidences[idx] && evidences[idx].lab_unit) ? evidences[idx].lab_unit : (labUnits[idx] || '');
+            if (typeof window.setLabUnits === 'function') window.setLabUnits(this, lu);
+            else this.value = Array.isArray(lu) ? lu.join(',') : (lu || '');
         });
     }
 
@@ -4768,27 +4766,59 @@ async function prepareDataForSubmissionSceneEvidence() {
         sevpf_sender_position: $('[name="sevpf_sender_position"]').val() || '',
     };
 
-    // Dynamic arrays
-    $('[name="ev7_evidence_item[]"]').each(function() { var v = $(this).val(); if (v) payload['ev7_evidence_item'].push(v); });
-    if (payload['ev7_evidence_item'].length === 0) {
-        $('[name="sevpf_evidence_item[]"]').each(function() { var v = $(this).val(); if (v) payload['ev7_evidence_item'].push(v); });
+    var readLabUnitValue = function(el) {
+        if (!el) return [];
+        try {
+            if (window.LabUnitMulti) window.LabUnitMulti.syncHidden(window.LabUnitMulti.selectFor(el) || el);
+            if (typeof window.getLabUnits === 'function') {
+                var arr = window.getLabUnits(el);
+                if (arr && arr.length) return arr;
+            }
+        } catch (e) {}
+        var raw = $(el).val();
+        if (Array.isArray(raw)) return raw.filter(Boolean);
+        if (typeof window.labUnitsToArray === 'function') return window.labUnitsToArray(raw);
+        return String(raw || '').split(',').map(function(s) { return s.trim(); }).filter(Boolean);
+    };
+    var collectEvidenceRows = function(rowSelector, itemName, labName) {
+        var items = [];
+        var labs = [];
+        var rows = [];
+        $(rowSelector).each(function() {
+            var $row = $(this);
+            var itemEl = $row.find('[name="' + itemName + '"]').get(0);
+            var labEl = $row.find('[name="' + labName + '"]').get(0) || $row.find('select.lab-unit-multi').get(0);
+            var item = $.trim($(itemEl).val() || '');
+            var lab = readLabUnitValue(labEl);
+            if (!item && !lab.length) return;
+            items.push(item);
+            labs.push(lab);
+            rows.push({ description: item, detail: item, lab_unit: lab });
+        });
+        return { items: items, labs: labs, rows: rows };
+    };
+
+    if (window.LabUnitMulti) {
+        window.LabUnitMulti.syncAll(document.getElementById('sceneEvidenceFormPdf') || document);
     }
-    $('[name="ev7_exhibit_desc[]"]').each(function() { var v = $(this).val(); if (v) payload['ev7_exhibit_desc'].push(v); });
+
+    // บันทึกจากฟอร์มรายงาน — ใช้แถวใน PDF เป็นหลัก (อย่าไปอ่านฟอร์มมาตรฐานที่ค้างอยู่)
+    var pdfEv = collectEvidenceRows('#sevpf_evidence_items_container .sevpf-evidence-item-row', 'sevpf_evidence_item[]', 'sevpf_lab_unit[]');
+    var stdEv = collectEvidenceRows('#ev7_evidence_items_container .ev7-evidence-item-row', 'ev7_evidence_item[]', 'ev7_lab_unit[]');
+    var chosenEv = pdfEv.items.length ? pdfEv : stdEv;
+    payload['ev7_evidence_item'] = chosenEv.items;
+    payload['ev7_lab_unit'] = chosenEv.labs;
+    payload['ev7_evidence_rows'] = chosenEv.rows;
+
+    $('[name="sevpf_exhibit_desc[]"]').each(function() { var v = $(this).val(); if (v) payload['ev7_exhibit_desc'].push(v); });
     if (payload['ev7_exhibit_desc'].length === 0) {
-        $('[name="sevpf_exhibit_desc[]"]').each(function() { var v = $(this).val(); if (v) payload['ev7_exhibit_desc'].push(v); });
+        $('[name="ev7_exhibit_desc[]"]').each(function() { var v = $(this).val(); if (v) payload['ev7_exhibit_desc'].push(v); });
     }
-    $('[name="ev7_collect_detail[]"]').each(function() { var v = $(this).val(); if (v) payload['ev7_collect_detail'].push(v); });
+    $('[name="sevpf_collect_detail[]"]').each(function() { var v = $(this).val(); if (v) payload['ev7_collect_detail'].push(v); });
     if (payload['ev7_collect_detail'].length === 0) {
-        $('[name="sevpf_collect_detail[]"]').each(function() { var v = $(this).val(); if (v) payload['ev7_collect_detail'].push(v); });
+        $('[name="ev7_collect_detail[]"]').each(function() { var v = $(this).val(); if (v) payload['ev7_collect_detail'].push(v); });
     }
     $('[name="ev7_other_evidence[]"]').each(function() { var v = $(this).val(); if (v) payload['ev7_other_evidence'].push(v); });
-
-    // Lab units
-    payload['ev7_lab_unit'] = [];
-    $('[name="sevpf_lab_unit[]"]').each(function() { payload['ev7_lab_unit'].push($(this).val() || ''); });
-    if (payload['ev7_lab_unit'].length === 0) {
-        $('[name="ev7_lab_unit[]"]').each(function() { payload['ev7_lab_unit'].push($(this).val() || ''); });
-    }
 
     // Inspectors (standard form only, no sevpf_inspector_container in new PDF form)
     $('#ev7_inspector_container .ev7-inspector-select').each(function() {
@@ -4796,11 +4826,21 @@ async function prepareDataForSubmissionSceneEvidence() {
         if (val) payload['ev7_inspector_id'].push(val);
     });
 
-    // FormData for file uploads
+    // FormData for file uploads — ส่ง payload_json เป็นหลัก เพื่อให้ array ต่อแถวไม่เพี้ยน
     var submitData = new FormData();
+    submitData.append('payload_json', JSON.stringify(payload));
     for (var key in payload) {
+        if (key === 'ev7_evidence_rows') continue;
         if (Array.isArray(payload[key])) {
-            payload[key].forEach(function(v) { submitData.append(key + '[]', v); });
+            payload[key].forEach(function(v) {
+                if (Array.isArray(v)) {
+                    submitData.append(key + '[]', v.filter(Boolean).join(','));
+                } else if (v && typeof v === 'object') {
+                    submitData.append(key + '[]', v.description || v.detail || '');
+                } else {
+                    submitData.append(key + '[]', v == null ? '' : v);
+                }
+            });
         } else {
             submitData.append(key, payload[key] || '');
         }

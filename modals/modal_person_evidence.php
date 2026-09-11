@@ -369,8 +369,8 @@ $todayTimeEV8 = date('H:i');
                                     <span class="input-group-text fw-bold">๓.๒.๑</span>
                                     <input type="text" class="form-control" name="ev8_evidence_desc[]" placeholder="ตัวอย่าง เช่น เนื้อเยื่อบุกระพุ้งแก้ม/เข่ากับที่... จาก (นาย/นาง/นางสาว)...">
                                     <button type="button" class="btn btn-outline-primary btn-hw-open btn-hw-dynamic" title="เขียนด้วยลายมือ"><i class="fas fa-pen"></i></button>
-                                    <select class="form-select" name="ev8_lab_unit[]" style="max-width:220px;">
-                                        <option value="" selected>-- กลุ่มตรวจพิสูจน์ --</option>
+                                    <select class="form-select lab-unit-multi" multiple size="3" title="เลือกได้มากกว่า 1 กลุ่มงาน" style="max-width:220px;">
+                                        <option value="">-- กลุ่มตรวจพิสูจน์ (เลือกได้หลายข้อ) --</option>
                                         <option value="bio_dna">กลุ่มงานตรวจชีววิทยา</option>
                                         <option value="chemical">กลุ่มงานตรวจทางเคมีฟิสิกส์</option>
                                         <option value="fingerprint">กลุ่มงานตรวจลายนิ้วมือแฝง</option>
@@ -379,6 +379,7 @@ $todayTimeEV8 = date('H:i');
                                         <option value="document">กลุ่มงานตรวจเอกสาร</option>
                                         <option value="digital">กลุ่มงานตรวจพิสูจน์หลักฐานดิจิทัล</option><option value="computer">กลุ่มงานตรวจพิสูจน์อาชญากรรมคอมพิวเตอร์</option>
                                     </select>
+                                    <input type="hidden" class="lab-unit-value" name="ev8_lab_unit[]" value="">
                                     <input type="text" class="form-control" name="ev8_evidence_qty[]" placeholder="จำนวน" style="max-width:120px;">
                                     <button type="button" class="btn btn-outline-danger" onclick="removeEV8Row(this)"><i class="fas fa-times"></i></button>
                                 </div>
@@ -655,7 +656,7 @@ function removeEV8PersonInfo(btn) {
 }
 
 var ev8EvidenceDetailIdx = 1;
-var ev8LabUnitOptions = '<option value="" selected>-- กลุ่มตรวจพิสูจน์ --</option>' +
+var ev8LabUnitOptions = '<option value="">-- กลุ่มตรวจพิสูจน์ (เลือกได้หลายข้อ) --</option>' +
     '<option value="bio_dna">กลุ่มงานตรวจชีววิทยา</option>' +
     '<option value="chemical">กลุ่มงานตรวจทางเคมีฟิสิกส์</option>' +
     '<option value="fingerprint">กลุ่มงานตรวจลายนิ้วมือแฝง</option>' +
@@ -669,7 +670,8 @@ function addEvidenceDetailEV8() {
         '<span class="input-group-text fw-bold">๓.๒.' + ev8EvidenceDetailIdx + '</span>' +
         '<input type="text" class="form-control" name="ev8_evidence_desc[]" placeholder="ตัวอย่าง เช่น เนื้อเยื่อบุกระพุ้งแก้ม/เข่ากับที่... จาก (นาย/นาง/นางสาว)...">' +
         '<button type="button" class="btn btn-outline-primary btn-hw-open btn-hw-dynamic" title="เขียนด้วยลายมือ"><i class="fas fa-pen"></i></button>' +
-        '<select class="form-select" name="ev8_lab_unit[]" style="max-width:220px;">' + ev8LabUnitOptions + '</select>' +
+        '<select class="form-select lab-unit-multi" multiple size="3" title="\u0e40\u0e25\u0e37\u0e2d\u0e01\u0e44\u0e14\u0e49\u0e21\u0e32\u0e01\u0e01\u0e27\u0e48\u0e32 1 \u0e01\u0e25\u0e38\u0e48\u0e21\u0e07\u0e32\u0e19" style="max-width:220px;">' + ev8LabUnitOptions + '</select>' +
+        '<input type="hidden" class="lab-unit-value" name="ev8_lab_unit[]" value="">' +
         '<input type="text" class="form-control" name="ev8_evidence_qty[]" placeholder="จำนวน" style="max-width:120px;">' +
         '<button type="button" class="btn btn-outline-danger" onclick="removeEV8Row(this)"><i class="fas fa-times"></i></button></div>';
     $('#ev8_evidence_detail_container').append(html);
@@ -1218,7 +1220,7 @@ window.loadPersonEvidenceDataToModal = function(incidentId, onComplete) {
                         }
                         var detail = (ev && typeof ev === 'object') ? (ev.detail || ev.item || ev.description || '') : (ev || '');
                         var qty = (ev && typeof ev === 'object') ? (ev.qty || '') : '';
-                        var lab = (ev && typeof ev === 'object') ? (ev.lab_unit || '') : '';
+                        var lab = (ev && typeof ev === 'object') ? window.labUnitsToString(ev.lab_unit) : '';
 
                         var stdDesc = $('[name="ev8_evidence_desc[]"]');
                         var stdQty = $('[name="ev8_evidence_qty[]"]');
@@ -1229,10 +1231,14 @@ window.loadPersonEvidenceDataToModal = function(incidentId, onComplete) {
 
                         if (stdDesc.eq(idx).length) stdDesc.eq(idx).val(detail);
                         if (stdQty.eq(idx).length) stdQty.eq(idx).val(qty);
-                        if (stdLab.eq(idx).length) stdLab.eq(idx).val(lab);
+                        if (stdLab.eq(idx).length) window.setLabUnits(stdLab.eq(idx), lab);
                         if (pdfDesc.eq(idx).length) pdfDesc.eq(idx).val(detail);
                         if (pdfQty.eq(idx).length) pdfQty.eq(idx).val(qty);
-                        if (pdfLab.eq(idx).length) pdfLab.eq(idx).val(lab).trigger('change');
+                        if (pdfLab.eq(idx).length) {
+                            window.setLabUnits(pdfLab.eq(idx), lab);
+                            var $pdfSel = pdfLab.eq(idx).closest('.pepf-ed-line2, .pepr-line-input').find('select.lab-unit-multi');
+                            if ($pdfSel.length) $pdfSel.trigger('change');
+                        }
                     });
                 }
 
@@ -1575,8 +1581,8 @@ async function prepareDataForSubmissionPersonEvidence() {
 
     payload['ev8_lab_unit'] = (function() {
         var stdVals = []; var pdfVals = [];
-        $('[name="ev8_lab_unit[]"]').each(function() { stdVals.push($.trim($(this).val() || '')); });
-        $('[name="pepf_lab_unit[]"]').each(function() { pdfVals.push($.trim($(this).val() || '')); });
+        $('[name="ev8_lab_unit[]"]').each(function() { stdVals.push(window.getLabUnitsString(this)); });
+        $('[name="pepf_lab_unit[]"]').each(function() { pdfVals.push(window.getLabUnitsString(this)); });
         var stdFilled = stdVals.filter(Boolean).length;
         var pdfFilled = pdfVals.filter(Boolean).length;
         return pdfFilled > stdFilled ? pdfVals : stdVals;

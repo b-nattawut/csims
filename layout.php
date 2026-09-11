@@ -51,31 +51,50 @@ $display_position = $logged_in_user['position_name'];
     <?php include 'includes/head.php'; ?>
 
     <style>
-        /* ช่อง "การตรวจพิสูจน์" แบบเลือกหลายกลุ่มงาน */
+        /* ช่อง "การตรวจพิสูจน์" แบบเลือกหลายกลุ่มงาน (ติ๊กได้บนแท็บเล็ต) */
         select.lab-unit-multi {
-            min-height: 62px;
-            padding: 2px 4px;
-            font-size: 0.82rem;
-            line-height: 1.35;
-            background-image: none;
-            overflow-y: auto;
+            position: absolute !important;
+            width: 1px !important;
+            height: 1px !important;
+            opacity: 0 !important;
+            pointer-events: none !important;
         }
-
-        select.lab-unit-multi option {
-            padding: 1px 4px;
+        .lab-unit-picker {
+            position: relative;
+            min-width: 92px;
+        }
+        .lab-unit-picker-list {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            max-height: 88px;
+            overflow-y: auto;
+            padding: 2px;
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            background: #fff;
+        }
+        .lab-unit-chip {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            margin: 0;
+            padding: 2px 4px;
+            font-size: 10px;
+            line-height: 1.25;
             border-radius: 3px;
             cursor: pointer;
+            user-select: none;
+            -webkit-user-select: none;
         }
-
-        select.lab-unit-multi option:checked {
-            background: #0d6efd linear-gradient(0deg, #0d6efd 0%, #0d6efd 100%);
-            color: #fff;
+        .lab-unit-chip input {
+            margin: 0;
+            flex-shrink: 0;
+        }
+        .lab-unit-chip.is-on {
+            background: #dbeafe;
+            color: #1e3a8a;
             font-weight: 600;
-        }
-
-        select.lab-unit-multi option[value=""] {
-            color: #6c757d;
-            font-style: italic;
         }
     </style>
 
@@ -98,7 +117,7 @@ $display_position = $logged_in_user['position_name'];
     <script src="js/jquery-3.7.1.min.js"></script>
     <script src="js/bootstrap.bundle.min.js"></script>
     <!-- ตัวช่วยกลางสำหรับช่อง "การตรวจพิสูจน์" (เลือกได้หลายกลุ่มงาน) -->
-    <script src="js/lab-unit-multi.js"></script>
+    <script src="js/lab-unit-multi.js?v=3"></script>
 
     <script src="js/sweetalert2.all.min.js"></script>
     <script src="js/signature_pad.umd.min.js"></script>

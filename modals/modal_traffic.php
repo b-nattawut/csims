@@ -600,7 +600,7 @@ $todayTimeTraffic = date('H:i');
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">การตรวจพิสูจน์</label>
-                                <select class="form-select" name="forensic_lab_unit">
+                                <select class="form-select lab-unit-multi" multiple size="4" title="เลือกได้มากกว่า 1 กลุ่มงาน">
                                     <option value="bio_dna">กลุ่มงานตรวจชีววิทยา</option>
                                     <option value="chemical">กลุ่มงานตรวจทางเคมีฟิสิกส์</option>
                                     <option value="fingerprint">กลุ่มงานตรวจลายนิ้วมือแฝง</option>
@@ -608,6 +608,7 @@ $todayTimeTraffic = date('H:i');
                                     <option value="gun">กลุ่มงานตรวจอาวุธปืนและเครื่องกระสุน</option>
                                     <option value="document">กลุ่มงานตรวจเอกสาร</option>
                                 </select>
+                                <input type="hidden" class="lab-unit-value" name="forensic_lab_unit" value="">
                             </div>
                             <!-- วัน / เวลาที่ทำการตรวจพิสูจน์ -->
                             <div class="col-md-6 mb-3">
@@ -2532,7 +2533,7 @@ $todayTimeTraffic = date('H:i');
                                             $card.find('input[name^="evidence_ref4_dist_bomb"]').val(evDist4);
                                             $card.find('[name="evidence_azimuth_bomb[]"]').val(ev.azimuth || '');
                                             $card.find('[name="evidence_remark_bomb[]"]').val(ev.remark || '');
-                                            $card.find('[name="evidence_lab_unit_bomb[]"]').val(ev.lab_unit || '');
+                                            window.setLabUnits($card.find('[name="evidence_lab_unit_bomb[]"]'), ev.lab_unit);
                                         });
                                     } else {
                                         addEvidenceRowBomb(); // สร้างรายการแรกว่างๆ

@@ -435,7 +435,7 @@ $todayTimeFPN = date('H:i');
                                             </div>
                                             <div class="col-md-12">
                                                 <label class="form-label">การตรวจพิสูจน์</label>
-                                                <select class="form-select" name="fpn_ev_lab_unit[]">
+                                                <select class="form-select lab-unit-multi" multiple size="4" title="เลือกได้มากกว่า 1 กลุ่มงาน">
                                                     <option value="bio_dna">กลุ่มงานตรวจชีววิทยา</option>
                                                     <option value="chemical">กลุ่มงานตรวจทางเคมีฟิสิกส์</option>
                                                     <option value="fingerprint" selected>กลุ่มงานตรวจลายนิ้วมือแฝง</option>
@@ -443,6 +443,7 @@ $todayTimeFPN = date('H:i');
                                                     <option value="gun">กลุ่มงานตรวจอาวุธปืนและเครื่องกระสุน</option>
                                                     <option value="document">กลุ่มงานตรวจเอกสาร</option>
                                                 </select>
+                                                <input type="hidden" class="lab-unit-value" name="fpn_ev_lab_unit[]" value="fingerprint">
                                             </div>
                                         </div>
 
@@ -953,7 +954,7 @@ $todayTimeFPN = date('H:i');
                         </div>
                         <div class="col-md-12">
                             <label class="form-label">การตรวจพิสูจน์</label>
-                            <select class="form-select" name="fpn_ev_lab_unit[]">
+                            <select class="form-select lab-unit-multi" multiple size="4" title="เลือกได้มากกว่า 1 กลุ่มงาน">
                                 <option value="bio_dna">กลุ่มงานตรวจชีววิทยา</option>
                                 <option value="chemical">กลุ่มงานตรวจทางเคมีฟิสิกส์</option>
                                 <option value="fingerprint" selected>กลุ่มงานตรวจลายนิ้วมือแฝง</option>
@@ -961,6 +962,7 @@ $todayTimeFPN = date('H:i');
                                 <option value="gun">กลุ่มงานตรวจอาวุธปืนและเครื่องกระสุน</option>
                                 <option value="document">กลุ่มงานตรวจเอกสาร</option>
                             </select>
+                            <input type="hidden" class="lab-unit-value" name="fpn_ev_lab_unit[]" value="fingerprint">
                         </div>
                     </div>
                 </div>
@@ -1271,7 +1273,7 @@ $todayTimeFPN = date('H:i');
                 height: (card.querySelector('[name="fpn_ev_height[]"]') || {}).value || '',
                 quantity: (card.querySelector('[name="fpn_ev_quantity[]"]') || {}).value || '',
                 label_no: (card.querySelector('[name="fpn_ev_label_no[]"]') || {}).value || '',
-                lab_unit: (card.querySelector('[name="fpn_ev_lab_unit[]"]') || {}).value || 'fingerprint',
+                lab_unit: window.getLabUnits(card.querySelector('[name="fpn_ev_lab_unit[]"]')),
                 methods: []
             };
             card.querySelectorAll('.fpn-method-row').forEach(row => {

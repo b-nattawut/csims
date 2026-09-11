@@ -339,8 +339,8 @@ $peprTodayDate = date('Y-m-d');
                                 <button type="button" class="pepr-del-btn" onclick="this.closest('.pepr-evidence-row').remove(); peprRenumberEvidenceDetails();">×</button>
                                 <div class="fr pepr-line-input">
                                     <span class="fl">กลุ่มตรวจพิสูจน์</span>
-                                    <select class="pepr-select" name="pepf_lab_unit[]" style="max-width:220px;">
-                                        <option value="">-- กลุ่มตรวจพิสูจน์ --</option>
+                                    <select class="pepr-select lab-unit-multi" multiple size="3" title="เลือกได้มากกว่า 1 กลุ่มงาน" style="max-width:220px;">
+                                        <option value="">-- กลุ่มตรวจพิสูจน์ (เลือกได้หลายข้อ) --</option>
                                         <option value="bio_dna">กลุ่มงานตรวจชีววิทยา</option>
                                         <option value="chemical">กลุ่มงานตรวจทางเคมีฟิสิกส์</option>
                                         <option value="fingerprint">กลุ่มงานตรวจลายนิ้วมือแฝง</option>
@@ -349,6 +349,7 @@ $peprTodayDate = date('Y-m-d');
                                         <option value="document">กลุ่มงานตรวจเอกสาร</option>
                                         <option value="digital">กลุ่มงานตรวจพิสูจน์หลักฐานดิจิทัล</option><option value="computer">กลุ่มงานตรวจพิสูจน์อาชญากรรมคอมพิวเตอร์</option>
                                     </select>
+                                    <input type="hidden" class="lab-unit-value" name="pepf_lab_unit[]" value="">
                                     <span class="fl">จำนวน</span><input type="text" class="pepr-inp pepr-inp-s" name="pepf_evidence_qty[]">
                                 </div>
                             </div>
@@ -551,7 +552,7 @@ $peprTodayDate = date('Y-m-d');
         row.innerHTML = '<span class="fl pepr-evidence-no"></span>' +
             '<input type="text" class="pepr-inp" name="pepf_evidence_desc[]">' +
             '<button type="button" class="pepr-del-btn" onclick="this.closest(\'.pepr-evidence-row\').remove(); peprRenumberEvidenceDetails();">×</button>' +
-            '<div class="fr pepr-line-input"><span class="fl">กลุ่มตรวจพิสูจน์</span><select class="pepr-select" name="pepf_lab_unit[]" style="max-width:220px;"><option value="">-- กลุ่มตรวจพิสูจน์ --</option><option value="bio_dna">กลุ่มงานตรวจชีววิทยา</option><option value="chemical">กลุ่มงานตรวจทางเคมีฟิสิกส์</option><option value="fingerprint">กลุ่มงานตรวจลายนิ้วมือแฝง</option><option value="drug">กลุ่มงานตรวจยาเสพติด</option><option value="gun">กลุ่มงานตรวจอาวุธปืนและเครื่องกระสุน</option><option value="document">กลุ่มงานตรวจเอกสาร</option><option value="digital">กลุ่มงานตรวจพิสูจน์หลักฐานดิจิทัล</option><option value="computer">กลุ่มงานตรวจพิสูจน์อาชญากรรมคอมพิวเตอร์</option></select><span class="fl">จำนวน</span><input type="text" class="pepr-inp pepr-inp-s" name="pepf_evidence_qty[]"></div>';
+            '<div class="fr pepr-line-input"><span class="fl">กลุ่มตรวจพิสูจน์</span><select class="pepr-select lab-unit-multi" multiple size="3" title="เลือกได้มากกว่า 1 กลุ่มงาน" style="max-width:220px;"><option value="">-- กลุ่มตรวจพิสูจน์ (เลือกได้หลายข้อ) --</option><option value="bio_dna">กลุ่มงานตรวจชีววิทยา</option><option value="chemical">กลุ่มงานตรวจทางเคมีฟิสิกส์</option><option value="fingerprint">กลุ่มงานตรวจลายนิ้วมือแฝง</option><option value="drug">กลุ่มงานตรวจยาเสพติด</option><option value="gun">กลุ่มงานตรวจอาวุธปืนและเครื่องกระสุน</option><option value="document">กลุ่มงานตรวจเอกสาร</option><option value="digital">กลุ่มงานตรวจพิสูจน์หลักฐานดิจิทัล</option><option value="computer">กลุ่มงานตรวจพิสูจน์อาชญากรรมคอมพิวเตอร์</option></select><input type="hidden" class="lab-unit-value" name="pepf_lab_unit[]" value=""><span class="fl">จำนวน</span><input type="text" class="pepr-inp pepr-inp-s" name="pepf_evidence_qty[]"></div>';
         container.appendChild(row);
         peprRenumberEvidenceDetails();
     };

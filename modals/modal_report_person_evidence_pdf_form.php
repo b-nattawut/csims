@@ -344,8 +344,8 @@
                 <span class="fl">จำนวน</span>
                 <input type="text" class="pepf-inp pepf-inp-s" name="pe_ev_qty[]">
                 <span class="fl">ส่งตรวจ</span>
-                <select class="pepf-select" name="pe_ev_lab_unit[]" style="min-width:200px;">
-                    <option value="">-- เลือกกลุ่มงาน --</option>
+                <select class="pepf-select lab-unit-multi" multiple size="3" title="เลือกได้มากกว่า 1 กลุ่มงาน" style="min-width:200px;">
+                    <option value="">-- เลือกกลุ่มงาน (เลือกได้หลายข้อ) --</option>
                     <option value="bio_dna">กลุ่มงานตรวจชีววิทยา</option>
                     <option value="chemical">กลุ่มงานตรวจทางเคมีฟิสิกส์</option>
                     <option value="fingerprint">กลุ่มงานตรวจลายนิ้วมือแฝง</option>
@@ -354,6 +354,7 @@
                     <option value="document">กลุ่มงานตรวจเอกสาร</option>
                     <option value="digital">กลุ่มงานตรวจพิสูจน์หลักฐานดิจิทัล</option><option value="computer">กลุ่มงานตรวจพิสูจน์อาชญากรรมคอมพิวเตอร์</option>
                 </select>
+                <input type="hidden" class="lab-unit-value" name="pe_ev_lab_unit[]" value="">
             </div>
         </div>
     </div>

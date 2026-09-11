@@ -777,7 +777,7 @@ $tpfTodayTime = date('H:i');
                     </div>
                     <div class="tpf-fr">
                         <span class="tpf-fl">การตรวจพิสูจน์</span>
-                        <select class="tpf-inp" name="forensic_lab_unit" id="tpf_forensic_lab_unit">
+                        <select class="tpf-inp lab-unit-multi" multiple size="3" title="เลือกได้มากกว่า 1 กลุ่มงาน" id="tpf_forensic_lab_unit">
                             <option value="bio_dna">กลุ่มงานตรวจชีววิทยา</option>
                             <option value="chemical">กลุ่มงานตรวจทางเคมีฟิสิกส์</option>
                             <option value="fingerprint">กลุ่มงานตรวจลายนิ้วมือแฝง</option>
@@ -785,6 +785,7 @@ $tpfTodayTime = date('H:i');
                             <option value="gun">กลุ่มงานตรวจอาวุธปืนและเครื่องกระสุน</option>
                             <option value="document">กลุ่มงานตรวจเอกสาร</option>
                         </select>
+                        <input type="hidden" class="lab-unit-value" name="forensic_lab_unit" value="">
                     </div>
                     <div class="tpf-fr">
                         <span class="tpf-fl">เมื่อวันที่</span>

@@ -1187,8 +1187,8 @@ if (isset($pdo)) {
                                             <!-- แถวที่ 6: การตรวจพิสูจน์ -->
                                             <div class="col-md-12">
                                                 <label class="form-label small text-muted">8. การตรวจพิสูจน์</label>
-                                                <select class="form-select" name="measurement_forensic_unit_property[]">
-                                                    <option value="" selected>-- กรุณาเลือก --</option>
+                                                <select class="form-select lab-unit-multi" multiple size="4" title="เลือกได้มากกว่า 1 กลุ่มงาน">
+                                                    <option value="">-- กรุณาเลือก (เลือกได้หลายข้อ) --</option>
                                                     <option value="fingerprint">กลุ่มงานตรวจลายนิ้วมือแฝง</option>
                                                     <option value="bio_dna">กลุ่มงานตรวจชีววิทยาและดีเอ็นเอ</option>
                                                     <option value="chemical">กลุ่มงานตรวจทางเคมีฟิสิกส์</option>
@@ -1198,6 +1198,7 @@ if (isset($pdo)) {
                                                     <option value="digital">กลุ่มงานตรวจพิสูจน์หลักฐานดิจิทัล</option>
                                                     <option value="computer">กลุ่มงานตรวจพิสูจน์อาชญากรรมคอมพิวเตอร์</option>
                                                 </select>
+                                                <input type="hidden" class="lab-unit-value" name="measurement_forensic_unit_property[]" value="">
                                             </div>
 
                                             <!-- ปุ่มลบ -->
@@ -1523,8 +1524,8 @@ function addMeasurementCardProperty() {
                     </div>
                     <div class="col-md-12">
                         <label class="form-label small text-muted">8. การตรวจพิสูจน์</label>
-                        <select class="form-select" name="measurement_forensic_unit_property[]">
-                            <option value="" selected>-- กรุณาเลือก --</option>
+                        <select class="form-select lab-unit-multi" multiple size="4" title="เลือกได้มากกว่า 1 กลุ่มงาน">
+                            <option value="">-- กรุณาเลือก (เลือกได้หลายข้อ) --</option>
                             <option value="fingerprint">กลุ่มงานตรวจลายนิ้วมือแฝง</option>
                             <option value="bio_dna">กลุ่มงานตรวจชีววิทยาและดีเอ็นเอ</option>
                             <option value="chemical">กลุ่มงานตรวจทางเคมีฟิสิกส์</option>
@@ -1534,6 +1535,7 @@ function addMeasurementCardProperty() {
                             <option value="digital">กลุ่มงานตรวจพิสูจน์หลักฐานดิจิทัล</option>
                             <option value="computer">กลุ่มงานตรวจพิสูจน์อาชญากรรมคอมพิวเตอร์</option>
                         </select>
+                        <input type="hidden" class="lab-unit-value" name="measurement_forensic_unit_property[]" value="">
                     </div>
                     <div class="col-12">
                         <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeMeasurementCardProperty(this)">

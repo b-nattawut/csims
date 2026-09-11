@@ -359,7 +359,7 @@ if (isset($pdo)) {
                                             </div>
                                             <div class="col-md-6">
                                                 <label class="form-label">การตรวจพิสูจน์</label>
-                                                <select class="form-select form-select-sm" name="rlf_ev_lab_unit[]">
+                                                <select class="form-select form-select-sm lab-unit-multi" multiple size="3" title="เลือกได้มากกว่า 1 กลุ่มงาน">
                                                     <option value="bio_dna">กลุ่มงานตรวจชีววิทยา</option>
                                                     <option value="chemical">กลุ่มงานตรวจทางเคมีฟิสิกส์</option>
                                                     <option value="fingerprint" selected>กลุ่มงานตรวจลายนิ้วมือแฝง</option>
@@ -367,6 +367,7 @@ if (isset($pdo)) {
                                                     <option value="gun">กลุ่มงานตรวจอาวุธปืนและเครื่องกระสุน</option>
                                                     <option value="document">กลุ่มงานตรวจเอกสาร</option>
                                                 </select>
+                                                <input type="hidden" class="lab-unit-value" name="rlf_ev_lab_unit[]" value="fingerprint">
                                             </div>
                                         </div>
                                     </div>
@@ -604,7 +605,7 @@ if (isset($pdo)) {
                 <div class="col-md-3"><label class="form-label">ส. (cm)</label><input type="text" class="form-control form-control-sm" name="rlf_ev_height[]"></div>
                 <div class="col-md-3"><label class="form-label">จำนวน</label><input type="text" class="form-control form-control-sm" name="rlf_ev_quantity[]"></div>
                 <div class="col-md-6"><label class="form-label">ป้ายหมายเลข</label><input type="text" class="form-control form-control-sm" name="rlf_ev_label_no[]"></div>
-                <div class="col-md-6"><label class="form-label">การตรวจพิสูจน์</label><select class="form-select form-select-sm" name="rlf_ev_lab_unit[]">${labUnitOptions}</select></div>
+                <div class="col-md-6"><label class="form-label">การตรวจพิสูจน์</label><select class="form-select form-select-sm lab-unit-multi" multiple size="3" title="เลือกได้มากกว่า 1 กลุ่มงาน">${labUnitOptions}</select><input type="hidden" class="lab-unit-value" name="rlf_ev_lab_unit[]" value=""></div>
             </div>
         </div>`;
     }

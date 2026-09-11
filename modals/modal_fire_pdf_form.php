@@ -2050,71 +2050,9 @@ $fpfTodayTime = date('H:i');
     });
 
     function _initSketchDraw(canvasId) {
-        var canvas = document.getElementById(canvasId);
-        if (!canvas || canvas.dataset.fpfInit === '1') return;
-        canvas.dataset.fpfInit = '1';
-        
-        var ctx = canvas.getContext('2d');
-        var drawing = false;
-        var currentStroke = null;
-        
-        if (!window._sketchColor) window._sketchColor = {};
-        if (!window._sketchOrigColor) window._sketchOrigColor = {};
-        if (!window._sketchEraser) window._sketchEraser = {};
-        if (!window._sketchPenSize) window._sketchPenSize = {};
-        if (!window._bpfSketchStrokes) window._bpfSketchStrokes = {};
-        
-        window._sketchColor[canvasId] = window._sketchColor[canvasId] || '#000';
-        window._sketchOrigColor[canvasId] = '#000';
-        window._sketchEraser[canvasId] = false;
-        window._sketchPenSize[canvasId] = window._sketchPenSize[canvasId] || 2;
-        window._bpfSketchStrokes[canvasId] = [];
-
-        function getPos(e) {
-            var rect = canvas.getBoundingClientRect();
-            var sx = canvas.width / rect.width, sy = canvas.height / rect.height;
-            return { x: e.offsetX * sx, y: e.offsetY * sy };
+        if (typeof window.initFreehandCanvas === 'function') {
+            window.initFreehandCanvas(canvasId);
         }
-        function getTouchPos(e) {
-            var t = e.touches[0];
-            var r = canvas.getBoundingClientRect();
-            var sx = canvas.width / r.width, sy = canvas.height / r.height;
-            return { x: (t.clientX - r.left) * sx, y: (t.clientY - r.top) * sy };
-        }
-        function start(e, pos) {
-            e.preventDefault(); drawing = true;
-            var isEraser = !!window._sketchEraser[canvasId];
-            var color = window._sketchColor[canvasId] || '#000';
-            var w = window._sketchPenSize[canvasId] || 2;
-            currentStroke = { eraser: isEraser, color: color, width: isEraser ? 20 : w, points: [pos] };
-            ctx.beginPath(); ctx.moveTo(pos.x, pos.y);
-            ctx.globalCompositeOperation = isEraser ? 'destination-out' : 'source-over';
-            if (!isEraser) ctx.strokeStyle = color;
-            ctx.lineWidth = isEraser ? 20 : w;
-            ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-        }
-        function move(e, pos) {
-            if (!drawing) return; e.preventDefault();
-            if (currentStroke) currentStroke.points.push(pos);
-            ctx.lineTo(pos.x, pos.y); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(pos.x, pos.y);
-        }
-        function end() {
-            if (!drawing) return; drawing = false;
-            ctx.globalCompositeOperation = 'source-over';
-            if (currentStroke && currentStroke.points.length > 0) {
-                window._bpfSketchStrokes[canvasId].push(currentStroke);
-            }
-            currentStroke = null;
-        }
-
-        canvas.addEventListener('mousedown', function(e) { start(e, getPos(e)); });
-        canvas.addEventListener('mousemove', function(e) { move(e, getPos(e)); });
-        canvas.addEventListener('mouseup', end);
-        canvas.addEventListener('mouseleave', end);
-        canvas.addEventListener('touchstart', function(e) { start(e, getTouchPos(e)); }, {passive:false});
-        canvas.addEventListener('touchmove', function(e) { move(e, getTouchPos(e)); }, {passive:false});
-        canvas.addEventListener('touchend', end);
     }
 
     window.fpfSketchAddPage = function() {
@@ -2251,26 +2189,34 @@ $fpfTodayTime = date('H:i');
     window.fpfCollectSketchPagesData = function() {
         var pagesData = [];
         window._fpfSketchPages.forEach(function(p) {
-            var canvas = document.getElementById(p.canvasId);
-            if (!canvas) return;
-            var tmpCanvas = document.createElement('canvas');
-            tmpCanvas.width = canvas.width;
-            tmpCanvas.height = canvas.height;
-            var tmpCtx = tmpCanvas.getContext('2d');
-            tmpCtx.fillStyle = '#fff';
-            tmpCtx.fillRect(0, 0, tmpCanvas.width, tmpCanvas.height);
-            if (p.bgImage) tmpCtx.drawImage(p.bgImage, 0, 0, tmpCanvas.width, tmpCanvas.height);
-            tmpCtx.drawImage(canvas, 0, 0);
+            var dataUrl = (typeof window.exportSketchDataUrl === 'function')
+                ? window.exportSketchDataUrl(p.canvasId, p.bgImage || p._bgImgEl || null)
+                : '';
+            if (!dataUrl) {
+                var canvas = document.getElementById(p.canvasId);
+                if (!canvas) return;
+                var tmpCanvas = document.createElement('canvas');
+                tmpCanvas.width = canvas.width;
+                tmpCanvas.height = canvas.height;
+                var tmpCtx = tmpCanvas.getContext('2d');
+                tmpCtx.fillStyle = '#fff';
+                tmpCtx.fillRect(0, 0, tmpCanvas.width, tmpCanvas.height);
+                if (p.bgImage) tmpCtx.drawImage(p.bgImage, 0, 0, tmpCanvas.width, tmpCanvas.height);
+                tmpCtx.drawImage(canvas, 0, 0);
+                dataUrl = tmpCanvas.toDataURL('image/png');
+            }
             pagesData.push({
                 pageId: p.id,
-                dataUrl: tmpCanvas.toDataURL('image/png'),
+                dataUrl: dataUrl,
                 bgImageName: p.bgImage || null
             });
         });
         var inp = document.getElementById('fpf_scene_sketch_pages_data');
         if (inp) inp.value = JSON.stringify(pagesData);
         var legacyInp = document.getElementById('fpf_scene_sketch_data');
-        if (legacyInp && pagesData.length > 0) legacyInp.value = pagesData[0].dataUrl;
+        if (legacyInp && pagesData.length > 0) legacyInp.value = pagesData[0].dataUrl || '';
+        var stdInp = document.getElementById('scene_sketch_data_fire');
+        if (stdInp && pagesData.length > 0) stdInp.value = pagesData[0].dataUrl || '';
         return pagesData;
     };
 

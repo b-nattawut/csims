@@ -1292,7 +1292,7 @@ $lpfTodayTime = date('H:i');
                 <td><input type="text" name="evidence_level_4_life_0" style="width:28px;"></td>
                 <td><input type="text" name="evidence_azimuth_life[]"><button type="button" class="btn btn-sm btn-hw-open btn-hw-dynamic" title="HW"><i class="fas fa-pen"></i></button></td>
                 <td><input type="text" name="evidence_remark_life[]"><button type="button" class="btn btn-sm btn-hw-open btn-hw-dynamic" title="HW"><i class="fas fa-pen"></i></button></td>
-                <td><select name="evidence_lab_unit_life[]" style="font-size:9px; padding:1px; width:100%;"><option value="">--</option><option value="fingerprint">ลายนิ้วมือแฝง</option><option value="bio_dna">ชีววิทยา/ดีเอ็นเอ</option><option value="chemical">เคมีฟิสิกส์</option><option value="drug">ยาเสพติด</option><option value="gun">อาวุธปืน</option><option value="document">เอกสาร</option><option value="digital">ดิจิทัล</option><option value="computer">คอมพิวเตอร์</option></select></td>
+                <td><select class="lab-unit-multi" multiple size="3" title="เลือกได้มากกว่า 1 กลุ่มงาน" style="font-size:9px; padding:1px; width:100%;"><option value="">--</option><option value="fingerprint">ลายนิ้วมือแฝง</option><option value="bio_dna">ชีววิทยา/ดีเอ็นเอ</option><option value="chemical">เคมีฟิสิกส์</option><option value="drug">ยาเสพติด</option><option value="gun">อาวุธปืน</option><option value="document">เอกสาร</option><option value="digital">ดิจิทัล</option><option value="computer">คอมพิวเตอร์</option></select><input type="hidden" class="lab-unit-value" name="evidence_lab_unit_life[]" value=""></td>
                 <td><button type="button" class="lpf-del-btn" onclick="lpfDelRow(this)">×</button></td>
             </tr>
         </tbody>
@@ -1436,7 +1436,7 @@ $lpfTodayTime = date('H:i');
                 <td><input type="checkbox" name="measurement_action_other_check_0" value="1"></td>
                 <td><input type="text" name="measurement_remark_life[]"><button type="button" class="btn btn-sm btn-hw-open btn-hw-dynamic" title="HW"><i class="fas fa-pen"></i></button></td>
                 <td>
-                    <select name="measurement_forensic_unit_life[]" style="font-size:9px; padding:1px; width:100%;">
+                    <select class="lab-unit-multi" multiple size="3" title="เลือกได้มากกว่า 1 กลุ่มงาน" style="font-size:9px; padding:1px; width:100%;">
                         <option value="">--</option>
                         <option value="fingerprint">ลายนิ้วมือแฝง</option>
                         <option value="bio_dna">ชีววิทยา/ดีเอ็นเอ</option>
@@ -1446,6 +1446,7 @@ $lpfTodayTime = date('H:i');
                         <option value="document">เอกสาร</option>
                         <option value="digital">ดิจิทัล</option><option value="computer">คอมพิวเตอร์</option>
                     </select>
+                    <input type="hidden" class="lab-unit-value" name="measurement_forensic_unit_life[]" value="">
                 </td>
                 <td><button type="button" class="lpf-del-btn" onclick="lpfDelRow(this)">×</button></td>
             </tr>
@@ -1632,7 +1633,7 @@ $lpfTodayTime = date('H:i');
             '<td><input type="text" name="evidence_level_4_life_' + rowIdx + '" style="width:28px;"></td>' +
             '<td><input type="text" name="evidence_azimuth_life[]"><button type="button" class="btn btn-sm btn-hw-open btn-hw-dynamic" title="HW"><i class="fas fa-pen"></i></button></td>' +
             '<td><input type="text" name="evidence_remark_life[]"><button type="button" class="btn btn-sm btn-hw-open btn-hw-dynamic" title="HW"><i class="fas fa-pen"></i></button></td>' +
-            '<td><select name="evidence_lab_unit_life[]" style="font-size:9px; padding:1px; width:100%;"><option value="">--</option><option value="fingerprint">ลายนิ้วมือแฝง</option><option value="bio_dna">ชีววิทยา/ดีเอ็นเอ</option><option value="chemical">เคมีฟิสิกส์</option><option value="drug">ยาเสพติด</option><option value="gun">อาวุธปืน</option><option value="document">เอกสาร</option><option value="digital">ดิจิทัล</option><option value="computer">คอมพิวเตอร์</option></select></td>' +
+            '<td><select class="lab-unit-multi" multiple size="3" title="เลือกได้มากกว่า 1 กลุ่มงาน" style="font-size:9px; padding:1px; width:100%;"><option value="">--</option><option value="fingerprint">ลายนิ้วมือแฝง</option><option value="bio_dna">ชีววิทยา/ดีเอ็นเอ</option><option value="chemical">เคมีฟิสิกส์</option><option value="drug">ยาเสพติด</option><option value="gun">อาวุธปืน</option><option value="document">เอกสาร</option><option value="digital">ดิจิทัล</option><option value="computer">คอมพิวเตอร์</option></select><input type="hidden" class="lab-unit-value" name="evidence_lab_unit_life[]" value=""></td>' +
             '<td><button type="button" class="lpf-del-btn" onclick="lpfDelRow(this)">×</button></td>';
         tbody.appendChild(tr);
     };
@@ -1654,7 +1655,7 @@ $lpfTodayTime = date('H:i');
             '<td><input type="checkbox" name="measurement_action_return_check_' + rowIdx + '" value="1"></td>' +
             '<td><input type="checkbox" name="measurement_action_other_check_' + rowIdx + '" value="1"></td>' +
             '<td><input type="text" name="measurement_remark_life[]"><button type="button" class="btn btn-sm btn-hw-open btn-hw-dynamic" title="HW"><i class="fas fa-pen"></i></button></td>' +
-            '<td><select name="measurement_forensic_unit_life[]" style="font-size:9px; padding:1px; width:100%;"><option value="">--</option><option value="fingerprint">ลายนิ้วมือแฝง</option><option value="bio_dna">ชีววิทยา/ดีเอ็นเอ</option><option value="chemical">เคมีฟิสิกส์</option><option value="drug">ยาเสพติด</option><option value="gun">อาวุธปืน</option><option value="document">เอกสาร</option><option value="digital">ดิจิทัล</option><option value="computer">คอมพิวเตอร์</option></select></td>' +
+            '<td><select class="lab-unit-multi" multiple size="3" title="เลือกได้มากกว่า 1 กลุ่มงาน" style="font-size:9px; padding:1px; width:100%;"><option value="">--</option><option value="fingerprint">ลายนิ้วมือแฝง</option><option value="bio_dna">ชีววิทยา/ดีเอ็นเอ</option><option value="chemical">เคมีฟิสิกส์</option><option value="drug">ยาเสพติด</option><option value="gun">อาวุธปืน</option><option value="document">เอกสาร</option><option value="digital">ดิจิทัล</option><option value="computer">คอมพิวเตอร์</option></select><input type="hidden" class="lab-unit-value" name="measurement_forensic_unit_life[]" value=""></td>' +
             '<td><button type="button" class="lpf-del-btn" onclick="lpfDelRow(this)">×</button></td>';
         tbody.appendChild(tr);
     };
@@ -2102,71 +2103,9 @@ $lpfTodayTime = date('H:i');
     });
 
     function _initSketchDraw(canvasId) {
-        var canvas = document.getElementById(canvasId);
-        if (!canvas || canvas.dataset.lpfInit === '1') return;
-        canvas.dataset.lpfInit = '1';
-        
-        var ctx = canvas.getContext('2d');
-        var drawing = false;
-        var currentStroke = null;
-        
-        if (!window._sketchColor) window._sketchColor = {};
-        if (!window._sketchOrigColor) window._sketchOrigColor = {};
-        if (!window._sketchEraser) window._sketchEraser = {};
-        if (!window._sketchPenSize) window._sketchPenSize = {};
-        if (!window._bpfSketchStrokes) window._bpfSketchStrokes = {};
-        
-        window._sketchColor[canvasId] = window._sketchColor[canvasId] || '#000';
-        window._sketchOrigColor[canvasId] = '#000';
-        window._sketchEraser[canvasId] = false;
-        window._sketchPenSize[canvasId] = window._sketchPenSize[canvasId] || 2;
-        window._bpfSketchStrokes[canvasId] = [];
-
-        function getPos(e) {
-            var rect = canvas.getBoundingClientRect();
-            var sx = canvas.width / rect.width, sy = canvas.height / rect.height;
-            return { x: e.offsetX * sx, y: e.offsetY * sy };
+        if (typeof window.initFreehandCanvas === 'function') {
+            window.initFreehandCanvas(canvasId);
         }
-        function getTouchPos(e) {
-            var t = e.touches[0];
-            var r = canvas.getBoundingClientRect();
-            var sx = canvas.width / r.width, sy = canvas.height / r.height;
-            return { x: (t.clientX - r.left) * sx, y: (t.clientY - r.top) * sy };
-        }
-        function start(e, pos) {
-            e.preventDefault(); drawing = true;
-            var isEraser = !!window._sketchEraser[canvasId];
-            var color = window._sketchColor[canvasId] || '#000';
-            var w = window._sketchPenSize[canvasId] || 2;
-            currentStroke = { eraser: isEraser, color: color, width: isEraser ? 20 : w, points: [pos] };
-            ctx.beginPath(); ctx.moveTo(pos.x, pos.y);
-            ctx.globalCompositeOperation = isEraser ? 'destination-out' : 'source-over';
-            if (!isEraser) ctx.strokeStyle = color;
-            ctx.lineWidth = isEraser ? 20 : w;
-            ctx.lineCap = 'round'; ctx.lineJoin = 'round';
-        }
-        function move(e, pos) {
-            if (!drawing) return; e.preventDefault();
-            if (currentStroke) currentStroke.points.push(pos);
-            ctx.lineTo(pos.x, pos.y); ctx.stroke();
-            ctx.beginPath(); ctx.moveTo(pos.x, pos.y);
-        }
-        function end() {
-            if (!drawing) return; drawing = false;
-            ctx.globalCompositeOperation = 'source-over';
-            if (currentStroke && currentStroke.points.length > 0) {
-                window._bpfSketchStrokes[canvasId].push(currentStroke);
-            }
-            currentStroke = null;
-        }
-
-        canvas.addEventListener('mousedown', function(e) { start(e, getPos(e)); });
-        canvas.addEventListener('mousemove', function(e) { move(e, getPos(e)); });
-        canvas.addEventListener('mouseup', end);
-        canvas.addEventListener('mouseleave', end);
-        canvas.addEventListener('touchstart', function(e) { start(e, getTouchPos(e)); }, {passive:false});
-        canvas.addEventListener('touchmove', function(e) { move(e, getTouchPos(e)); }, {passive:false});
-        canvas.addEventListener('touchend', end);
     }
 
     window.lpfSketchAddPage = function() {
@@ -2303,26 +2242,34 @@ $lpfTodayTime = date('H:i');
     window.lpfCollectSketchPagesData = function() {
         var pagesData = [];
         window._lpfSketchPages.forEach(function(p) {
-            var canvas = document.getElementById(p.canvasId);
-            if (!canvas) return;
-            var tmpCanvas = document.createElement('canvas');
-            tmpCanvas.width = canvas.width;
-            tmpCanvas.height = canvas.height;
-            var tmpCtx = tmpCanvas.getContext('2d');
-            tmpCtx.fillStyle = '#fff';
-            tmpCtx.fillRect(0, 0, tmpCanvas.width, tmpCanvas.height);
-            if (p.bgImage) tmpCtx.drawImage(p.bgImage, 0, 0, tmpCanvas.width, tmpCanvas.height);
-            tmpCtx.drawImage(canvas, 0, 0);
+            var dataUrl = (typeof window.exportSketchDataUrl === 'function')
+                ? window.exportSketchDataUrl(p.canvasId, p.bgImage || p._bgImgEl || null)
+                : '';
+            if (!dataUrl) {
+                var canvas = document.getElementById(p.canvasId);
+                if (!canvas) return;
+                var tmpCanvas = document.createElement('canvas');
+                tmpCanvas.width = canvas.width;
+                tmpCanvas.height = canvas.height;
+                var tmpCtx = tmpCanvas.getContext('2d');
+                tmpCtx.fillStyle = '#fff';
+                tmpCtx.fillRect(0, 0, tmpCanvas.width, tmpCanvas.height);
+                if (p.bgImage) tmpCtx.drawImage(p.bgImage, 0, 0, tmpCanvas.width, tmpCanvas.height);
+                tmpCtx.drawImage(canvas, 0, 0);
+                dataUrl = tmpCanvas.toDataURL('image/png');
+            }
             pagesData.push({
                 pageId: p.id,
-                dataUrl: tmpCanvas.toDataURL('image/png'),
+                dataUrl: dataUrl,
                 bgImageName: p.bgImage || null
             });
         });
         var inp = document.getElementById('lpf_scene_sketch_pages_data');
         if (inp) inp.value = JSON.stringify(pagesData);
         var legacyInp = document.getElementById('lpf_scene_sketch_data');
-        if (legacyInp && pagesData.length > 0) legacyInp.value = pagesData[0].dataUrl;
+        if (legacyInp && pagesData.length > 0) legacyInp.value = pagesData[0].dataUrl || '';
+        var stdInp = document.getElementById('scene_sketch_data_life');
+        if (stdInp && pagesData.length > 0) stdInp.value = pagesData[0].dataUrl || '';
         return pagesData;
     };
 
@@ -2509,11 +2456,13 @@ $lpfTodayTime = date('H:i');
         //  ทำให้แผนผังไม่ขึ้นในไฟล์รายงาน)
         // ภาพที่รวมแล้วจะมีพื้นขาวเสมอ จึงต้องเช็คที่ canvas ต้นทางว่ามีคนวาดจริงไหม
         var lpfSketchHasContent = (window._lpfSketchPages || []).some(function (p) {
-            if (p.bgImage) return true;
+            if (p.bgImage || p._bgImgEl) return true;
+            if (typeof window.sketchHasInk === 'function' && window.sketchHasInk(p.canvasId)) return true;
             var c = document.getElementById(p.canvasId);
             return c && !lpfIsCanvasBlank(c);
         });
 
+        if (typeof lpfCollectSketchPagesData === 'function') lpfCollectSketchPagesData();
         var lpfSketchInp = document.getElementById('lpf_scene_sketch_data');
         var lpfSketchVal = lpfSketchInp ? (lpfSketchInp.value || '') : '';
 
@@ -2522,8 +2471,6 @@ $lpfTodayTime = date('H:i');
             if (lpfSketchBlob) {
                 formData.append('sig_file_scene_sketch', lpfSketchBlob, 'scene_sketch.png');
             }
-        } else if (!lpfSketchHasContent) {
-            clearedSignatures.push('scene_sketch');
         }
 
         for (var sigKey in sigCanvasMap) {
@@ -2785,16 +2732,16 @@ $lpfTodayTime = date('H:i');
             var actionOtherChk = card.querySelector('[name="measurement_action_other_check_' + idx + '"]');
             var remark = card.querySelector('[name="measurement_remark_life[]"]');
             var forensicUnit = card.querySelector('[name="measurement_forensic_unit_life[]"]');
-            var forensicVal = forensicUnit ? forensicUnit.value : '';
+            var forensicVal = window.getLabUnitsString(forensicUnit);
 
-            // สร้าง options สำหรับ select การตรวจพิสูจน์
-            var forensicOptions = '<option value=""' + (forensicVal === '' ? ' selected' : '') + '>--</option>' +
-                '<option value="fingerprint"' + (forensicVal === 'fingerprint' ? ' selected' : '') + '>ลายนิ้วมือแฝง</option>' +
-                '<option value="bio_dna"' + (forensicVal === 'bio_dna' ? ' selected' : '') + '>ชีววิทยา/ดีเอ็นเอ</option>' +
-                '<option value="chemical"' + (forensicVal === 'chemical' ? ' selected' : '') + '>เคมีฟิสิกส์</option>' +
-                '<option value="drug"' + (forensicVal === 'drug' ? ' selected' : '') + '>ยาเสพติด</option>' +
-                '<option value="gun"' + (forensicVal === 'gun' ? ' selected' : '') + '>อาวุธปืน</option>' +
-                '<option value="document"' + (forensicVal === 'document' ? ' selected' : '') + '>เอกสาร</option>';
+            // สร้าง options สำหรับ select การตรวจพิสูจน์ (ค่าที่เลือกถูกกำหนดหลัง append)
+            var forensicOptions = '<option value="">--</option>' +
+                '<option value="fingerprint">ลายนิ้วมือแฝง</option>' +
+                '<option value="bio_dna">ชีววิทยา/ดีเอ็นเอ</option>' +
+                '<option value="chemical">เคมีฟิสิกส์</option>' +
+                '<option value="drug">ยาเสพติด</option>' +
+                '<option value="gun">อาวุธปืน</option>' +
+                '<option value="document">เอกสาร</option>';
 
             var tr = document.createElement('tr');
             tr.innerHTML = '<td style="text-align:center;">' + (idx + 1) + '</td>' +
@@ -2808,9 +2755,10 @@ $lpfTodayTime = date('H:i');
                 '<td><input type="checkbox" name="measurement_action_return_check_' + idx + '" value="1"' + (returnChk && returnChk.checked ? ' checked' : '') + '></td>' +
                 '<td><input type="checkbox" name="measurement_action_other_check_' + idx + '" value="1"' + (actionOtherChk && actionOtherChk.checked ? ' checked' : '') + '></td>' +
                 '<td><input type="text" name="measurement_remark_life[]" value="' + (remark ? remark.value : '') + '"><button type="button" class="btn btn-sm btn-hw-open btn-hw-dynamic" title="HW"><i class="fas fa-pen"></i></button></td>' +
-                '<td><select name="measurement_forensic_unit_life[]" style="font-size:9px; padding:1px; width:100%;">' + forensicOptions + '</select></td>' +
+                '<td><select class="lab-unit-multi" multiple size="3" title="\u0e40\u0e25\u0e37\u0e2d\u0e01\u0e44\u0e14\u0e49\u0e21\u0e32\u0e01\u0e01\u0e27\u0e48\u0e32 1 \u0e01\u0e25\u0e38\u0e48\u0e21\u0e07\u0e32\u0e19" style="font-size:9px; padding:1px; width:100%;">' + forensicOptions + '</select><input type="hidden" class="lab-unit-value" name="measurement_forensic_unit_life[]" value=""></td>' +
                 '<td><button type="button" class="lpf-del-btn" onclick="lpfDelRow(this)">×</button></td>';
             pdfTbody.appendChild(tr);
+            window.setLabUnits(tr.querySelector('[name="measurement_forensic_unit_life[]"]'), forensicVal);
         });
     };
 
