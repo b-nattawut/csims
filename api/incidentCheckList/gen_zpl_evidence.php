@@ -14,6 +14,7 @@ header('Content-Type: application/json; charset=utf-8');
 header('Access-Control-Allow-Origin: *');
 
 require_once __DIR__ . '/../../db_config.php';
+require_once __DIR__ . '/lab_unit_helper.php';
 
 $incidentId = isset($_GET['incident_id']) ? intval($_GET['incident_id']) : 0;
 
@@ -140,29 +141,19 @@ try {
  * คำนวณจำนวนหน้าทั้งหมดที่ต้องการ
  */
 function calculateTotalPages($pdo, $incidentId) {
-    $maxEvidencePerPage = 10;
-    
-    // ดึงข้อมูล evidence
-    $stmt = $pdo->prepare("SELECT incident_checklist_data FROM incident_checklist_transaction WHERE incident_id = ?");
+    $stmt = $pdo->prepare("SELECT incident_checklist_data FROM incident_checklist_transaction WHERE incident_id = ? ORDER BY create_date DESC LIMIT 1");
     $stmt->execute([$incidentId]);
     $row = $stmt->fetch(PDO::FETCH_ASSOC);
-    
-    $evidenceCount = 0;
+
+    $stickerCount = 1;
     if ($row && !empty($row['incident_checklist_data'])) {
-        $data = json_decode($row['incident_checklist_data'], true);
-        $evidenceForm = $data['evidence_form'] ?? [];
-        $evidences = $evidenceForm['evidence_details'] ?? $data['evidences'] ?? [];
-        $evidenceCount = count($evidences);
+        $data = json_decode($row['incident_checklist_data'], true) ?: [];
+        $rows = collectStickerEvidenceRows($data);
+        $pages = buildStickerPagesByLabUnit($rows, 10);
+        $stickerCount = max(1, count($pages));
     }
-    
-    // หน้าแรก: evidence (สูงสุด 10 รายการ)
-    // หน้าเพิ่มเติม: evidence ที่เหลือ (ทุก 10 รายการ)
-    // หน้าสุดท้าย: custody chain
-    
-    $evidencePages = max(1, ceil($evidenceCount / $maxEvidencePerPage));
-    $totalPages = $evidencePages + 1; // +1 สำหรับหน้า custody
-    
-    return $totalPages;
+
+    return $stickerCount + 1; // +1 หน้า chain of custody
 }
 
 /**
@@ -297,22 +288,12 @@ function generateZplWithGD($pdo, $incidentId, $targetW, $targetH, $pageNum = 1, 
         }
     }
     
-    // Evidence Details (ไม่รวมรายการที่ถูกซ่อน hidden: true)
+    // Evidence Details — รวม measurements และแยกตามกลุ่มงาน
+    $stickerRows = collectStickerEvidenceRows($data);
+    $stickerPages = buildStickerPagesByLabUnit($stickerRows, 10);
     $evidences = [];
-    $evfEvidences = $evidenceForm['evidence_details'] ?? [];
-    $dataEvidences = $data['evidences'] ?? [];
-    $rawEvidences = !empty($evfEvidences) ? $evfEvidences : $dataEvidences;
-    foreach ($rawEvidences as $ev) {
-        // ข้ามรายการที่ถูกซ่อน
-        if (isset($ev['hidden']) && $ev['hidden'] === true) {
-            continue;
-        }
-        $detail = trim($ev['detail'] ?? $ev['item'] ?? $ev['description'] ?? '');
-        $qty = trim($ev['qty'] ?? $ev['quantity'] ?? $ev['quantity_val'] ?? '');
-        $position = trim($ev['position'] ?? $ev['area_found'] ?? $ev['area'] ?? '');
-        if ($detail !== '' || $qty !== '' || $position !== '') {
-            $evidences[] = ['detail' => $detail, 'qty' => $qty, 'position' => $position];
-        }
+    foreach ($stickerRows as $r) {
+        $evidences[] = ['detail' => $r['detail'], 'qty' => $r['qty'], 'position' => $r['position']];
     }
     
     // Custody Chain
@@ -629,10 +610,13 @@ function generateZplWithGD($pdo, $incidentId, $targetW, $targetH, $pageNum = 1, 
             goto convertToZpl;
         }
         
-        // ========== หน้า Evidence (หน้า 1 ถึง N-1) ==========
-        // คำนวณ evidence ที่จะแสดงในหน้านี้
-        $startIdx = ($pageNum - 1) * $maxEvidencePerPage;
-        $pageEvidences = array_slice($evidences, $startIdx, $maxEvidencePerPage);
+        // ========== หน้า Evidence (หน้า 1 ถึง N-1) — แยกตามกลุ่มงาน ==========
+        $stickerPage = $stickerPages[$pageNum - 1] ?? ['label' => '', 'items' => [], 'part' => 1, 'parts' => 1];
+        $pageEvidences = $stickerPage['items'];
+        $groupLabel = $stickerPage['label'] ?? '';
+        if (!empty($stickerPage['parts']) && $stickerPage['parts'] > 1) {
+            $groupLabel .= ' (' . $stickerPage['part'] . '/' . $stickerPage['parts'] . ')';
+        }
         
         // หน้าแรกแสดง victim table และข้อมูลเพิ่มเติม
         if ($pageNum == 1) {
@@ -699,8 +683,9 @@ function generateZplWithGD($pdo, $incidentId, $targetW, $targetH, $pageNum = 1, 
         }
         
         // ลักษณะ / จำนวน / ตำแหน่ง
-        $labelText = ($pageNum == 1) ? "ลักษณะ / จำนวน / ตำแหน่ง วัตถุพยานที่ตรวจพบ" : "ลักษณะ / จำนวน / ตำแหน่ง วัตถุพยานที่ตรวจพบ (ต่อ)";
-        imagettftext($img, 12, 0, $contentX, $y, $black, $fontBold, $labelText);
+        $labelText = "ลักษณะ / จำนวน / ตำแหน่ง วัตถุพยานที่ตรวจพบ";
+        if ($groupLabel !== '') $labelText .= " — " . $groupLabel;
+        imagettftext($img, 11, 0, $contentX, $y, $black, $fontBold, $labelText);
         $y += 28;
         
         $tableX = $contentX;

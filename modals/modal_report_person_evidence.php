@@ -289,8 +289,8 @@
                                 </div>
                                 <div class="col-md-3">
                                     <label class="form-label">ส่งตรวจ</label>
-                                    <select class="form-select form-select-sm" name="pe_ev_lab_unit[]">
-                                        <option value="">-- เลือกกลุ่มงาน --</option>
+                                    <select class="form-select form-select-sm lab-unit-multi" multiple size="3" title="เลือกได้มากกว่า 1 กลุ่มงาน">
+                                        <option value="">-- เลือกกลุ่มงาน (เลือกได้หลายข้อ) --</option>
                                         <option value="bio_dna">กลุ่มงานตรวจชีววิทยา</option>
                                         <option value="chemical">กลุ่มงานตรวจทางเคมีฟิสิกส์</option>
                                         <option value="fingerprint">กลุ่มงานตรวจลายนิ้วมือแฝง</option>
@@ -299,6 +299,7 @@
                                         <option value="document">กลุ่มงานตรวจเอกสาร</option>
                                         <option value="digital">กลุ่มงานตรวจพิสูจน์หลักฐานดิจิทัล</option><option value="computer">กลุ่มงานตรวจพิสูจน์อาชญากรรมคอมพิวเตอร์</option>
                                     </select>
+                                    <input type="hidden" class="lab-unit-value" name="pe_ev_lab_unit[]" value="">
                                 </div>
                                 <div class="col-auto">
                                     <button type="button" class="btn btn-sm btn-outline-danger pe-remove-evidence" title="ลบ"><i class="fas fa-trash-alt"></i></button>

@@ -929,7 +929,7 @@ $sevpfTodayTime = date('H:i');
                         <div class="sevpf-fr" style="margin-top:2px; margin-bottom:3px;">
                             <span class="sevpf-fl" style="min-width:38px; visibility:hidden;">ลงชื่อ</span>
                             <span class="sevpf-fl">(</span>
-                            <select class="sevpf-sel sevpf-user-select" name="sevpf_receiver_id" id="sevpf_receiver_id" style="text-align:center;" data-pos-target="#sevpf_receiver_position">
+                            <select class="sevpf-sel sevpf-user-select" name="sevpf_receiver_id" id="sevpf_receiver_id" style="text-align:center;" data-pos-target="#sevpf_receiver_position" data-ftn-skip>
                                 <?= str_replace('-- เลือก --', '-- เลือกผู้รับมอบ --', $sevpfInspectorOptions) ?>
                             </select>
                             <span class="sevpf-fl">)</span>
@@ -959,7 +959,7 @@ $sevpfTodayTime = date('H:i');
                         <div class="sevpf-fr" style="margin-top:2px; margin-bottom:3px;">
                             <span class="sevpf-fl" style="min-width:38px; visibility:hidden;">ลงชื่อ</span>
                             <span class="sevpf-fl">(</span>
-                            <select class="sevpf-sel sevpf-user-select" name="sevpf_sender_id" id="sevpf_sender_id" style="text-align:center;" data-pos-target="#sevpf_sender_position">
+                            <select class="sevpf-sel sevpf-user-select" name="sevpf_sender_id" id="sevpf_sender_id" style="text-align:center;" data-pos-target="#sevpf_sender_position" data-ftn-skip>
                                 <?= str_replace('-- เลือก --', '-- เลือกผู้ส่งมอบ --', $sevpfInspectorOptions) ?>
                             </select>
                             <span class="sevpf-fl">)</span>

@@ -84,16 +84,30 @@
         return labels.join(sep);
     }
 
+    /** แถวที่ครอบ select + hidden (หลัง enhance แล้ว select อยู่ใน .lab-unit-picker) */
+    function rowScope(el) {
+        if (!el || !el.closest) return el && el.parentNode ? el.parentNode : null;
+        return el.closest('.sevpf-evidence-item-row, .ev7-evidence-item-row, .lab-unit-picker') || el.parentNode;
+    }
+
     /** หา hidden input ที่คู่กับ select */
     function hiddenFor(select) {
         if (!select) return null;
+        var wrap = select.closest ? select.closest('.lab-unit-picker') : null;
+        if (wrap && wrap.parentNode && wrap.parentNode.querySelector) {
+            var inRow = wrap.parentNode.querySelector('input.lab-unit-value');
+            if (inRow) return inRow;
+        }
         var el = select.nextElementSibling;
         while (el) {
             if (el.tagName === 'INPUT' && el.className && el.className.indexOf('lab-unit-value') !== -1) return el;
+            if (el.className && el.className.indexOf('lab-unit-picker') !== -1) {
+                var nested = el.querySelector && el.querySelector('input.lab-unit-value');
+                if (nested) return nested;
+            }
             el = el.nextElementSibling;
         }
-        // สำรอง: หาในกล่องแถวเดียวกัน
-        var parent = select.parentNode;
+        var parent = rowScope(select);
         if (parent && parent.querySelector) {
             return parent.querySelector('input.lab-unit-value');
         }
@@ -106,9 +120,13 @@
         var el = hidden.previousElementSibling;
         while (el) {
             if (el.tagName === 'SELECT' && el.className && el.className.indexOf('lab-unit-multi') !== -1) return el;
+            if (el.className && el.className.indexOf('lab-unit-picker') !== -1) {
+                var nested = el.querySelector && el.querySelector('select.lab-unit-multi');
+                if (nested) return nested;
+            }
             el = el.previousElementSibling;
         }
-        var parent = hidden.parentNode;
+        var parent = rowScope(hidden);
         if (parent && parent.querySelector) return parent.querySelector('select.lab-unit-multi');
         return null;
     }
@@ -191,6 +209,7 @@
             opt.selected = (opt.value !== '' && wanted.indexOf(opt.value) !== -1);
         }
         syncHidden(select);
+        if (select._labRebuild) select._labRebuild();
     }
 
     /** คัดลอกค่าที่เลือกลง hidden input */
@@ -210,6 +229,123 @@
         if (!root || !root.querySelectorAll) root = document;
         var list = root.querySelectorAll(SELECT_SELECTOR);
         for (var i = 0; i < list.length; i++) syncHidden(list[i]);
+    }
+
+    /**
+     * ครอบ property "value" ของ hidden input ไว้ เพื่อให้โค้ดเก่าที่เขียนค่าตรง ๆ
+     * (el.value = "bio_dna" หรือ $(el).val("bio_dna")) ยังทำให้ <select multiple>
+     * แสดงผลตรงกันอัตโนมัติ โดยไม่ต้องแก้ทุกจุดที่ load ข้อมูล
+     */
+    var nativeValueDesc = (global.HTMLInputElement && global.HTMLInputElement.prototype)
+        ? Object.getOwnPropertyDescriptor(global.HTMLInputElement.prototype, 'value')
+        : null;
+    var applyingFromHidden = false;
+
+    function hookHidden(hidden) {
+        if (!hidden || hidden.__labUnitHooked) return;
+        if (!nativeValueDesc || !nativeValueDesc.get || !nativeValueDesc.set) return;
+        hidden.__labUnitHooked = true;
+        Object.defineProperty(hidden, 'value', {
+            configurable: true,
+            enumerable: true,
+            get: function () {
+                return nativeValueDesc.get.call(this);
+            },
+            set: function (v) {
+                var joined = join(v);
+                nativeValueDesc.set.call(this, joined);
+                if (applyingFromHidden) return;
+                applyingFromHidden = true;
+                try {
+                    var sel = selectFor(this);
+                    if (sel) setValue(sel, joined);
+                } finally {
+                    applyingFromHidden = false;
+                }
+            }
+        });
+    }
+
+    /** ครอบ hidden input ทุกตัวใน container */
+    function hookAll(container) {
+        var root = container || document;
+        if (root && typeof root.length === 'number' && !root.querySelectorAll) root = root[0];
+        if (!root || !root.querySelectorAll) root = document;
+        var list = root.querySelectorAll('input.lab-unit-value');
+        for (var i = 0; i < list.length; i++) hookHidden(list[i]);
+        if (root.nodeType === 1 && root.matches && root.matches('input.lab-unit-value')) hookHidden(root);
+        enhanceAll(root);
+    }
+
+    /** แปลง <select multiple> เป็นช่องติ๊ก ที่กดบนแท็บเล็ตได้ทีละหลายข้อ */
+    function enhanceSelect(select) {
+        if (!select || select.dataset.labEnhanced === '1') return;
+        if (!select.parentNode) return;
+        select.dataset.labEnhanced = '1';
+        select.setAttribute('aria-hidden', 'true');
+        select.tabIndex = -1;
+
+        var wrap = document.createElement('div');
+        wrap.className = 'lab-unit-picker';
+        select.parentNode.insertBefore(wrap, select);
+        wrap.appendChild(select);
+
+        var list = document.createElement('div');
+        list.className = 'lab-unit-picker-list';
+        wrap.appendChild(list);
+
+        function rebuild() {
+            list.innerHTML = '';
+            Array.prototype.forEach.call(select.options, function (opt) {
+                if (!opt.value) return;
+                var lab = document.createElement('label');
+                lab.className = 'lab-unit-chip' + (opt.selected ? ' is-on' : '');
+                var cb = document.createElement('input');
+                cb.type = 'checkbox';
+                cb.checked = !!opt.selected;
+                cb.addEventListener('click', function (e) { e.stopPropagation(); });
+                cb.addEventListener('change', function () {
+                    opt.selected = cb.checked;
+                    lab.classList.toggle('is-on', cb.checked);
+                    syncHidden(select);
+                    if (global.jQuery) global.jQuery(select).trigger('change');
+                });
+                lab.appendChild(cb);
+                lab.appendChild(document.createTextNode(opt.textContent || opt.value));
+                list.appendChild(lab);
+            });
+        }
+
+        select._labRebuild = rebuild;
+        rebuild();
+    }
+
+    function enhanceAll(container) {
+        var root = container || document;
+        if (root && typeof root.length === 'number' && !root.querySelectorAll) root = root[0];
+        if (!root || !root.querySelectorAll) root = document;
+        var list = root.querySelectorAll(SELECT_SELECTOR);
+        for (var i = 0; i < list.length; i++) enhanceSelect(list[i]);
+        if (root.nodeType === 1 && root.matches && root.matches(SELECT_SELECTOR)) enhanceSelect(root);
+    }
+
+    /**
+     * ย้อนทาง: เอาค่าจาก hidden input (เช่นถูกเขียนทับด้วยโค้ด sync ที่ copy ตาม name)
+     * กลับไปเลือกใน <select multiple> ให้ตรงกัน
+     */
+    function refreshFromHidden(container) {
+        var root = container || document;
+        if (root && typeof root.length === 'number' && !root.querySelectorAll) root = root[0];
+        if (!root || !root.querySelectorAll) root = document;
+        var list = root.querySelectorAll('input.lab-unit-value');
+        for (var i = 0; i < list.length; i++) {
+            var sel = selectFor(list[i]);
+            if (sel) {
+                var joined = join(list[i].value);
+                setValue(sel, joined);
+                list[i].value = joined;
+            }
+        }
     }
 
     /** ล้างค่าทั้งหมดใน container */
@@ -235,6 +371,8 @@
         setValue: setValue,
         syncHidden: syncHidden,
         syncAll: syncAll,
+        hookAll: hookAll,
+        refreshFromHidden: refreshFromHidden,
         clearAll: clearAll
     };
 
@@ -279,7 +417,34 @@
             return false;
         });
 
-        $(function () { syncAll(document); });
+        // เปิด modal ใหม่ทีไร ให้ select แสดงตรงกับ hidden ที่ถูกโหลดมา
+        $(document).on('shown.bs.modal', function (e) {
+            hookAll(e.target);
+            refreshFromHidden(e.target);
+        });
+
+        $(function () {
+            hookAll(document);
+            syncAll(document);
+            observeNewRows();
+        });
+    }
+
+    /** แถวที่ถูกสร้างทีหลัง (dynamic row) ต้องถูกครอบ value property ด้วย */
+    function observeNewRows() {
+        if (!global.MutationObserver || !global.document || !global.document.body) return;
+        var observer = new global.MutationObserver(function (records) {
+            for (var i = 0; i < records.length; i++) {
+                var added = records[i].addedNodes;
+                for (var j = 0; j < added.length; j++) {
+                    if (added[j].nodeType === 1) {
+                        hookAll(added[j]);
+                        enhanceAll(added[j]);
+                    }
+                }
+            }
+        });
+        observer.observe(global.document.body, { childList: true, subtree: true });
     }
 
     if (global.jQuery) {

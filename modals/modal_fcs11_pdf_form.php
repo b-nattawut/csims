@@ -551,8 +551,8 @@ $rpfTodayTime = date('H:i');
                 <td><input type="text" name="evidence_item[]" class="rpf-ev-item" style="text-align:left;"></td>
                 <td>
                     <div class="rpf-ev-cell">
-                        <select name="evidence_test[]" class="rpf-ev-select">
-                            <option value="">-- เลือก --</option>
+                        <select class="rpf-ev-select lab-unit-multi" multiple size="3" title="เลือกได้มากกว่า 1 กลุ่มงาน">
+                            <option value="">-- เลือก (เลือกได้หลายข้อ) --</option>
                             <option value="กลุ่มงานตรวจชีววิทยา">กลุ่มงานตรวจชีววิทยา</option>
                             <option value="กลุ่มงานตรวจทางเคมีฟิสิกส์">กลุ่มงานตรวจทางเคมีฟิสิกส์</option>
                             <option value="กลุ่มงานตรวจลายนิ้วมือแฝง">กลุ่มงานตรวจลายนิ้วมือแฝง</option>
@@ -563,6 +563,7 @@ $rpfTodayTime = date('H:i');
                             <option value="กลุ่มงานตรวจพิสูจน์อาชญากรรมคอมพิวเตอร์">กลุ่มงานตรวจพิสูจน์อาชญากรรมคอมพิวเตอร์</option>
                             <option value="กลุ่มงานตรวจวัตถุระเบิด (กก.กตว.)">กลุ่มงานตรวจวัตถุระเบิด (กก.กตว.)</option>
                         </select>
+                        <input type="hidden" class="lab-unit-value" name="evidence_test[]" value="">
                     </div>
                 </td>
             </tr>
@@ -674,13 +675,15 @@ $rpfTodayTime = date('H:i');
         { value: 'กลุ่มงานตรวจวัตถุระเบิด (กก.กตว.)', text: 'กลุ่มงานตรวจวัตถุระเบิด (กก.กตว.)' }
     ];
     
+    // เลือกได้หลายกลุ่มงาน: <select multiple> คู่กับ hidden input ที่ถือค่า "a,b"
     function buildLabUnitSelect(selectedValue) {
-        var html = '<select name="evidence_test[]" class="rpf-ev-select">';
+        var joined = window.labUnitsToString ? window.labUnitsToString(selectedValue) : (selectedValue || '');
+        var html = '<select class="rpf-ev-select lab-unit-multi" multiple size="3" title="เลือกได้มากกว่า 1 กลุ่มงาน">';
         labUnitOptions.forEach(function(opt) {
-            var sel = (opt.value === selectedValue) ? ' selected' : '';
-            html += '<option value="' + opt.value + '"' + sel + '>' + opt.text + '</option>';
+            html += '<option value="' + opt.value + '">' + opt.text + '</option>';
         });
         html += '</select>';
+        html += '<input type="hidden" class="lab-unit-value" name="evidence_test[]" value="' + joined.replace(/"/g, '&quot;') + '">';
         return html;
     }
 
@@ -1016,6 +1019,7 @@ $rpfTodayTime = date('H:i');
                     '<button type="button" class="rpf-del-btn" onclick="rpfDelEvidenceRow(this)" title="ลบ">×</button>' +
                 '</div></td>';
             tbody.appendChild(tr);
+            window.setLabUnits(tr.querySelector('select.lab-unit-multi'), ev.test || '');
         });
         
         rpfUpdateEvidenceCount();
@@ -1150,13 +1154,13 @@ $rpfTodayTime = date('H:i');
         
         // Evidences
         var items = document.querySelectorAll('#rpf_evidence_tbody input[name="evidence_item[]"]');
-        var tests = document.querySelectorAll('#rpf_evidence_tbody select[name="evidence_test[]"]');
+        var tests = document.querySelectorAll('#rpf_evidence_tbody select.lab-unit-multi');
         items.forEach(function(item, idx) {
             if (item.value.trim()) {
                 formData.evidences.push({
                     no: idx + 1,
                     item: item.value.trim(),
-                    test: tests[idx] ? tests[idx].value : ''
+                    test: tests[idx] ? window.getLabUnitsString(tests[idx]) : ''
                 });
             }
         });

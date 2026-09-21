@@ -556,6 +556,7 @@
         function sendOtp(isInitial) {
             fetch('api/send_otp.php', {
                 method: 'POST',
+                credentials: 'same-origin',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ user_id: parseInt(otpUserId), email: otpEmail })
             })
@@ -614,6 +615,7 @@
 
             fetch('api/verify_otp.php', {
                 method: 'POST',
+                credentials: 'same-origin',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     user_id: parseInt(otpUserId),

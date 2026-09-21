@@ -377,10 +377,6 @@ if (!empty($photographDescs)) {
 // ==========================================
 $photoInspectDate = thaiDate(getVal($photoRecords, 'inspect_date'));
 $photoInspectTime = getVal($photoRecords, 'inspect_time');
-$photoTotal = !empty($photos) ? count($photos) : 0;
-$photoIdStart = $photoTotal > 0 ? '1' : '';
-$photoIdEnd = $photoTotal > 0 ? (string)$photoTotal : '';
-$photoAmount = (string)$photoTotal;
 
 // Photographer name (lookup from user_id)
 $photographerName = '';
@@ -398,93 +394,98 @@ if (!empty($rawPDT)) {
 }
 
 // ==========================================
-// Photo Slots (3 per page)
+// Photo grid (5 คอลัมน์ × 7 แถว = 35 รูป/หน้า)
 // ==========================================
 $photoSlotsHtml = '';
 $extraPhotoPagesHtml = '';
+$PHOTOS_PER_PAGE = 35;
+$validPhotos = [];
 
 if (!empty($photos)) {
-    $photosPerPage = 3;
-    $firstPagePhotos = array_slice($photos, 0, $photosPerPage);
-    $remainingPhotos = array_slice($photos, $photosPerPage);
-    
-    // First page photo slots
-    foreach ($firstPagePhotos as $pIdx => $photo) {
-        $fileId = $photo['file_id'] ?? 0;
-        $base64 = loadBlobAsBase64($pdo, $fileId);
-        $caption = $photoCaptions[$pIdx] ?? '';
-        
-        $photoSlotsHtml .= '<div class="photo-slot">';
-        if (!empty($base64)) {
-            $photoSlotsHtml .= '<img src="' . $base64 . '" alt="ภาพที่ ' . ($pIdx + 1) . '">';
-        } else {
-            $photoSlotsHtml .= '<div style="color:#bbb; font-size:12px; text-align:center;">ภาพที่ ' . ($pIdx + 1) . '</div>';
+    foreach ($photos as $idx => $photo) {
+        $pBase64 = '';
+        $pName = '';
+        if (is_array($photo)) {
+            if (!empty($photo['file_id'])) {
+                $pBase64 = loadBlobAsBase64($pdo, $photo['file_id']);
+            }
+            if (empty($pBase64) && !empty($photo['base64'])) {
+                $pBase64 = $photo['base64'];
+            }
+            $pName = $photo['filename'] ?? $photo['name'] ?? $photo['original_name'] ?? $photo['file_name'] ?? '';
+            if (empty($pName) && !empty($photoCaptions[$idx])) {
+                $pName = $photoCaptions[$idx];
+            }
         }
-        if (!empty($caption)) {
-            $photoSlotsHtml .= '<div class="photo-caption">' . htmlspecialchars($caption) . '</div>';
+        if (!empty($pBase64) && strpos($pBase64, 'data:image') !== false) {
+            if (empty($pName)) $pName = 'photo_' . (count($validPhotos) + 1) . '.jpg';
+            $validPhotos[] = ['base64' => $pBase64, 'name' => $pName];
         }
+    }
+}
+
+$photoTotal = count($validPhotos);
+$photoIdStart = '';
+$photoIdEnd = '';
+$photoAmount = $photoTotal > 0 ? (string)$photoTotal : '';
+
+if (!empty($validPhotos)) {
+    $firstPageEnd = min($PHOTOS_PER_PAGE, $photoTotal) - 1;
+    $photoIdStart = $validPhotos[0]['name'];
+    $photoIdEnd = $validPhotos[$firstPageEnd]['name'];
+    $pagesNeeded = (int)ceil($photoTotal / $PHOTOS_PER_PAGE);
+
+    $photoSlotsHtml = '<div class="photo-grid">';
+    for ($i = 0; $i <= $firstPageEnd; $i++) {
+        $safeName = htmlspecialchars($validPhotos[$i]['name']);
+        $photoSlotsHtml .= '<div class="photo-cell-wrapper">';
+        $photoSlotsHtml .= '<div class="photo-cell"><img src="' . $validPhotos[$i]['base64'] . '" alt="' . $safeName . '"></div>';
+        $photoSlotsHtml .= '<div class="photo-fname" title="' . $safeName . '">' . $safeName . '</div>';
         $photoSlotsHtml .= '</div>';
     }
-    
-    // Fill remaining slots on first page
-    for ($i = count($firstPagePhotos); $i < $photosPerPage; $i++) {
-        $photoSlotsHtml .= '<div class="photo-slot"><div style="color:#bbb; font-size:12px; text-align:center;">ภาพที่ ' . ($i + 1) . '</div></div>';
-    }
-    
-    // Extra pages
-    $chunks = array_chunk($remainingPhotos, $photosPerPage);
-    foreach ($chunks as $chunkIdx => $chunk) {
-        $pageNum = $chunkIdx + 3; // page 3, 4, 5, ...
-        $extraPhotoPagesHtml .= '<div class="page page-photo">';
+    $photoSlotsHtml .= '</div>';
+
+    for ($p = 2; $p <= $pagesNeeded; $p++) {
+        $startI = ($p - 1) * $PHOTOS_PER_PAGE;
+        $endI = min($p * $PHOTOS_PER_PAGE, $photoTotal) - 1;
+        $pageStartName = htmlspecialchars($validPhotos[$startI]['name']);
+        $pageEndName = htmlspecialchars($validPhotos[$endI]['name']);
+        $pageNum = 2 + ($p - 1);
+
+        $gridHtml = '<div class="photo-grid">';
+        for ($i = $startI; $i <= $endI; $i++) {
+            $safeName = htmlspecialchars($validPhotos[$i]['name']);
+            $gridHtml .= '<div class="photo-cell-wrapper">';
+            $gridHtml .= '<div class="photo-cell"><img src="' . $validPhotos[$i]['base64'] . '" alt="' . $safeName . '"></div>';
+            $gridHtml .= '<div class="photo-fname" title="' . $safeName . '">' . $safeName . '</div>';
+            $gridHtml .= '</div>';
+        }
+        $gridHtml .= '</div>';
+
+        $extraPhotoPagesHtml .= '<div class="page page-photo" style="display:flex; flex-direction:column;">';
         $extraPhotoPagesHtml .= '<div class="fpf-header"><div class="fpf-header-inner">';
         $extraPhotoPagesHtml .= '<div class="fpf-header-logo"><img src="/csims/images/office-of-police-forensic-icon.jpg" alt=""></div>';
         $extraPhotoPagesHtml .= '<div class="fpf-header-center"><div class="fpf-title-main">แบบตรวจสอบการปฏิบัติงาน (Check list)</div><div class="fpf-title-sub">การตรวจเก็บวัตถุพยาน (ลายนิ้วมือแฝง)</div><div style="font-size:11px; font-weight:600;">บันทึกการถ่ายภาพ (ต่อ)</div></div>';
-        $extraPhotoPagesHtml .= '<div class="fpf-header-qr"><div class="fpf-doc-box"><div class="fpf-doc-line">รายงานที่ ' . htmlspecialchars($docNo) . ' / 25' . htmlspecialchars($docYear) . '</div><div class="fpf-doc-line">หน้าที่ PAGENUM / TOTALPAGES</div></div></div>';
+        $extraPhotoPagesHtml .= '<div class="fpf-header-qr"><div class="fpf-doc-box"><div class="fpf-doc-line">รายงานที่ ' . htmlspecialchars($docNo) . ' / 25' . htmlspecialchars($docYear) . '</div><div class="fpf-doc-line">หน้าที่ ' . $pageNum . ' / TOTALPAGES</div></div></div>';
         $extraPhotoPagesHtml .= '<div class="fpf-header-qr-code" id="qr_page' . $pageNum . '"></div>';
         $extraPhotoPagesHtml .= '</div></div>';
-        
-        foreach ($chunk as $ci => $photo) {
-            $globalIdx = $photosPerPage + ($chunkIdx * $photosPerPage) + $ci;
-            $fileId = $photo['file_id'] ?? 0;
-            $base64 = loadBlobAsBase64($pdo, $fileId);
-            $caption = $photoCaptions[$globalIdx] ?? '';
-            
-            $extraPhotoPagesHtml .= '<div class="photo-slot">';
-            if (!empty($base64)) {
-                $extraPhotoPagesHtml .= '<img src="' . $base64 . '" alt="ภาพที่ ' . ($globalIdx + 1) . '">';
-            }
-            if (!empty($caption)) {
-                $extraPhotoPagesHtml .= '<div class="photo-caption">' . htmlspecialchars($caption) . '</div>';
-            }
-            $extraPhotoPagesHtml .= '</div>';
-        }
-        
-        $extraPhotoPagesHtml .= '<div class="fpf-footer"><div class="fpf-footer-inner"><div></div><div class="fpf-footer-right">F-CS-XX แก้ไขครั้งที่ 1<br>เริ่มใช้ 1 ต.ค. 63</div></div></div>';
+        $extraPhotoPagesHtml .= '<div style="margin-bottom:4px;"><div class="fr" style="flex-wrap:nowrap;"><span class="fl">รหัสภาพถ่ายที่</span><span class="fd" style="flex:1; min-width:40px;">' . $pageStartName . '</span><span class="fl">ถึง</span><span class="fd" style="flex:1; min-width:40px;">' . $pageEndName . '</span></div>';
+        $extraPhotoPagesHtml .= '<div style="font-size:10.5px; font-style:italic; margin-top:1px;">(ตามภาพถ่ายรวมที่แนบ)</div></div>';
+        $extraPhotoPagesHtml .= $gridHtml;
+        $extraPhotoPagesHtml .= '<div class="fpf-footer" style="margin-top:auto;"><div class="fpf-footer-inner"><div></div><div class="fpf-footer-right">F-CS-XX แก้ไขครั้งที่ 1<br>เริ่มใช้ 1 ต.ค. 63</div></div></div>';
         $extraPhotoPagesHtml .= '</div>';
     }
 } else {
-    // Empty slots
-    for ($i = 0; $i < 3; $i++) {
-        $photoSlotsHtml .= '<div class="photo-slot"><div style="color:#bbb; font-size:12px; text-align:center;">ภาพที่ ' . ($i + 1) . '</div></div>';
-    }
+    $photoSlotsHtml = '<div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;"><div style="color:#999; font-style:italic;">ไม่มีภาพถ่าย</div></div>';
 }
 
 // ==========================================
 // Calculate total pages
 // ==========================================
-$totalPages = 2; // page 1 (form) + page 2 (photo)
-if (!empty($photos) && count($photos) > 3) {
-    $totalPages += ceil((count($photos) - 3) / 3);
-}
-
-// Fix page numbers in extra pages
+$photoPagesCount = !empty($validPhotos) ? (int)ceil(count($validPhotos) / $PHOTOS_PER_PAGE) : 1;
+$extraPhotoPages = max(0, $photoPagesCount - 1);
+$totalPages = 2 + $extraPhotoPages;
 $extraPhotoPagesHtml = str_replace('TOTALPAGES', $totalPages, $extraPhotoPagesHtml);
-// Assign actual page numbers
-$pageCounter = 3;
-while (strpos($extraPhotoPagesHtml, 'PAGENUM') !== false) {
-    $extraPhotoPagesHtml = preg_replace('/PAGENUM/', $pageCounter, $extraPhotoPagesHtml, 1);
-    $pageCounter++;
-}
 
 // ==========================================
 // 5. LOAD TEMPLATE & REPLACE
@@ -588,8 +589,8 @@ $replacements = [
     // Photo page
     '{{photo_inspect_date}}' => $photoInspectDate,
     '{{photo_inspect_time}}' => htmlspecialchars($photoInspectTime),
-    '{{photo_id_start}}' => $photoIdStart,
-    '{{photo_id_end}}' => $photoIdEnd,
+    '{{photo_id_start}}' => htmlspecialchars($photoIdStart),
+    '{{photo_id_end}}' => htmlspecialchars($photoIdEnd),
     '{{photo_amount}}' => $photoAmount,
     '{{photographer_name}}' => $photographerName,
     '{{photographer_datetime}}' => $photographerDatetime,

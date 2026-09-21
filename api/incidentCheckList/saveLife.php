@@ -12,6 +12,7 @@ ini_set('memory_limit', '256M');
 header('Content-Type: application/json; charset=utf-8');
 
 require_once '../../db_config.php';
+require_once __DIR__ . '/lab_unit_helper.php';
 
 // ============================================
 // Helper Functions
@@ -254,7 +255,7 @@ try {
                 'label_no' => $ev['label_no'] ?? '',
                 'azimuth' => $ev['azimuth'] ?? '',
                 'remark' => $ev['remark'] ?? '',
-                'lab_unit' => $ev['lab_unit'] ?? '',
+                'lab_unit' => labUnitsNormalize($ev['lab_unit'] ?? ''),
                 'quantity_val' => $qtyVal,
                 'quantity_unit' => $qtyUnit,
                 // ระยะห่างจากจุดอ้างอิง (ค่าจริงเป็นเมตร)
@@ -301,7 +302,7 @@ try {
                 'action_return_text' => '',
                 'action_other' => !empty($action['other']),
                 'action_other_text' => $action['other_text'] ?? '',
-                'forensic_unit' => $ev['lab_unit'] ?? ''
+                'forensic_unit' => labUnitsNormalize($ev['lab_unit'] ?? '')
             ];
         }
     }
@@ -324,7 +325,7 @@ try {
                     'detail' => $item,
                     'azimuth' => $data['evidence_azimuth_life'][$i] ?? '',
                     'remark' => $data['evidence_remark_life'][$i] ?? '',
-                    'lab_unit' => $data['evidence_lab_unit_life'][$i] ?? '',
+                    'lab_unit' => labUnitsNormalize($data['evidence_lab_unit_life'][$i] ?? ''),
                     'ref1_dist' => $ref1Dist,
                     'ref2_dist' => $ref2Dist,
                     'ref3_dist' => $ref3Dist,
@@ -374,7 +375,7 @@ try {
                     'action_return_text' => $actReturnText,
                     'action_other' => $actOther,
                     'action_other_text' => $actOtherText,
-                    'forensic_unit' => $data['measurement_forensic_unit_life'][$i] ?? ''
+                    'forensic_unit' => labUnitsNormalize($data['measurement_forensic_unit_life'][$i] ?? '')
                 ];
                 $measurements[] = $measurement;
             }

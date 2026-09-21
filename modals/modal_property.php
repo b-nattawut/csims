@@ -943,7 +943,7 @@ if (isset($pdo)) {
                                     <div class="row g-2 mb-3">
                                         <div class="col-12">
                                             <label class="form-label small text-muted">ลงชื่อ (ผู้รับมอบ) <span class="text-danger">*</span></label>
-                                            <select class="form-select user-select-box" id="receiver_id" name="receiver_id" data-pos-target="#receiver_position">
+                                            <select class="form-select user-select-box" id="receiver_id" name="receiver_id" data-pos-target="#receiver_position" data-ftn-skip>
                                                 <?php echo $inspectorOptions; ?>
                                             </select>
                                         </div>
@@ -981,7 +981,7 @@ if (isset($pdo)) {
                                     <div class="row g-2 mb-3">
                                         <div class="col-12">
                                             <label class="form-label small text-muted">ลงชื่อ (ผู้ส่งมอบ) <span class="text-danger">*</span></label>
-                                            <select class="form-select user-select-box" id="deliverer_id" name="deliverer_id" data-pos-target="#deliverer_position">
+                                            <select class="form-select user-select-box" id="deliverer_id" name="deliverer_id" data-pos-target="#deliverer_position" data-ftn-skip>
                                                 <?php echo $inspectorOptions; ?>
                                             </select>
                                         </div>
@@ -1187,8 +1187,8 @@ if (isset($pdo)) {
                                             <!-- แถวที่ 6: การตรวจพิสูจน์ -->
                                             <div class="col-md-12">
                                                 <label class="form-label small text-muted">8. การตรวจพิสูจน์</label>
-                                                <select class="form-select" name="measurement_forensic_unit_property[]">
-                                                    <option value="" selected>-- กรุณาเลือก --</option>
+                                                <select class="form-select lab-unit-multi" multiple size="4" title="เลือกได้มากกว่า 1 กลุ่มงาน">
+                                                    <option value="">-- กรุณาเลือก (เลือกได้หลายข้อ) --</option>
                                                     <option value="fingerprint">กลุ่มงานตรวจลายนิ้วมือแฝง</option>
                                                     <option value="bio_dna">กลุ่มงานตรวจชีววิทยาและดีเอ็นเอ</option>
                                                     <option value="chemical">กลุ่มงานตรวจทางเคมีฟิสิกส์</option>
@@ -1198,6 +1198,7 @@ if (isset($pdo)) {
                                                     <option value="digital">กลุ่มงานตรวจพิสูจน์หลักฐานดิจิทัล</option>
                                                     <option value="computer">กลุ่มงานตรวจพิสูจน์อาชญากรรมคอมพิวเตอร์</option>
                                                 </select>
+                                                <input type="hidden" class="lab-unit-value" name="measurement_forensic_unit_property[]" value="">
                                             </div>
 
                                             <!-- ปุ่มลบ -->
@@ -1523,8 +1524,8 @@ function addMeasurementCardProperty() {
                     </div>
                     <div class="col-md-12">
                         <label class="form-label small text-muted">8. การตรวจพิสูจน์</label>
-                        <select class="form-select" name="measurement_forensic_unit_property[]">
-                            <option value="" selected>-- กรุณาเลือก --</option>
+                        <select class="form-select lab-unit-multi" multiple size="4" title="เลือกได้มากกว่า 1 กลุ่มงาน">
+                            <option value="">-- กรุณาเลือก (เลือกได้หลายข้อ) --</option>
                             <option value="fingerprint">กลุ่มงานตรวจลายนิ้วมือแฝง</option>
                             <option value="bio_dna">กลุ่มงานตรวจชีววิทยาและดีเอ็นเอ</option>
                             <option value="chemical">กลุ่มงานตรวจทางเคมีฟิสิกส์</option>
@@ -1534,6 +1535,7 @@ function addMeasurementCardProperty() {
                             <option value="digital">กลุ่มงานตรวจพิสูจน์หลักฐานดิจิทัล</option>
                             <option value="computer">กลุ่มงานตรวจพิสูจน์อาชญากรรมคอมพิวเตอร์</option>
                         </select>
+                        <input type="hidden" class="lab-unit-value" name="measurement_forensic_unit_property[]" value="">
                     </div>
                     <div class="col-12">
                         <button type="button" class="btn btn-sm btn-outline-danger" onclick="removeMeasurementCardProperty(this)">

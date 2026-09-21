@@ -1204,7 +1204,7 @@ $todayTimeLife = date('H:i');
                                     <div class="row g-2 mb-3">
                                         <div class="col-12">
                                             <label class="form-label small text-muted">ลงชื่อ (ผู้รับมอบ) <span class="text-danger">*</span></label>
-                                            <select class="form-select user-select-box-life" id="receiver_name_life" name="receiver_name" data-pos-target="#receiver_position_life">
+                                            <select class="form-select user-select-box-life" id="receiver_name_life" name="receiver_name" data-pos-target="#receiver_position_life" data-ftn-skip>
                                                 <?php echo str_replace('-- เลือกผู้ตรวจ --', '-- เลือกผู้รับมอบ --', $inspectorOptionsLife); ?>
                                             </select>
                                         </div>
@@ -1239,7 +1239,7 @@ $todayTimeLife = date('H:i');
                                     <div class="row g-2 mb-3">
                                         <div class="col-12">
                                             <label class="form-label small text-muted">ลงชื่อ (ผู้ส่งมอบ) <span class="text-danger">*</span></label>
-                                            <select class="form-select user-select-box-life" id="sender_name_life" name="sender_name" data-pos-target="#sender_position_life">
+                                            <select class="form-select user-select-box-life" id="sender_name_life" name="sender_name" data-pos-target="#sender_position_life" data-ftn-skip>
                                                 <?php echo str_replace('-- เลือกผู้ตรวจ --', '-- เลือกผู้ส่งมอบ --', $inspectorOptionsLife); ?>
                                             </select>
                                         </div>
@@ -1408,8 +1408,8 @@ $todayTimeLife = date('H:i');
                                             </div>
                                             <div class="col-md-4">
                                                 <label class="form-label small text-muted">การตรวจพิสูจน์</label>
-                                                <select class="form-select" name="evidence_lab_unit_life[]">
-                                                    <option value="">-- เลือก --</option>
+                                                <select class="form-select lab-unit-multi" multiple size="4" title="เลือกได้มากกว่า 1 กลุ่มงาน">
+                                                    <option value="">-- เลือก (เลือกได้หลายข้อ) --</option>
                                                     <option value="fingerprint">ลายนิ้วมือแฝง</option>
                                                     <option value="bio_dna">ชีววิทยา/ดีเอ็นเอ</option>
                                                     <option value="chemical">เคมีฟิสิกส์</option>
@@ -1418,6 +1418,7 @@ $todayTimeLife = date('H:i');
                                                     <option value="document">เอกสาร</option>
                                                     <option value="digital">ดิจิทัล</option><option value="computer">คอมพิวเตอร์</option>
                                                 </select>
+                                                <input type="hidden" class="lab-unit-value" name="evidence_lab_unit_life[]" value="">
                                             </div>
 
                                             <!-- ปุ่มลบ -->
@@ -1673,8 +1674,8 @@ $todayTimeLife = date('H:i');
                                             <!-- แถวที่ 6: การตรวจพิสูจน์ -->
                                             <div class="col-md-12">
                                                 <label class="form-label small text-muted">8. การตรวจพิสูจน์</label>
-                                                <select class="form-select" name="measurement_forensic_unit_life[]">
-                                                    <option value="" selected>-- กรุณาเลือก --</option>
+                                                <select class="form-select lab-unit-multi" multiple size="4" title="เลือกได้มากกว่า 1 กลุ่มงาน">
+                                                    <option value="">-- กรุณาเลือก (เลือกได้หลายข้อ) --</option>
                                                     <option value="fingerprint">กลุ่มงานตรวจลายนิ้วมือแฝง</option>
                                                     <option value="bio_dna">กลุ่มงานตรวจชีววิทยาและดีเอ็นเอ</option>
                                                     <option value="chemical">กลุ่มงานตรวจทางเคมีฟิสิกส์</option>
@@ -1683,6 +1684,7 @@ $todayTimeLife = date('H:i');
                                                     <option value="document">กลุ่มงานตรวจเอกสาร</option>
                                                     <option value="digital">กลุ่มงานตรวจพิสูจน์หลักฐานดิจิทัล</option><option value="computer">กลุ่มงานตรวจพิสูจน์อาชญากรรมคอมพิวเตอร์</option>
                                                 </select>
+                                                <input type="hidden" class="lab-unit-value" name="measurement_forensic_unit_life[]" value="">
                                             </div>
 
                                             <!-- ปุ่มลบ -->
@@ -1965,8 +1967,8 @@ $todayTimeLife = date('H:i');
                                     </div>
                                     <div class="col-md-4">
                                         <label class="form-label small text-muted">การตรวจพิสูจน์</label>
-                                        <select class="form-select" name="evidence_lab_unit_life[]">
-                                            <option value="">-- เลือก --</option>
+                                        <select class="form-select lab-unit-multi" multiple size="4" title="เลือกได้มากกว่า 1 กลุ่มงาน">
+                                            <option value="">-- เลือก (เลือกได้หลายข้อ) --</option>
                                             <option value="fingerprint">ลายนิ้วมือแฝง</option>
                                             <option value="bio_dna">ชีววิทยา/ดีเอ็นเอ</option>
                                             <option value="chemical">เคมีฟิสิกส์</option>
@@ -1975,6 +1977,7 @@ $todayTimeLife = date('H:i');
                                             <option value="document">เอกสาร</option>
                                             <option value="digital">ดิจิทัล</option><option value="computer">คอมพิวเตอร์</option>
                                         </select>
+                                        <input type="hidden" class="lab-unit-value" name="evidence_lab_unit_life[]" value="">
                                     </div>
 
                                     <!-- ปุ่มลบ -->
@@ -2133,8 +2136,8 @@ $todayTimeLife = date('H:i');
                                     <!-- แถวที่ 6: การตรวจพิสูจน์ -->
                                     <div class="col-md-12">
                                         <label class="form-label small text-muted">8. การตรวจพิสูจน์</label>
-                                        <select class="form-select" name="measurement_forensic_unit_life[]">
-                                            <option value="" selected>-- กรุณาเลือก --</option>
+                                        <select class="form-select lab-unit-multi" multiple size="4" title="เลือกได้มากกว่า 1 กลุ่มงาน">
+                                            <option value="">-- กรุณาเลือก (เลือกได้หลายข้อ) --</option>
                                             <option value="fingerprint">กลุ่มงานตรวจลายนิ้วมือแฝง</option>
                                             <option value="bio_dna">กลุ่มงานตรวจชีววิทยาและดีเอ็นเอ</option>
                                             <option value="chemical">กลุ่มงานตรวจทางเคมีฟิสิกส์</option>
@@ -2143,6 +2146,7 @@ $todayTimeLife = date('H:i');
                                             <option value="document">กลุ่มงานตรวจเอกสาร</option>
                                             <option value="digital">กลุ่มงานตรวจพิสูจน์หลักฐานดิจิทัล</option><option value="computer">กลุ่มงานตรวจพิสูจน์อาชญากรรมคอมพิวเตอร์</option>
                                         </select>
+                                        <input type="hidden" class="lab-unit-value" name="measurement_forensic_unit_life[]" value="">
                                     </div>
 
                                     <!-- ปุ่มลบ -->

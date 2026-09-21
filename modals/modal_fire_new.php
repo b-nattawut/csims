@@ -1256,7 +1256,7 @@ $todayTimeFire = date('H:i');
                                     <div class="row g-2 mb-3">
                                         <div class="col-12">
                                             <label class="form-label small text-muted">ลงชื่อ (ผู้รับมอบ) <span class="text-danger">*</span></label>
-                                            <select class="form-select user-select-box-fire" id="receiver_name_fire" name="receiver_name_fire" data-pos-target="#receiver_position_fire">
+                                            <select class="form-select user-select-box-fire" id="receiver_name_fire" name="receiver_name_fire" data-pos-target="#receiver_position_fire" data-ftn-skip>
                                                 <?php echo str_replace('-- เลือกผู้ตรวจ --', '-- เลือกผู้รับมอบ --', $inspectorOptionsFire); ?>
                                             </select>
                                         </div>
@@ -1292,7 +1292,7 @@ $todayTimeFire = date('H:i');
                                     <div class="row g-2 mb-3">
                                         <div class="col-12">
                                             <label class="form-label small text-muted">ลงชื่อ (ผู้ส่งมอบ) <span class="text-danger">*</span></label>
-                                            <select class="form-select user-select-box-fire" id="sender_name_fire" name="sender_name_fire" data-pos-target="#sender_position_fire">
+                                            <select class="form-select user-select-box-fire" id="sender_name_fire" name="sender_name_fire" data-pos-target="#sender_position_fire" data-ftn-skip>
                                                 <?php echo str_replace('-- เลือกผู้ตรวจ --', '-- เลือกผู้ส่งมอบ --', $inspectorOptionsFire); ?>
                                             </select>
                                         </div>

@@ -489,107 +489,124 @@ $sender_signature_img = renderSignatureImg($signatures['sender_sig'] ?? '', $pdo
 // PHOTO RECORDS
 // ---------------------------------------------------------
 
-// สร้าง Photo images HTML — แต่ละรูปอยู่คนละหน้า
+// สร้าง Photo images HTML (grid 5 คอลัมน์ × 7 แถว = 35 รูป/หน้า)
 $photos = $data['photos'] ?? [];
-$photo_images = ''; // รูปแรกใส่ในหน้า Page 8 เดิม (ของจราจรยังไม่รู้ว่ามีกี่ page)
-$photo_extra_pages = ''; // รูปที่ 2+ สร้างเป็นหน้าใหม่
+$photo_images = '';
+$photo_extra_pages = '';
+$PHOTOS_PER_PAGE = 35;
 
-// โหลดรูปภาพ: BLOB ก่อน (ข้อมูลใหม่), ดิสก์/base64 สำรอง (ข้อมูลเก่า)
 $photosDir = __DIR__ . '/../../uploads_2/checklist_traffic_photos/';
 $validPhotos = [];
 if (!empty($photos)) {
     foreach ($photos as $idx => $photo) {
         $pBase64 = '';
-        // 1) BLOB จาก DB
-        if (is_array($photo) && !empty($photo['file_id'])) {
-            $pBase64 = loadBlobAsBase64($pdo, $photo['file_id']);
-        }
-        // 2) base64 เดิมใน JSON (ข้อมูลเก่า)
-        if (empty($pBase64) && is_array($photo) && !empty($photo['base64'])) {
-            $pBase64 = $photo['base64'];
-        }
-        // 3) ไฟล์บนดิสก์ (ข้อมูลเก่า)
-        if (empty($pBase64) && is_array($photo) && !empty($photo['filename'])) {
-            $fp = $photosDir . $photo['filename'];
-            if (file_exists($fp)) {
-                $bin = @file_get_contents($fp);
-                if ($bin !== false) {
-                    $mime = @mime_content_type($fp) ?: 'image/jpeg';
-                    $pBase64 = 'data:'.$mime.';base64,'.base64_encode($bin);
+        $pName = '';
+        if (is_array($photo)) {
+            if (!empty($photo['file_id'])) {
+                $pBase64 = loadBlobAsBase64($pdo, $photo['file_id']);
+            }
+            if (empty($pBase64) && !empty($photo['base64'])) {
+                $pBase64 = $photo['base64'];
+            }
+            if (empty($pBase64) && !empty($photo['filename'])) {
+                $fp = $photosDir . $photo['filename'];
+                if (file_exists($fp)) {
+                    $bin = @file_get_contents($fp);
+                    if ($bin !== false) {
+                        $mime = @mime_content_type($fp) ?: 'image/jpeg';
+                        $pBase64 = 'data:'.$mime.';base64,'.base64_encode($bin);
+                    }
                 }
             }
+            $pName = $photo['filename'] ?? $photo['name'] ?? $photo['original_name'] ?? $photo['file_name'] ?? '';
         }
         if (!empty($pBase64) && strpos($pBase64, 'data:image') !== false) {
-            $validPhotos[] = $pBase64;
+            if (empty($pName)) $pName = 'photo_' . (count($validPhotos) + 1) . '.jpg';
+            $validPhotos[] = ['base64' => $pBase64, 'name' => $pName];
         }
     }
 }
 
 if (!empty($validPhotos)) {
-    foreach ($validPhotos as $pIdx => $pBase64) {
-        $photoNum = $pIdx + 1;
-        $photoHtml = '<div style="flex:1; display:flex; align-items:center; justify-content:center;">';
-        $photoHtml .= '<div style="text-align:center;">';
-        $photoHtml .= '<img src="' . $pBase64 . '" style="max-width:100%; max-height:850px; object-fit:contain; border:1px solid #ccc;" alt="ภาพที่ ' . $photoNum . '">';
-        $photoHtml .= '<div style="font-size:11px; color:#333; margin-top:4px;">ภาพที่ ' . $photoNum . ' / ' . count($validPhotos) . '</div>';
-        $photoHtml .= '</div>';
-        $photoHtml .= '</div>';
+    $totalPhotos = count($validPhotos);
+    $firstPageEnd = min($PHOTOS_PER_PAGE, $totalPhotos) - 1;
+    $photo_id_start = $validPhotos[0]['name'];
+    $photo_id_end = $validPhotos[$firstPageEnd]['name'];
+    $photo_amount = (string)$totalPhotos;
+    $pagesNeeded = (int)ceil($totalPhotos / $PHOTOS_PER_PAGE);
 
-        if ($pIdx === 0) {
-            // รูปแรก → ใส่ในหน้า Page 3 เดิม 
-            $photo_images = $photoHtml;
-        } else {
-            // รูปที่ 2+ → สร้างหน้าใหม่ ( checklist ระเบิดมี 9 หน้า เลยจะเริ่มตั้งแต่หน้า 10 ไปสำหรับรูปที่ 2+) 
-            // (ของจราจรยังไม่รู้ว่ามีกี่ page ต้องมาปรับอีกที + ปรับส่วนของ footer ให้ถูก)
-            $pageNum = 3 + $pIdx;
-            $photo_extra_pages .= '
-                <div class="page" style="display:flex; flex-direction:column;">
-                    <div class="form-header">
-                        <div class="header-logo">
-                            <img src="../../images/office-of-police-forensic-icon.jpg" alt="ตราสำนักงานตำรวจแห่งชาติ">
-                        </div>
-                        <div class="header-center">
-                            <div class="title-main">แบบตรวจสอบการปฏิบัติงาน (Check list)</div>
-                            <div class="title-sub">การตรวจสถานที่เกิดเหตุคดีเกี่ยวกับจราจร</div>
-                            <div style="font-size:11px; font-weight:600;">บันทึกการถ่ายภาพ (ต่อ)</div>
-                        </div>
-                        <div class="header-right">
-                            <div class="doc-box">
-                                <div class="doc-line">เลขรับที่/เลขรายงาน <span style="display:inline-block;min-width:60px;border-bottom:1px dotted #888;text-align:center;">' . htmlspecialchars($report_no) . '</span> / <span style="display:inline-block;min-width:40px;border-bottom:1px dotted #888;text-align:center;">' . htmlspecialchars($report_year) . '</span></div>
-                                <div class="doc-line">หน้าที่ ' . $pageNum . ' / {{total_pages}}</div>
-                            </div>
-                        </div>
-                    </div>
-                    ' . $photoHtml . '
+    $photo_images = '<div class="photo-grid">';
+    for ($i = 0; $i <= $firstPageEnd; $i++) {
+        $safeName = htmlspecialchars($validPhotos[$i]['name']);
+        $photo_images .= '<div class="photo-cell-wrapper">';
+        $photo_images .= '<div class="photo-cell"><img src="' . $validPhotos[$i]['base64'] . '" alt="' . $safeName . '"></div>';
+        $photo_images .= '<div class="photo-fname" title="' . $safeName . '">' . $safeName . '</div>';
+        $photo_images .= '</div>';
+    }
+    $photo_images .= '</div>';
 
-                    <div style="margin-top:12px; display:flex; flex-direction:column; align-items:flex-end;">
-                        <div class="fr" style="width:auto;">
-                            <span class="fl">ผู้จดบันทึก</span>
-                            <span class="fd" style="width:250px;">' . htmlspecialchars($photo_recorder) . '</span>
-                        </div>
-                        <div class="fr" style="width:auto;">
-                            <span class="fl">วัน /เวลา</span>
-                            <span class="fd" style="width:250px;">' . htmlspecialchars($photo_datetime) . '</span>
-                        </div>
-                    </div>
+    for ($p = 2; $p <= $pagesNeeded; $p++) {
+        $startI = ($p - 1) * $PHOTOS_PER_PAGE;
+        $endI = min($p * $PHOTOS_PER_PAGE, $totalPhotos) - 1;
+        $pageStartName = htmlspecialchars($validPhotos[$startI]['name']);
+        $pageEndName = htmlspecialchars($validPhotos[$endI]['name']);
+        $pageNum = 3 + ($p - 1);
 
-                    <div class="form-footer" style="margin-top:auto;">
-                        <div class="form-footer-left">
-                            <strong>หมายเหตุ</strong> กรณีมีข้อมูลมากกว่าที่กำหนดไว้สามารถเขียนเพิ่มเติมได้ที่ด้านหลังกระดาษ
-                        </div>
-                        <div class="form-footer-right">
-                            F-CS-... แก้ไขครั้งที่...<br>
-                            แก้ไขวันที่...<br>
-                            เริ่มใช้...
-                        </div>
-                    </div>
-                </div>';
+        $gridHtml = '<div class="photo-grid">';
+        for ($i = $startI; $i <= $endI; $i++) {
+            $safeName = htmlspecialchars($validPhotos[$i]['name']);
+            $gridHtml .= '<div class="photo-cell-wrapper">';
+            $gridHtml .= '<div class="photo-cell"><img src="' . $validPhotos[$i]['base64'] . '" alt="' . $safeName . '"></div>';
+            $gridHtml .= '<div class="photo-fname" title="' . $safeName . '">' . $safeName . '</div>';
+            $gridHtml .= '</div>';
         }
+        $gridHtml .= '</div>';
+
+        $photo_extra_pages .= '
+<div class="page" style="display:flex; flex-direction:column;">
+    <div class="form-header">
+        <div class="header-logo">
+            <img src="../../images/office-of-police-forensic-icon.jpg" alt="ตราสำนักงานตำรวจแห่งชาติ">
+        </div>
+        <div class="header-center">
+            <div class="title-main">แบบตรวจสอบการปฏิบัติงาน (Check list)</div>
+            <div class="title-sub">การตรวจสถานที่เกิดเหตุคดีเกี่ยวกับจราจร</div>
+            <div style="font-size:11px; font-weight:600;">บันทึกการถ่ายภาพ (ต่อ)</div>
+        </div>
+        <div class="header-qr">
+            <div class="doc-box">
+                <div class="doc-line">เลขรับที่/เลขรายงาน <span style="display:inline-block;min-width:60px;border-bottom:1px dotted #888;text-align:center;">' . htmlspecialchars($report_no) . '</span> / <span style="display:inline-block;min-width:40px;border-bottom:1px dotted #888;text-align:center;">' . htmlspecialchars($report_year) . '</span></div>
+                <div class="doc-line">หน้าที่ ' . $pageNum . ' / {{total_pages}}</div>
+            </div>
+        </div>
+        <div class="header-qr-code" id="qr_page' . $pageNum . '"></div>
+    </div>
+    <div style="margin-bottom:4px;">
+        <div class="fr" style="flex-wrap:nowrap;">
+            <span class="fl">รหัสภาพถ่ายที่</span>
+            <span class="fd" style="flex:1; min-width:40px;">' . $pageStartName . '</span>
+            <span class="fl">ถึง</span>
+            <span class="fd" style="flex:1; min-width:40px;">' . $pageEndName . '</span>
+        </div>
+        <div style="font-size:10.5px; font-style:italic; margin-top:1px;">(ตามภาพถ่ายรวมที่แนบ)</div>
+    </div>
+    ' . $gridHtml . '
+    <div class="form-footer" style="margin-top:auto;">
+        <div class="form-footer-left">
+            <strong>หมายเหตุ</strong> กรณีมีข้อมูลมากกว่าที่กำหนดไว้สามารถเขียนเพิ่มเติมได้ที่ด้านหลังกระดาษ
+        </div>
+        <div class="form-footer-right">
+            F-CS-.. แก้ไขครั้งที่...<br>
+            แก้ไขวันที่...<br>
+            เริ่มใช้...
+        </div>
+    </div>
+</div>';
     }
 }
 
 if (empty($photo_images)) {
-    $photo_images = '<div style="flex:1; display:flex; align-items:center; justify-content:center;"><div style="color:#999; font-style:italic;">ไม่มีภาพถ่าย</div></div>';
+    $photo_images = '<div style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:center;"><div style="color:#999; font-style:italic;">ไม่มีภาพถ่าย</div></div>';
 }
 
 // ==========================================
@@ -688,10 +705,10 @@ if (!empty($photo_extra_pages)) {
     $htmlContent = str_replace('</body>', $photo_extra_pages . "\n</body>", $htmlContent);
 }
 
-// คำนวณจำนวนหน้ารวม: 3 หน้าพื้นฐาน + หน้ารูปเพิ่ม (รูปที่ 2 เป็นต้นไป) (ต้องมาแก้เลขหน้าอีกที ดูก่อนว่ามีกี่หน้า)
-$basePages = 3;
-$extraPhotoPages = (count($validPhotos) > 1) ? count($validPhotos) - 1 : 0;
-$total_pages = $basePages + $extraPhotoPages;
+// คำนวณจำนวนหน้ารวม: 3 หน้าพื้นฐาน + หน้ารูปเพิ่ม (35 รูป/หน้า)
+$photoPagesCount = !empty($validPhotos) ? (int)ceil(count($validPhotos) / $PHOTOS_PER_PAGE) : 1;
+$extraPhotoPages = max(0, $photoPagesCount - 1);
+$total_pages = 3 + $extraPhotoPages;
 $htmlContent = str_replace('{{total_pages}}', $total_pages, $htmlContent);
 
 // ==========================================

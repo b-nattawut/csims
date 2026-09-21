@@ -1,15 +1,7 @@
 <?php
 
-// ตั้งค่า Session Timeout (แก้ค่าที่ includes/session_timeout.php)
-require_once __DIR__ . '/includes/session_timeout.php';
-@ini_set('session.gc_maxlifetime', CSIMS_SESSION_TIMEOUT * 2);
-session_set_cookie_params([
-    'lifetime' => CSIMS_SESSION_TIMEOUT,
-    'path'     => '/',
-    'httponly' => true,
-    'samesite' => 'Lax',
-]);
-session_start();
+// ตั้งค่า Session Timeout / cookie (แก้ค่าที่ includes/session_timeout.php)
+require_once __DIR__ . '/includes/session_boot.php';
 header('Content-Type: application/json');
 require_once 'db_config.php'; // ตรวจสอบว่าไฟล์นี้มีการเชื่อมต่อ PDO $pdo
 require_once __DIR__ . '/vendor/phpmailer/phpmailer/src/PHPMailer.php';
@@ -267,6 +259,11 @@ try {
         $_SESSION['last_name'] = $user['last_name'] ?? '';
         $_SESSION['rank_name'] = $user['rank_name'] ?? '';      // ยศ
         $_SESSION['position_name'] = $user['position_name'] ?? ''; // ตำแหน่ง
+        $_SESSION['last_activity'] = time();
+        if (function_exists('session_regenerate_id')) {
+            session_regenerate_id(true);
+        }
+        csims_persist_session_cookie();
 
         try {
             writeLoginLog($pdo, $user['user_id'], 0, $ipAddress, $email, $locationPredict);

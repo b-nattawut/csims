@@ -11,6 +11,7 @@ ini_set('display_startup_errors', 1);
 error_reporting(E_ALL);
 
 require_once __DIR__ . '/../../db_config.php';
+require_once __DIR__ . '/lab_unit_helper.php';
 
 // ==========================================
 // 1. HELPER FUNCTIONS
@@ -380,7 +381,7 @@ if (!empty($evidenceList)) {
             continue;
         }
 
-        $labUnitText = !empty($labUnit) ? ($labUnitMap[$labUnit] ?? $labUnit) : '';
+        $labUnitText = labUnitsToText($labUnit);
 
         $evidenceRowsHtml .= '<tr>
             <td><span class="dot-fill">' . htmlspecialchars($evidenceNo) . '</span></td>

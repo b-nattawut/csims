@@ -12,7 +12,7 @@
  *   6. ถ้าผิด → นับจำนวนครั้งที่ลองผิด (ล็อกหลัง 5 ครั้ง)
  */
 
-session_start();
+require_once __DIR__ . '/../includes/session_boot.php';
 header('Content-Type: application/json; charset=utf-8');
 
 require_once __DIR__ . '/../db_config.php';
@@ -146,6 +146,11 @@ try {
     $_SESSION['rank_name']     = $user['rank_name'] ?? '';
     $_SESSION['position_name'] = $user['position_name'] ?? '';
     $_SESSION['otp_verified']  = true;
+    $_SESSION['last_activity'] = time();
+    if (function_exists('session_regenerate_id')) {
+        session_regenerate_id(true);
+    }
+    csims_persist_session_cookie();
 
     echo json_encode([
         'success' => true,

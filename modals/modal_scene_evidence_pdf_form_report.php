@@ -242,8 +242,8 @@ if (isset($_SESSION['user_id']) && isset($pdo)) {
         <div class="fr sevpf-evidence-item-row" style="flex-wrap:wrap; gap:2px;">
             <span class="fl sevpf-si-no" style="min-width:30px;">1.1</span>
             <input type="text" class="sevpf-inp" name="sevpf_evidence_item[]" style="flex:1; min-width:120px;">
-            <select class="sevpf-select" name="sevpf_lab_unit[]" style="max-width:180px; font-size:0.75rem;">
-                <option value="">-- การตรวจพิสูจน์ --</option>
+            <select class="sevpf-select lab-unit-multi" multiple size="3" title="เลือกได้มากกว่า 1 กลุ่มงาน" style="max-width:180px; font-size:0.75rem;">
+                <option value="">-- การตรวจพิสูจน์ (เลือกได้หลายข้อ) --</option>
                 <option value="bio_dna">ตรวจชีววิทยา</option>
                 <option value="chemical">ตรวจทางเคมีฟิสิกส์</option>
                 <option value="fingerprint">ตรวจลายนิ้วมือแฝง</option>
@@ -252,6 +252,7 @@ if (isset($_SESSION['user_id']) && isset($pdo)) {
                 <option value="document">ตรวจเอกสาร</option>
                 <option value="digital">ตรวจพิสูจน์ดิจิทัล</option><option value="computer">ตรวจอาชญากรรมคอมพิวเตอร์</option>
             </select>
+            <input type="hidden" class="lab-unit-value" name="sevpf_lab_unit[]" value="">
             <button type="button" class="sevpf-del-btn" onclick="this.closest('.sevpf-evidence-item-row').remove(); sevpfRenumberEvidenceItems();">✕</button>
         </div>
     </div>
@@ -457,7 +458,8 @@ if (isset($_SESSION['user_id']) && isset($pdo)) {
         row.style.cssText = 'flex-wrap:wrap; gap:2px;';
         row.innerHTML = '<span class="fl sevpf-si-no" style="min-width:30px;">1.' + sevpfItemIdx + '</span>' +
             '<input type="text" class="sevpf-inp" name="sevpf_evidence_item[]" style="flex:1; min-width:120px;">' +
-            '<select class="sevpf-select" name="sevpf_lab_unit[]" style="max-width:180px; font-size:0.75rem;">' + sevpfLabUnitOpts + '</select>' +
+            '<select class="sevpf-select lab-unit-multi" multiple size="3" title="เลือกได้มากกว่า 1 กลุ่มงาน" style="max-width:180px; font-size:0.75rem;">' + sevpfLabUnitOpts + '</select>' +
+            '<input type="hidden" class="lab-unit-value" name="sevpf_lab_unit[]" value="">' +
             ' <button type="button" class="sevpf-del-btn" onclick="this.closest(\'.sevpf-evidence-item-row\').remove(); sevpfRenumberEvidenceItems();">✕</button>';
         container.appendChild(row);
     };
@@ -671,9 +673,15 @@ if (isset($_SESSION['user_id']) && isset($pdo)) {
                 if (typeof window[config.renumberFn] === 'function') window[config.renumberFn]();
             };
             var syncDynamicValues = function(sourceSelector, targetSelector, targetConfig) {
-                var values = Array.prototype.slice.call(document.querySelectorAll(sourceSelector)).map(function(el) { return el.value || ''; });
+                var sourceScope = fromForm || document;
+                var targetScope = toForm || document;
+                var values = Array.prototype.slice.call(sourceScope.querySelectorAll(sourceSelector)).map(function(el) { return el.value || ''; });
+                var hasSource = values.some(function(v) { return String(v).trim() !== ''; });
+                var targetExisting = Array.prototype.slice.call(targetScope.querySelectorAll(targetSelector)).map(function(el) { return el.value || ''; });
+                var hasTarget = targetExisting.some(function(v) { return String(v).trim() !== ''; });
+                if (!hasSource && hasTarget) return;
                 ensureDynamicRows(targetConfig, values.length || 1);
-                var targetInputs = document.querySelectorAll(targetSelector);
+                var targetInputs = targetScope.querySelectorAll(targetSelector);
                 targetInputs.forEach(function(el, idx) { el.value = values[idx] || ''; });
             };
 
@@ -751,13 +759,23 @@ if (isset($_SESSION['user_id']) && isset($pdo)) {
                     : { containerSelector: '#sevpf_collect_detail_container', rowSelector: '.sevpf-collect-row', addFn: 'sevpfAddCollectDetail', renumberFn: 'sevpfRenumberCollectDetails' }
             );
 
-            // Lab units
+            // Lab units — hidden input ถือค่าจริง (comma-separated) รองรับเลือกหลายกลุ่มงาน
             (function() {
-                var srcSel = fromFormId === 'incidentCheckListFormSceneEvidence' ? '[name="ev7_lab_unit[]"]' : '[name="sevpf_lab_unit[]"]';
-                var tgtSel = toStdForm ? '[name="ev7_lab_unit[]"]' : '[name="sevpf_lab_unit[]"]';
+                if (window.LabUnitMulti) window.LabUnitMulti.syncAll(document);
+                var srcSel = fromFormId === 'incidentCheckListFormSceneEvidence' ? 'input.lab-unit-value[name="ev7_lab_unit[]"]' : 'input.lab-unit-value[name="sevpf_lab_unit[]"]';
+                var tgtSel = toStdForm ? 'input.lab-unit-value[name="ev7_lab_unit[]"]' : 'input.lab-unit-value[name="sevpf_lab_unit[]"]';
                 var srcEls = document.querySelectorAll(srcSel);
                 var tgtEls = document.querySelectorAll(tgtSel);
-                srcEls.forEach(function(el, idx) { if (tgtEls[idx]) tgtEls[idx].value = el.value || ''; });
+                srcEls.forEach(function(el, idx) {
+                    var tgt = tgtEls[idx];
+                    if (!tgt) return;
+                    var val = window.LabUnitMulti ? window.LabUnitMulti.join(el.value) : (el.value || '');
+                    tgt.value = val;
+                    if (window.LabUnitMulti) {
+                        var sel = window.LabUnitMulti.selectFor(tgt);
+                        if (sel) window.LabUnitMulti.setValue(sel, val);
+                    }
+                });
             })();
 
             // Other evidence text ↔ array

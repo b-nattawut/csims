@@ -14,6 +14,7 @@ error_reporting(E_ALL);
 
 require_once __DIR__ . '/../../db_config.php';
 require_once __DIR__ . '/../../helpers/report_no.php';
+require_once __DIR__ . '/lab_unit_helper.php';
 
 // ==========================================
 // 1. HELPER FUNCTIONS
@@ -350,91 +351,34 @@ if (!empty($evfEvidenceDetails)) {
     $evidencesFound = [];
 }
 
-$evidenceRows = [];
-$safeStr = function ($val) {
-    if (is_array($val)) return implode(', ', array_filter(array_map('strval', $val)));
-    return (string)($val ?? '');
-};
-$normalizeEvidence = function ($row) use ($safeStr) {
-    return [
-        'detail' => trim($safeStr(getVal($row, 'detail') ?: getVal($row, 'item') ?: getVal($row, 'description'))),
-        'qty' => trim($safeStr(getVal($row, 'quantity_val') ?: getVal($row, 'qty') ?: getVal($row, 'quantity'))),
-        'position' => trim($safeStr(getVal($row, 'area_found') ?: getVal($row, 'position') ?: getVal($row, 'area'))),
-    ];
-};
+// ==========================================
+// 5. EVIDENCE TABLE ROWS — แยกแผ่นตามกลุ่มงานส่งตรวจ
+// ==========================================
+$evidenceRows = collectStickerEvidenceRows($data);
+$stickerPages = buildStickerPagesByLabUnit($evidenceRows, 10);
+$firstSticker = $stickerPages[0];
+$restStickers = array_slice($stickerPages, 1);
 
-// สำหรับคดีทรัพย์/ระเบิด: ใช้ measurements เป็นแหล่งหลัก (ตาราง "บันทึกการตรวจเก็บวัตถุพยาน")
-$evCaseType = getVal($gen, 'case_type');
-$evPropertyBombTypes = ['theft', 'snatch', 'robbery', 'bomb'];
-$evUsesMeasurements = in_array($evCaseType, $evPropertyBombTypes) && !empty($measurementList);
-
-if ($evUsesMeasurements) {
-    // คดีทรัพย์/ระเบิด: measurements เป็นหลัก, evidences เติมช่องว่าง
-    foreach ($measurementList as $ms) {
-        $evidenceRows[] = $normalizeEvidence($ms);
+function stickerEvidenceRowsHtml($items, &$evNo)
+{
+    $html = '';
+    foreach ($items as $er) {
+        $evNo++;
+        $html .= '<tr>';
+        $html .= '<td>' . $evNo . '</td>';
+        $html .= '<td style="text-align:left;padding-left:4px;">' . htmlspecialchars($er['detail']) . '</td>';
+        $html .= '<td>' . htmlspecialchars($er['qty']) . '</td>';
+        $html .= '<td style="text-align:left;padding-left:4px;">' . htmlspecialchars($er['position']) . '</td>';
+        $html .= '</tr>';
     }
-    foreach ($evidenceList as $idx => $ev) {
-        if (isset($ev['hidden']) && $ev['hidden'] === true) continue;
-        $e = $normalizeEvidence($ev);
-        if (isset($evidenceRows[$idx])) {
-            if ($evidenceRows[$idx]['qty'] === '' && $e['qty'] !== '') $evidenceRows[$idx]['qty'] = $e['qty'];
-            if ($evidenceRows[$idx]['position'] === '' && $e['position'] !== '') $evidenceRows[$idx]['position'] = $e['position'];
-        }
-    }
-} else {
-    // คดีอื่น ๆ: evidences เป็นหลัก, measurements/evidences_found เติมช่องว่าง
-    foreach ($evidenceList as $ev) {
-        if (isset($ev['hidden']) && $ev['hidden'] === true) continue;
-        $evidenceRows[] = $normalizeEvidence($ev);
-    }
-
-    foreach ($measurementList as $idx => $ms) {
-        $m = $normalizeEvidence($ms);
-        if (isset($evidenceRows[$idx])) {
-            if ($evidenceRows[$idx]['detail'] === '' && $m['detail'] !== '') $evidenceRows[$idx]['detail'] = $m['detail'];
-            if ($evidenceRows[$idx]['qty'] === '' && $m['qty'] !== '') $evidenceRows[$idx]['qty'] = $m['qty'];
-            if ($evidenceRows[$idx]['position'] === '' && $m['position'] !== '') $evidenceRows[$idx]['position'] = $m['position'];
-        } else {
-            $evidenceRows[] = $m;
-        }
-    }
-
-    foreach ($evidencesFound as $idx => $ef) {
-        $f = $normalizeEvidence($ef);
-        if (isset($evidenceRows[$idx])) {
-            if ($evidenceRows[$idx]['detail'] === '' && $f['detail'] !== '') $evidenceRows[$idx]['detail'] = $f['detail'];
-            if ($evidenceRows[$idx]['qty'] === '' && $f['qty'] !== '') $evidenceRows[$idx]['qty'] = $f['qty'];
-            if ($evidenceRows[$idx]['position'] === '' && $f['position'] !== '') $evidenceRows[$idx]['position'] = $f['position'];
-        } else {
-            $evidenceRows[] = $f;
-        }
-    }
+    return $html;
 }
 
-$evidenceRowsHtml = '';
 $evNo = 0;
-$maxRowsPerPage = 10; // จำกัดจำนวนแถวต่อหน้า
-$filteredEvidence = [];
-foreach ($evidenceRows as $er) {
-    if ($er['detail'] === '' && $er['qty'] === '' && $er['position'] === '') continue;
-    $filteredEvidence[] = $er;
-}
-
-// แสดงเฉพาะ 10 แถวแรกในหน้าแรก
-foreach ($filteredEvidence as $idx => $er) {
-    if ($idx >= $maxRowsPerPage) break;
-    $evNo++;
-    $evidenceRowsHtml .= '<tr>';
-    $evidenceRowsHtml .= '<td>' . $evNo . '</td>';
-    $evidenceRowsHtml .= '<td style="text-align:left;padding-left:4px;">' . htmlspecialchars($er['detail']) . '</td>';
-    $evidenceRowsHtml .= '<td>' . htmlspecialchars($er['qty']) . '</td>';
-    $evidenceRowsHtml .= '<td style="text-align:left;padding-left:4px;">' . htmlspecialchars($er['position']) . '</td>';
-    $evidenceRowsHtml .= '</tr>';
-}
-
-// เก็บแถวที่เหลือสำหรับหน้าถัดไป (ถ้ามี)
-$remainingEvidence = array_slice($filteredEvidence, $maxRowsPerPage);
-$hasMoreEvidence = count($remainingEvidence) > 0;
+$evidenceRowsHtml = stickerEvidenceRowsHtml($firstSticker['items'], $evNo);
+$labGroupSuffix = $firstSticker['label'] !== ''
+    ? ' — ' . $firstSticker['label'] . ($firstSticker['parts'] > 1 ? ' (' . $firstSticker['part'] . '/' . $firstSticker['parts'] . ')' : '')
+    : '';
 
 // ==========================================
 // 6. CHAIN OF CUSTODY TABLE
@@ -605,14 +549,13 @@ if ($htmlTemplate === false) {
     die("Error: ไม่สามารถอ่านไฟล์ template ได้");
 }
 
-// สร้าง HTML สำหรับหน้าเพิ่มเติม (ถ้ามีแถวเกิน)
+// สร้าง HTML สำหรับหน้าเพิ่มเติม — แยกแผ่นตามกลุ่มงานส่งตรวจ
 $extraPagesHtml = '';
-if ($hasMoreEvidence) {
-    $pageNum = 1;
-    $chunks = array_chunk($remainingEvidence, $maxRowsPerPage);
-    foreach ($chunks as $chunk) {
-        $pageNum++;
-        $extraPagesHtml .= '
+foreach ($restStickers as $pageIdx => $pg) {
+    $pageNum = $pageIdx + 2;
+    $groupTitle = $pg['label'] . ($pg['parts'] > 1 ? ' (' . $pg['part'] . '/' . $pg['parts'] . ')' : '');
+    $n = 0;
+    $extraPagesHtml .= '
 <!-- ==================== EXTRA PAGE ' . $pageNum . ' ==================== -->
 <div class="page">
     <div class="sidebar">
@@ -625,7 +568,7 @@ if ($hasMoreEvidence) {
     <div class="content">
         <div class="ev-title">วัตถุพยาน</div>
         <div class="ev-subtitle">EVIDENCE</div>
-        <div class="section-label">ลักษณะ / จำนวน / ตำแหน่ง วัตถุพยานที่ตรวจพบ (ต่อ)</div>
+        <div class="section-label">ลักษณะ / จำนวน / ตำแหน่ง วัตถุพยานที่ตรวจพบ — ' . htmlspecialchars($groupTitle) . '</div>
         <table class="evidence-table">
             <thead>
                 <tr>
@@ -635,25 +578,13 @@ if ($hasMoreEvidence) {
                     <th style="width:27%;">ตำแหน่งที่พบ</th>
                 </tr>
             </thead>
-            <tbody>';
-        foreach ($chunk as $er) {
-            $evNo++;
-            $extraPagesHtml .= '<tr>';
-            $extraPagesHtml .= '<td>' . $evNo . '</td>';
-            $extraPagesHtml .= '<td style="text-align:left;padding-left:4px;">' . htmlspecialchars($er['detail']) . '</td>';
-            $extraPagesHtml .= '<td>' . htmlspecialchars($er['qty']) . '</td>';
-            $extraPagesHtml .= '<td style="text-align:left;padding-left:4px;">' . htmlspecialchars($er['position']) . '</td>';
-            $extraPagesHtml .= '</tr>';
-        }
-        $extraPagesHtml .= '
-            </tbody>
+            <tbody>' . stickerEvidenceRowsHtml($pg['items'], $n) . '</tbody>
         </table>
         <div class="qr-section">
             <div id="qrcode_extra_' . $pageNum . '"></div>
         </div>
     </div>
 </div>';
-    }
 }
 
 $replacements = [
@@ -668,6 +599,7 @@ $replacements = [
     '{{collect_date}}'       => htmlspecialchars($collectDate),
     '{{collect_time}}'       => htmlspecialchars($collectTime),
     '{{collector_name}}'     => htmlspecialchars($collectorName),
+    '{{lab_group_suffix}}'   => htmlspecialchars($labGroupSuffix),
     '{{evidence_rows}}'      => $evidenceRowsHtml,
     '{{custody_rows}}'       => $custodyRowsHtml,
     '{{chk_condition_good}}' => $chkCondGood,

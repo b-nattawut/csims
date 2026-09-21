@@ -1831,7 +1831,7 @@ $todayTimeBomb = date('H:i');
                                             <div class="row g-2 mb-3">
                                                 <div class="col-12">
                                                     <label class="form-label small text-muted">ลงชื่อ (ผู้รับมอบ) <span class="text-danger">*</span></label>
-                                                    <select class="form-select user-select-box-bomb" id="receiver_name_bomb" name="receiver_name" data-pos-target="#receiver_position_bomb">
+                                                    <select class="form-select user-select-box-bomb" id="receiver_name_bomb" name="receiver_name" data-pos-target="#receiver_position_bomb" data-ftn-skip>
                                                         <?php echo str_replace('-- เลือกผู้ตรวจ --', '-- เลือกผู้รับมอบ --', $inspectorOptionsBomb); ?>
                                                     </select>
                                                 </div>
@@ -1869,7 +1869,7 @@ $todayTimeBomb = date('H:i');
                                             <div class="row g-2 mb-3">
                                                 <div class="col-12">
                                                     <label class="form-label small text-muted">ลงชื่อ (ผู้ส่งมอบ) <span class="text-danger">*</span></label>
-                                                    <select class="form-select user-select-box-bomb" id="sender_name_bomb" name="sender_name" data-pos-target="#sender_position_bomb">
+                                                    <select class="form-select user-select-box-bomb" id="sender_name_bomb" name="sender_name" data-pos-target="#sender_position_bomb" data-ftn-skip>
                                                         <?php echo str_replace('-- เลือกผู้ตรวจ --', '-- เลือกผู้ส่งมอบ --', $inspectorOptionsBomb); ?>
                                                     </select>
                                                 </div>
@@ -4090,6 +4090,7 @@ $todayTimeBomb = date('H:i');
                                             if (preferPdf) {
                                                 const bpfSketchHasContent = (window._bpfSketchPages || []).some(function(p) {
                                                     if (p._bgImgEl || p.bgImageData) return true;
+                                                    if (typeof window.sketchHasInk === 'function' && window.sketchHasInk(p.canvasId)) return true;
                                                     const c = document.getElementById(p.canvasId);
                                                     if (!c || !c.width || !c.height) return false;
                                                     try {
@@ -4100,6 +4101,7 @@ $todayTimeBomb = date('H:i');
                                                     } catch (e) { /* skip */ }
                                                     return false;
                                                 });
+                                                if (typeof bpfCollectSketchPagesData === 'function') bpfCollectSketchPagesData();
                                                 const bpfSketchInp = document.getElementById('bpf_scene_sketch_data');
                                                 const bpfSketchVal = bpfSketchInp ? (bpfSketchInp.value || '') : '';
                                                 if (bpfSketchHasContent && bpfSketchVal.indexOf('data:image') === 0) {
@@ -4126,7 +4128,10 @@ $todayTimeBomb = date('H:i');
                                             // แผนผังจาก PDF form จัดการแยกด้านบนแล้ว
                                             // ถ้าไม่มีเนื้อหาเลย ให้แจ้งลบรูปเดิม
                                             if (preferPdf && !bombSketchHandled) {
-                                                clearedSignatures.push('scene_sketch');
+                                                const _ecSketch = window._explicitlyClearedBombSigKeys;
+                                                if (_ecSketch && _ecSketch.has('scene_sketch')) {
+                                                    clearedSignatures.push('scene_sketch');
+                                                }
                                             }
                                             for (const [key, canvasIds] of Object.entries(sigCanvasMap)) {
                                                 let blobSent = false;
@@ -5096,4 +5101,46 @@ $todayTimeBomb = date('H:i');
         &times;
     </button>
 
-    <img id="lightboxImageBomb" sr
+    <img id="lightboxImageBomb" src="" style="max-width: 95%; max-height: 85%; object-fit: contain; box-shadow: 0 0 30px rgba(0,0,0,0.5); cursor: default;" onclick="event.stopPropagation()">
+
+</div>
+<style>
+    body.lightbox-open {
+        overflow: hidden;
+    }
+
+    /* สไตล์ปุ่มปิด Lightbox */
+    .btn-close-lightbox-bomb {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        background: none;
+        border: none;
+        color: white;
+        font-size: 2.5rem;
+        cursor: pointer;
+        width: 40px;
+        height: 40px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        border-radius: 50%;
+        /* ทำให้พื้นหลังเป็นวงกลม */
+        transition: all 0.2s ease;
+        /* ให้การเปลี่ยนสีดูนุ่มนวล */
+        line-height: 1;
+        z-index: 10001;
+
+        line-height: 0;
+        padding-bottom: 16px;
+    }
+
+    /* เอฟเฟกต์ตอนเอาเมาส์ไปวาง (Hover) */
+    .btn-close-lightbox-bomb:hover {
+        background-color: rgba(255, 255, 255, 0.15);
+        transform: scale(1.1)
+            /* พื้นหลังขาวอ่อนๆ */
+    }
+
+    /* ล็อก Scroll หน้าหลัง */
+</style>

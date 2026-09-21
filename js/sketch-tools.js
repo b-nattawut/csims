@@ -1,88 +1,91 @@
 ﻿// ============================================================================
-// sketch-tools.js v8 — Undo (snapshot-based) + Palm rejection + Color + Pen Size + Eraser
+// sketch-tools.js v9 — Undo + Palm rejection + Color + Pen Size + Eraser
 //
-// v8 แก้ 2 ปัญหาที่ผู้ใช้แจ้ง:
-//  1) ปุ่ม "ย้อนกลับ" กดไม่ได้ / ไม่มีผล
-//     เดิม undo อ่านจาก pad.toData() ซึ่งจะว่างเมื่อแผนผังถูกโหลดมาจากรูปเดิม
-//     (fromDataURL / drawImage) หรือเมื่อใช้ยางลบแบบ destination-out
-//     v8 เก็บ "ภาพ snapshot" ของ canvas ก่อนเริ่มลากทุกเส้น แล้ว undo = คืนภาพก่อนหน้า
+// v9 แก้แผนผังฟอร์ม PDF (ระเบิด/เพลิงไหม้/ชีวิต/ทรัพย์):
+//  1) ปุ่ม "ย้อนกลับ" กดแล้วไม่มีผล
+//     ฟอร์ม PDF วาดด้วย canvas เอง ไม่ใช้ SignaturePad แต่ undo ไปอ่าน pad
+//     หรืออ่านอาเรย์เส้นที่ยังว่าง เพราะเส้นฝ่ามือยังลากไม่จบ
+//     v9 รวม undo ทุกโหมด: ยกเลิกเส้นที่กำลังลาก + ย้อนเส้นล่าสุด + snapshot ของ SignaturePad
 //  2) วางฝ่ามือบนจอแล้วเกิดเส้นลากอัตโนมัติ
-//     เพิ่ม palm rejection: ตัดนิ้ว/ฝ่ามือที่แตะพร้อมกันหลายจุด, ตัดพื้นที่สัมผัสกว้าง
-//     และถ้าตรวจพบว่าใช้ปากกา (stylus) จะไม่รับ input จากนิ้วเลย
+//     รับเฉพาะ pointer หลัก, ตัดสัมผัสที่สอง, ถ้ามีปากกาแล้วไม่รับนิ้ว,
+//     และถ้าฝ่ามือมาก่อนแล้วปากกามาทีหลัง จะทิ้งเส้นฝ่ามือแล้วให้ปากกาต่อ
 // ============================================================================
 window.signaturePads = window.signaturePads || {};
 window._sketchColor  = {};
 window._sketchOrigColor = {};
 window._sketchPenSize = {};
 window._sketchEraser = {};
+window._bpfSketchStrokes = window._bpfSketchStrokes || {};
 
-// --- state ภายในของ v8 ---
-var _sketchHistory   = {};   // canvasId -> [dataURL, ...] ภาพก่อนเริ่มแต่ละเส้น
-var _sketchHooked    = {};   // canvasId -> true เมื่อ hook pad แล้ว
-var _sketchPenSeen   = {};   // canvasId -> true เมื่อเคยเจอ pointerType 'pen'
-var _sketchPalmGuard = {};   // canvasId -> true เมื่อติดตั้ง palm rejection แล้ว
+var _sketchHistory   = {};
+var _sketchHooked    = {};
+var _sketchPenSeen   = {};
+var _sketchPalmGuard = {};
+var _sketchFreehand  = {};
+var _sketchLive      = {};
 var SKETCH_HISTORY_MAX = 25;
+var PALM_CONTACT_PX = 40;
+var PALM_TOUCH_DELAY_MS = 45;
 
-// ขนาดพื้นที่สัมผัส (px) ที่ถือว่าเป็นฝ่ามือ ไม่ใช่ปลายนิ้ว/ปากกา
-var PALM_CONTACT_PX = 45;
-
-// ============================================================================
-// Palm rejection
-// ============================================================================
-function _installPalmGuard(canvasId) {
-    if (_sketchPalmGuard[canvasId]) return;
-    var canvas = document.getElementById(canvasId);
-    if (!canvas) return;
-    _sketchPalmGuard[canvasId] = true;
-
-    var activeTouches = 0;
-
-    function block(e) {
-        e.stopImmediatePropagation();
-        e.preventDefault();
-    }
-
-    // ใช้ capture phase เพื่อสกัดก่อนที่ SignaturePad จะได้รับ event
-    canvas.addEventListener('pointerdown', function (e) {
-        if (e.pointerType === 'pen' || e.pointerType === 'mouse') {
-            if (e.pointerType === 'pen') _sketchPenSeen[canvasId] = true;
-            return;
-        }
-        // pointerType === 'touch'
-        // ใช้ปากกาอยู่ -> ไม่รับนิ้ว/ฝ่ามือเลย
-        if (_sketchPenSeen[canvasId]) { block(e); return; }
-        // แตะพร้อมกันหลายจุด (ฝ่ามือ) -> ไม่รับ
-        if (activeTouches > 0) { block(e); return; }
-        // พื้นที่สัมผัสกว้างเกินปลายนิ้ว (ฝ่ามือ/สันมือ) -> ไม่รับ
-        if ((e.width || 0) > PALM_CONTACT_PX || (e.height || 0) > PALM_CONTACT_PX) { block(e); return; }
-    }, true);
-
-    // นับจำนวนจุดสัมผัสจาก touch events (แม่นกว่าใน iOS/Android บางรุ่น)
-    canvas.addEventListener('touchstart', function (e) {
-        activeTouches = e.touches ? e.touches.length : 1;
-        if (_sketchPenSeen[canvasId]) { block(e); return; }
-        if (activeTouches > 1) { block(e); return; }
-        var t = e.touches && e.touches[0];
-        if (t && (((t.radiusX || 0) * 2) > PALM_CONTACT_PX || ((t.radiusY || 0) * 2) > PALM_CONTACT_PX)) {
-            block(e);
-        }
-    }, true);
-
-    canvas.addEventListener('touchmove', function (e) {
-        var n = e.touches ? e.touches.length : 1;
-        if (n > 1 || _sketchPenSeen[canvasId]) block(e);
-    }, true);
-
-    ['touchend', 'touchcancel'].forEach(function (ev) {
-        canvas.addEventListener(ev, function (e) {
-            activeTouches = e.touches ? e.touches.length : 0;
-        }, true);
-    });
+function _isPalmContact(e) {
+    var w = e.width || 0;
+    var h = e.height || 0;
+    if (w > PALM_CONTACT_PX || h > PALM_CONTACT_PX) return true;
+    var rx = e.radiusX || 0;
+    var ry = e.radiusY || 0;
+    return (rx * 2) > PALM_CONTACT_PX || (ry * 2) > PALM_CONTACT_PX;
 }
 
-// ============================================================================
-// Undo history (snapshot-based)
-// ============================================================================
+function _pointerPos(canvas, e) {
+    var rect = canvas.getBoundingClientRect();
+    if (!rect.width || !rect.height) return { x: 0, y: 0 };
+    return {
+        x: (e.clientX - rect.left) * (canvas.width / rect.width),
+        y: (e.clientY - rect.top) * (canvas.height / rect.height)
+    };
+}
+
+function _applyStrokeStyle(ctx, canvasId, isEraser) {
+    var w = window._sketchPenSize[canvasId] || 2;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.globalCompositeOperation = isEraser ? 'destination-out' : 'source-over';
+    if (!isEraser) ctx.strokeStyle = window._sketchColor[canvasId] || '#000';
+    ctx.lineWidth = isEraser ? Math.max(20, w * 4) : w;
+}
+
+function _drawStroke(ctx, s) {
+    if (!s || !s.points || !s.points.length) return;
+    ctx.beginPath();
+    ctx.moveTo(s.points[0].x, s.points[0].y);
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+    ctx.lineWidth = s.width;
+    ctx.globalCompositeOperation = s.eraser ? 'destination-out' : 'source-over';
+    if (!s.eraser) ctx.strokeStyle = s.color;
+    if (s.points.length === 1) {
+        ctx.arc(s.points[0].x, s.points[0].y, Math.max(0.5, s.width / 2), 0, Math.PI * 2);
+        ctx.fillStyle = s.eraser ? 'rgba(0,0,0,1)' : s.color;
+        ctx.fill();
+        return;
+    }
+    for (var i = 1; i < s.points.length; i++) ctx.lineTo(s.points[i].x, s.points[i].y);
+    ctx.stroke();
+}
+
+function _redrawFreehand(canvasId) {
+    var canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    var ctx = canvas.getContext('2d');
+    ctx.save();
+    ctx.globalCompositeOperation = 'source-over';
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    var strokes = window._bpfSketchStrokes[canvasId] || [];
+    strokes.forEach(function (s) { _drawStroke(ctx, s); });
+    ctx.restore();
+    ctx.globalCompositeOperation = 'source-over';
+}
+
 function _sketchSnapshot(canvasId) {
     var canvas = document.getElementById(canvasId);
     if (!canvas) return;
@@ -94,14 +97,16 @@ function _sketchSnapshot(canvasId) {
             _sketchHistory[canvasId].shift();
         }
     } catch (e) {
-        // canvas ถูก taint จากรูปข้ามโดเมน -> ข้าม snapshot รอบนี้
         console.warn('[sketch-tools] snapshot failed for ' + canvasId, e);
     }
 }
 
-// เรียกหลังโหลดแผนผังเดิมเข้ามา เพื่อให้ undo ย้อนได้ไม่เกินภาพต้นฉบับ
 function sketchResetHistory(canvasId) {
     _sketchHistory[canvasId] = [];
+    if (window._bpfSketchStrokes) window._bpfSketchStrokes[canvasId] = [];
+    var live = _sketchLive[canvasId];
+    if (live && live.timer) clearTimeout(live.timer);
+    _sketchLive[canvasId] = null;
 }
 window.sketchResetHistory = sketchResetHistory;
 
@@ -122,15 +127,224 @@ function _restoreSnapshot(canvasId, dataUrl, done) {
     img.src = dataUrl;
 }
 
-// ★ ย้อนกลับเส้นล่าสุด (Undo)
-function sketchUndo(canvasId) {
-    var pad = window.signaturePads[canvasId];
-    var hist = _sketchHistory[canvasId] || [];
+function _cancelLiveFreehand(canvasId) {
+    var live = _sketchLive[canvasId];
+    if (!live) return false;
+    if (live.timer) clearTimeout(live.timer);
+    _sketchLive[canvasId] = null;
+    if (live.snapshot) {
+        _restoreSnapshot(canvasId, live.snapshot);
+        return true;
+    }
+    _redrawFreehand(canvasId);
+    return true;
+}
 
+// ============================================================================
+// Freehand engine (PDF sketch pages — ไม่ใช้ SignaturePad)
+// ============================================================================
+function initFreehandCanvas(canvasId) {
+    var canvas = document.getElementById(canvasId);
+    if (!canvas || canvas.dataset.freehandInit === '1') return;
+    canvas.dataset.freehandInit = '1';
+    canvas.style.touchAction = 'none';
+    canvas.style.msTouchAction = 'none';
+
+    var ctx = canvas.getContext('2d');
+    window._sketchColor[canvasId] = window._sketchColor[canvasId] || '#000';
+    window._sketchOrigColor[canvasId] = window._sketchOrigColor[canvasId] || window._sketchColor[canvasId];
+    window._sketchPenSize[canvasId] = window._sketchPenSize[canvasId] || 2;
+    window._sketchEraser[canvasId] = !!window._sketchEraser[canvasId];
+    if (!window._bpfSketchStrokes[canvasId]) window._bpfSketchStrokes[canvasId] = [];
+
+    _sketchFreehand[canvasId] = true;
+
+    function beginStroke(e) {
+        var p = _pointerPos(canvas, e);
+        var isEraser = !!window._sketchEraser[canvasId];
+        var color = window._sketchColor[canvasId] || '#000';
+        var w = window._sketchPenSize[canvasId] || 2;
+        var snapshot = null;
+        try { snapshot = canvas.toDataURL('image/png'); } catch (err) { snapshot = null; }
+        _sketchLive[canvasId] = {
+            pointerId: e.pointerId,
+            type: e.pointerType,
+            snapshot: snapshot,
+            stroke: { eraser: isEraser, color: color, width: isEraser ? Math.max(20, w * 4) : w, points: [p] }
+        };
+        try { canvas.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+        _applyStrokeStyle(ctx, canvasId, isEraser);
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+    }
+
+    function moveStroke(e) {
+        var live = _sketchLive[canvasId];
+        if (!live || live.pointerId !== e.pointerId || !live.stroke) return;
+        var p = _pointerPos(canvas, e);
+        live.stroke.points.push(p);
+        ctx.lineTo(p.x, p.y);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.moveTo(p.x, p.y);
+    }
+
+    function endStroke(e) {
+        var live = _sketchLive[canvasId];
+        if (!live || (e && live.pointerId !== e.pointerId)) return;
+        if (live.timer) clearTimeout(live.timer);
+        ctx.globalCompositeOperation = 'source-over';
+        if (live.stroke && live.stroke.points.length > 0) {
+            window._bpfSketchStrokes[canvasId].push(live.stroke);
+            if (live.snapshot) {
+                if (!_sketchHistory[canvasId]) _sketchHistory[canvasId] = [];
+                _sketchHistory[canvasId].push(live.snapshot);
+                if (_sketchHistory[canvasId].length > SKETCH_HISTORY_MAX) {
+                    _sketchHistory[canvasId].shift();
+                }
+            }
+        }
+        _sketchLive[canvasId] = null;
+    }
+
+    canvas.addEventListener('pointerdown', function (e) {
+        if (e.button != null && e.button !== 0) return;
+        e.preventDefault();
+        e.stopPropagation();
+
+        if (e.pointerType === 'pen') _sketchPenSeen[canvasId] = true;
+        try { canvas.setPointerCapture(e.pointerId); } catch (err) { /* ignore */ }
+
+        var live = _sketchLive[canvasId];
+        if (live) {
+            if (e.pointerType === 'pen' && live.type === 'touch') {
+                _cancelLiveFreehand(canvasId);
+            } else {
+                return;
+            }
+        }
+
+        if (e.pointerType === 'touch' && _sketchPenSeen[canvasId]) return;
+        if (e.pointerType === 'touch' && _isPalmContact(e)) return;
+
+        if (e.pointerType === 'touch') {
+            var pending = {
+                pointerId: e.pointerId,
+                type: e.pointerType,
+                timer: null,
+                stroke: null,
+                snapshot: null
+            };
+            _sketchLive[canvasId] = pending;
+            pending.timer = setTimeout(function () {
+                if (_sketchLive[canvasId] !== pending) return;
+                if (_isPalmContact(e)) {
+                    _sketchLive[canvasId] = null;
+                    return;
+                }
+                beginStroke(e);
+            }, PALM_TOUCH_DELAY_MS);
+            return;
+        }
+
+        beginStroke(e);
+    });
+
+    canvas.addEventListener('pointermove', function (e) {
+        var live = _sketchLive[canvasId];
+        if (!live || live.pointerId !== e.pointerId) return;
+        e.preventDefault();
+        if (!live.stroke) return;
+        moveStroke(e);
+    });
+
+    function onPointerUp(e) {
+        var live = _sketchLive[canvasId];
+        if (!live || live.pointerId !== e.pointerId) return;
+        e.preventDefault();
+        if (!live.stroke) {
+            if (live.timer) clearTimeout(live.timer);
+            _sketchLive[canvasId] = null;
+            return;
+        }
+        endStroke(e);
+    }
+
+    canvas.addEventListener('pointerup', onPointerUp);
+    canvas.addEventListener('pointercancel', function (e) {
+        var live = _sketchLive[canvasId];
+        if (!live || live.pointerId !== e.pointerId) return;
+        _cancelLiveFreehand(canvasId);
+    });
+}
+window.initFreehandCanvas = initFreehandCanvas;
+
+function _canvasHasPixels(canvas) {
+    if (!canvas || !canvas.width || !canvas.height) return false;
+    try {
+        var px = canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height).data;
+        for (var i = 3; i < px.length; i += 4) {
+            if (px[i] > 0) return true;
+        }
+    } catch (e) { /* tainted */ }
+    return false;
+}
+
+function sketchHasInk(canvasId) {
+    var live = _sketchLive[canvasId];
+    if (live && live.stroke && live.stroke.points && live.stroke.points.length) return true;
+    var strokes = window._bpfSketchStrokes && window._bpfSketchStrokes[canvasId];
+    if (strokes && strokes.length > 0) return true;
+    return _canvasHasPixels(document.getElementById(canvasId));
+}
+
+function exportSketchDataUrl(canvasId, bgImage) {
+    var src = document.getElementById(canvasId);
+    var w = (src && src.width) ? src.width : 1120;
+    var h = (src && src.height) ? src.height : 660;
+    var out = document.createElement('canvas');
+    out.width = w;
+    out.height = h;
+    var ctx = out.getContext('2d');
+    ctx.fillStyle = '#ffffff';
+    ctx.fillRect(0, 0, w, h);
+    if (bgImage) {
+        try { ctx.drawImage(bgImage, 0, 0, w, h); } catch (e) { /* ignore */ }
+    }
+    if (_canvasHasPixels(src)) {
+        try { ctx.drawImage(src, 0, 0); } catch (e) { /* ignore */ }
+    } else {
+        var strokes = (window._bpfSketchStrokes && window._bpfSketchStrokes[canvasId]) || [];
+        strokes.forEach(function (s) { _drawStroke(ctx, s); });
+    }
+    var live = _sketchLive[canvasId];
+    if (live && live.stroke) _drawStroke(ctx, live.stroke);
+    try { return out.toDataURL('image/png'); } catch (e) { return ''; }
+}
+window.sketchHasInk = sketchHasInk;
+window.exportSketchDataUrl = exportSketchDataUrl;
+
+// ============================================================================
+// Undo
+// ============================================================================
+function sketchUndo(canvasId) {
+    if (_cancelLiveFreehand(canvasId)) return;
+
+    var strokes = window._bpfSketchStrokes && window._bpfSketchStrokes[canvasId];
+    if (strokes && strokes.length > 0) {
+        strokes.pop();
+        if (_sketchHistory[canvasId] && _sketchHistory[canvasId].length > 0) {
+            _sketchHistory[canvasId].pop();
+        }
+        _redrawFreehand(canvasId);
+        return;
+    }
+
+    var hist = _sketchHistory[canvasId] || [];
     if (hist.length > 0) {
         var prev = hist.pop();
+        var pad = window.signaturePads[canvasId];
         _restoreSnapshot(canvasId, prev, function () {
-            // sync ข้อมูลใน pad ให้ตรงกับภาพ (เพื่อไม่ให้ toData เพี้ยน)
             if (pad) {
                 try {
                     var d = pad.toData();
@@ -142,7 +356,7 @@ function sketchUndo(canvasId) {
         return;
     }
 
-    // ไม่มี history (เช่นสคริปต์โหลดทีหลัง) -> fallback แบบเดิม
+    var pad = window.signaturePads[canvasId];
     if (!pad) return;
     var data = pad.toData();
     if (!data || data.length === 0) return;
@@ -162,8 +376,80 @@ function sketchUndo(canvasId) {
 window.sketchUndo = sketchUndo;
 
 // ============================================================================
-// Patch SignaturePad instance (สี + hook undo history)
+// Palm rejection for SignaturePad canvases
 // ============================================================================
+function _installPalmGuard(canvasId) {
+    if (_sketchPalmGuard[canvasId]) return;
+    var canvas = document.getElementById(canvasId);
+    if (!canvas) return;
+    _sketchPalmGuard[canvasId] = true;
+    canvas.style.touchAction = 'none';
+
+    var activeId = null;
+    var activeType = null;
+
+    function block(e) {
+        e.stopImmediatePropagation();
+        e.preventDefault();
+    }
+
+    function restoreLastSnapshot() {
+        var hist = _sketchHistory[canvasId] || [];
+        if (!hist.length) return;
+        var prev = hist.pop();
+        _restoreSnapshot(canvasId, prev);
+        var pad = window.signaturePads[canvasId];
+        if (pad) {
+            try {
+                var d = pad.toData();
+                if (d && d.length) { d.pop(); pad._data = d; }
+            } catch (err) { /* ignore */ }
+        }
+    }
+
+    canvas.addEventListener('pointerdown', function (e) {
+        if (e.pointerType === 'pen' || e.pointerType === 'mouse') {
+            if (e.pointerType === 'pen') _sketchPenSeen[canvasId] = true;
+            if (activeId != null && activeId !== e.pointerId && e.pointerType === 'pen' && activeType === 'touch') {
+                restoreLastSnapshot();
+                activeId = e.pointerId;
+                activeType = 'pen';
+                return;
+            }
+            if (activeId != null && activeId !== e.pointerId) { block(e); return; }
+            activeId = e.pointerId;
+            activeType = e.pointerType;
+            return;
+        }
+        if (_sketchPenSeen[canvasId]) { block(e); return; }
+        if (activeId != null && activeId !== e.pointerId) { block(e); return; }
+        if (_isPalmContact(e)) { block(e); return; }
+        activeId = e.pointerId;
+        activeType = 'touch';
+    }, true);
+
+    canvas.addEventListener('pointerup', function (e) {
+        if (e.pointerId === activeId) { activeId = null; activeType = null; }
+    }, true);
+    canvas.addEventListener('pointercancel', function (e) {
+        if (e.pointerId === activeId) { activeId = null; activeType = null; }
+    }, true);
+
+    canvas.addEventListener('touchstart', function (e) {
+        var n = e.touches ? e.touches.length : 1;
+        if (_sketchPenSeen[canvasId] || n > 1) { block(e); return; }
+        var t = e.touches && e.touches[0];
+        if (t && (((t.radiusX || 0) * 2) > PALM_CONTACT_PX || ((t.radiusY || 0) * 2) > PALM_CONTACT_PX)) {
+            block(e);
+        }
+    }, true);
+
+    canvas.addEventListener('touchmove', function (e) {
+        var n = e.touches ? e.touches.length : 1;
+        if (n > 1 || _sketchPenSeen[canvasId]) block(e);
+    }, true);
+}
+
 function _patchPad(canvasId) {
     var pad = window.signaturePads[canvasId];
     if (!pad) return;
@@ -188,16 +474,12 @@ function _patchPad(canvasId) {
         };
     }
 
-    // hook "ก่อนเริ่มลากเส้น" เพื่อเก็บ snapshot ไว้ให้ undo
     if (!_sketchHooked[canvasId]) {
         _sketchHooked[canvasId] = true;
         var snap = function () { _sketchSnapshot(canvasId); };
-
         if (typeof pad.addEventListener === 'function') {
-            // SignaturePad v4
             pad.addEventListener('beginStroke', snap);
         } else {
-            // SignaturePad v2/v3
             var prevOnBegin = pad.onBegin;
             pad.onBegin = function () {
                 snap();
@@ -207,7 +489,6 @@ function _patchPad(canvasId) {
     }
 }
 
-// สแกนหา pad ที่ยังไม่ถูก hook (เผื่อ pad ถูกสร้างหลังไฟล์นี้โหลด)
 setInterval(function () {
     for (var id in window.signaturePads) {
         if (!_sketchHooked[id] && window.signaturePads[id]) _patchPad(id);
@@ -216,14 +497,12 @@ setInterval(function () {
 
 function sketchSetColor(canvasId, color) {
     window._sketchColor[canvasId] = color;
-    // เปลี่ยนสีแล้วปิด eraser อัตโนมัติ
     window._sketchEraser[canvasId] = false;
     _updateEraserBtn(canvasId, false);
     var pad = window.signaturePads[canvasId];
     if (pad) { _patchPad(canvasId); }
 }
 
-// ★ เปลี่ยนขนาดปากกา
 function sketchSetPenSize(canvasId, size) {
     window._sketchPenSize[canvasId] = parseFloat(size) || 2;
     var pad = window.signaturePads[canvasId];
@@ -233,7 +512,6 @@ function sketchSetPenSize(canvasId, size) {
     }
 }
 
-// ★ Toggle ยางลบ
 function sketchToggleEraser(canvasId) {
     window._sketchEraser[canvasId] = !window._sketchEraser[canvasId];
     var isEraser = window._sketchEraser[canvasId];
@@ -259,7 +537,6 @@ function sketchToggleEraser(canvasId) {
 }
 
 function _updateEraserBtn(canvasId, active) {
-    // Try both ID conventions: suffix '_eraser_btn' and replace '_canvas' → '_eraser_btn'
     var btn = document.getElementById(canvasId + '_eraser_btn')
            || document.getElementById(canvasId.replace('_canvas', '_eraser_btn'));
     if (btn) {
@@ -289,4 +566,4 @@ function buildSketchToolbar(canvasId, style) {
         '</label>';
 }
 
-console.log('[sketch-tools.js v8] loaded OK - Snapshot Undo + Palm rejection + Color + PenSize + Eraser');
+console.log('[sketch-tools.js v9] loaded OK - Freehand Undo + Palm rejection + Color + PenSize + Eraser');

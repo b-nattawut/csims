@@ -12,7 +12,7 @@
  *   6. ส่ง masked email กลับไปแสดงที่ frontend
  */
 
-session_start();
+require_once __DIR__ . '/../includes/session_boot.php';
 header('Content-Type: application/json; charset=utf-8');
 
 require_once __DIR__ . '/../db_config.php';

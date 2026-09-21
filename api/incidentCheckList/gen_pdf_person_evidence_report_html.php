@@ -14,6 +14,7 @@ error_reporting(E_ALL);
 
 require_once __DIR__ . '/../../db_config.php';
 require_once __DIR__ . '/../../helpers/report_no.php';
+require_once __DIR__ . '/lab_unit_helper.php';
 
 // ==========================================
 // 1. HELPER FUNCTIONS
@@ -503,7 +504,7 @@ if (!empty($evidences) && is_array($evidences)) {
         if (empty($detail)) $detail = h(getVal($ev, 'item'));
         $qty = h(getVal($ev, 'qty'));
         $labUnit = getVal($ev, 'lab_unit');
-        $labUnitText = $labUnitMap[$labUnit] ?? $labUnit;
+        $labUnitText = labUnitsToText($labUnit);
 
         $labLine = '';
         if (!empty($labUnitText)) {

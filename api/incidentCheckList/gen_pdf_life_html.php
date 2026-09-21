@@ -598,7 +598,7 @@ if (!empty($scene_sketch_img_data)) {
         $sketchBase64 = $scene_sketch_img_data;
     }
     if (!empty($sketchBase64) && strpos($sketchBase64, 'data:image') !== false) {
-        $scene_sketch_img = '<img src="' . $sketchBase64 . '" style="max-width:95%; max-height:95%; object-fit:contain;" alt="แผนผังสังเขป">';
+        $scene_sketch_img = '<img src="' . $sketchBase64 . '" style="width:100%; height:100%; object-fit:contain; display:block;" alt="แผนผังสังเขป">';
     }
 }
 

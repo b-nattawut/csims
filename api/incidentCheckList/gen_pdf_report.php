@@ -13,6 +13,7 @@ error_reporting(E_ALL);
 
 require_once __DIR__ . '/../../vendor/autoload.php';
 require_once __DIR__ . '/../../db_config.php';
+require_once __DIR__ . '/lab_unit_helper.php';
 
 // ==========================================
 // 1. รับ Parameter และดึงข้อมูลจาก Database
@@ -356,10 +357,11 @@ if (!empty($evidenceList)) {
         $evidenceNo = getV($evidence, 'no', $index);
         $evidenceDetail = trim((string)getV($evidence, 'detail'));
         $labUnit = getV($evidence, 'lab_unit');
-        if ($labUnit === 'traffic') $labUnit = getV($forensicResults, 'lab_unit', '');
+        $labUnits = labUnitsNormalize($labUnit);
+        if (in_array('traffic', $labUnits, true)) $labUnit = getV($forensicResults, 'lab_unit', '');
         if ($evidenceDetail === '' && (string)$evidenceNo === '') continue;
-        $labUnitText = $labUnitMap[$labUnit] ?? $labUnit;
-        if (empty($labUnitText)) $labUnitText = '-';
+        $labUnitText = labUnitsToText($labUnit);
+        if ($labUnitText === '') $labUnitText = '-';
 
         $evidenceRowsHtml .= '<tr>
             <td style="text-align:center;">' . htmlspecialchars($evidenceNo) . '</td>

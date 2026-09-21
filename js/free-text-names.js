@@ -1,22 +1,25 @@
 // ============================================================================
-// free-text-names.js v1
+// free-text-names.js v2
 //
 // แก้ปัญหาที่ผู้ใช้แจ้ง (ข้อ 1):
 //   "หัวข้อเลือกผู้บันทึก (ใบรับแจ้ง, เช็คลิสต์) รายชื่อไม่ตรงตามจริง
 //    ยังมีชื่อทดลองในแบบฟอร์ม ขอให้เป็นช่องว่างแล้วพิมพ์รายชื่อเอง"
 //
 // วิธีทำ: แปลง <select> ของช่องชื่อคน (ผู้บันทึก/ผู้จดบันทึก/ผู้เก็บวัตถุพยาน/
-// ผู้ถ่ายภาพ/ผู้รับมอบ/ผู้ส่งมอบ/ผู้ทบทวน/ผู้อนุมัติ) ให้เป็น <input type="text">
+// ผู้ถ่ายภาพ/ผู้ทบทวน/ผู้อนุมัติ) ให้เป็น <input type="text">
 // ที่ "พิมพ์ชื่อเองได้อิสระ" แต่ยังมี <datalist> แนะนำรายชื่อจากฐานข้อมูลให้เลือก
 //
-// ทำเป็นไฟล์กลางไฟล์เดียว ครอบทุกแบบฟอร์ม (ระเบิด/เพลิงไหม้/ชีวิต/ทรัพย์/จราจร
-// ทั้งฟอร์มปกติและฟอร์ม PDF) เพื่อให้แก้/ย้อนกลับได้ง่ายกว่าการไปแก้ทีละจุด
+// v2: ช่องการส่งมอบสถานที่เกิดเหตุ (ผู้รับมอบ / ผู้ส่งมอบ) ทุกแบบตรวจเก็บ
+//     ต้องเป็น dropdown ตามรายชื่อในระบบ ไม่แปลงเป็นช่องพิมพ์
 // ============================================================================
 (function () {
     'use strict';
 
-    // ชื่อ/ไอดีของช่องที่ถือว่าเป็น "ช่องกรอกชื่อคน"
-    var NAME_PATTERN = /(recorder|collector_name|photographer_name|receiver_name|sender_name|receiver_id|deliverer_id|reviewer|approver|investigator_select)/i;
+    // ช่องชื่อคนที่ยังให้พิมพ์เองได้ (ไม่รวมผู้รับมอบ/ผู้ส่งมอบ)
+    var NAME_PATTERN = /(recorder|collector_name|photographer_name|reviewer|approver|investigator_select)/i;
+
+    // การส่งมอบสถานที่เกิดเหตุ / ผู้รับมอบ-ผู้ส่งมอบวัตถุพยาน ต้องเป็น dropdown
+    var HANDOVER_SKIP_PATTERN = /(receiver_name|sender_name|receiver_id|deliverer_id|sender_id)/i;
 
     // คลาสที่ต้องถอดออก เพราะเป็นคลาสที่โค้ดอื่นใช้ผูก select2 ไว้
     // (select2 ใช้กับ <input> ไม่ได้ ถ้าไม่ถอดจะ error)
@@ -76,6 +79,7 @@
 
     function convert(select) {
         var key = (select.name || '') + ' ' + (select.id || '');
+        if (HANDOVER_SKIP_PATTERN.test(key)) return;
         if (!NAME_PATTERN.test(key)) return;
 
         // ถ้า select2 ผูกไว้แล้ว ต้องถอดก่อน ไม่งั้นจะเหลือ DOM ค้าง
@@ -153,5 +157,5 @@
     });
 
     window.convertNameSelectsToFreeText = run;
-    console.log('[free-text-names.js v1] loaded OK');
+    console.log('[free-text-names.js v2] loaded OK');
 })();
