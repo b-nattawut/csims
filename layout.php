@@ -395,7 +395,7 @@ $display_position = $logged_in_user['position_name'];
 
             function goLogout() {
                 clearInterval(pollTimer);
-                window.location.href = '/csims/logout.php';
+                window.location.href = '/csims/login.html?timeout=1';
             }
 
             function showWarning() {
@@ -447,8 +447,8 @@ $display_position = $logged_in_user['position_name'];
 
     <script src="js/dexie.js"></script>
     <script src="js/offline-db.js"></script>
-    <!-- แปลงช่องเลือกชื่อคน (ผู้บันทึก/ผู้รับมอบ/ผู้ทบทวน ฯลฯ) ให้พิมพ์ชื่อเองได้ -->
-    <script src="js/free-text-names.js"></script>
+    <!-- แปลงช่องเลือกชื่อคน (ผู้บันทึก/ผู้ทบทวน ฯลฯ) ให้พิมพ์ชื่อเองได้ — ผู้รับมอบ/ผู้ส่งมอบยังเป็น dropdown -->
+    <script src="js/free-text-names.js?v=2"></script>
 
     <script>
         // ลงทะเบียน Service Worker

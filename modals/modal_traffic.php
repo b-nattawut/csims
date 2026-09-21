@@ -830,7 +830,7 @@ $todayTimeTraffic = date('H:i');
                                     <div class="row g-2 mb-3">
                                         <div class="col-12">
                                             <label class="form-label small text-muted">ลงชื่อ (ผู้รับมอบ) <span class="text-danger">*</span></label>
-                                            <select class="form-select user-select-box-traffic" id="receiver_name_traffic" name="receiver_name" data-pos-target="#receiver_position_traffic">
+                                            <select class="form-select user-select-box-traffic" id="receiver_name_traffic" name="receiver_name" data-pos-target="#receiver_position_traffic" data-ftn-skip>
                                                 <?php echo str_replace('-- เลือกผู้ตรวจ --', '-- เลือกผู้รับมอบ --', $inspectorOptionsTraffic); ?>
                                             </select>
                                         </div>
@@ -868,7 +868,7 @@ $todayTimeTraffic = date('H:i');
                                     <div class="row g-2 mb-3">
                                         <div class="col-12">
                                             <label class="form-label small text-muted">ลงชื่อ (ผู้ส่งมอบ) <span class="text-danger">*</span></label>
-                                            <select class="form-select user-select-box-traffic" id="sender_name_traffic" name="sender_name" data-pos-target="#sender_position_traffic">
+                                            <select class="form-select user-select-box-traffic" id="sender_name_traffic" name="sender_name" data-pos-target="#sender_position_traffic" data-ftn-skip>
                                                 <?php echo str_replace('-- เลือกผู้ตรวจ --', '-- เลือกผู้ส่งมอบ --', $inspectorOptionsTraffic); ?>
                                             </select>
                                         </div>

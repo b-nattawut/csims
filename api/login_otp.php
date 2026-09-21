@@ -7,7 +7,7 @@
  * แต่ไม่ set session → คืน user_id + email ให้ frontend ไป verify OTP ต่อ
  */
 
-session_start();
+require_once __DIR__ . '/../includes/session_boot.php';
 header('Content-Type: application/json; charset=utf-8');
 
 require_once __DIR__ . '/../db_config.php';

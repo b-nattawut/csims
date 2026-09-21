@@ -1098,7 +1098,7 @@ $fpfTodayTime = date('H:i');
                     <div class="fpf-fr">
                         <span class="fpf-fl" style="visibility:hidden;">ลงชื่อ</span>
                         <span class="fpf-fl">(</span>
-                        <select class="fpf-sel" name="receiver_name_fire" id="fpf_receiver_name" style="text-align:center;">
+                        <select class="fpf-sel" name="receiver_name_fire" id="fpf_receiver_name" style="text-align:center;" data-ftn-skip>
                             <?= str_replace('-- เลือกผู้ตรวจ --', '-- เลือกผู้รับมอบ --', $inspectorOptionsFire) ?>
                         </select>
                         <span class="fpf-fl">)</span>
@@ -1123,7 +1123,7 @@ $fpfTodayTime = date('H:i');
                     <div class="fpf-fr">
                         <span class="fpf-fl" style="visibility:hidden;">ลงชื่อ</span>
                         <span class="fpf-fl">(</span>
-                        <select class="fpf-sel" name="sender_name_fire" id="fpf_sender_name" style="text-align:center;">
+                        <select class="fpf-sel" name="sender_name_fire" id="fpf_sender_name" style="text-align:center;" data-ftn-skip>
                             <?= str_replace('-- เลือกผู้ตรวจ --', '-- เลือกผู้ส่งมอบ --', $inspectorOptionsFire) ?>
                         </select>
                         <span class="fpf-fl">)</span>

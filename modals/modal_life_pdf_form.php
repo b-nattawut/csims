@@ -1110,7 +1110,7 @@ $lpfTodayTime = date('H:i');
                     <div class="lpf-fr">
                         <span class="lpf-fl" style="visibility:hidden;">ลงชื่อ</span>
                         <span class="lpf-fl">(</span>
-                        <select class="lpf-sel" name="receiver_name" id="lpf_receiver_name" style="text-align:center;">
+                        <select class="lpf-sel" name="receiver_name" id="lpf_receiver_name" style="text-align:center;" data-ftn-skip>
                             <?= str_replace('-- เลือกผู้ตรวจ --', '-- เลือกผู้รับมอบ --', $lpfInspectorOptions) ?>
                         </select>
                         <span class="lpf-fl">)</span>
@@ -1135,7 +1135,7 @@ $lpfTodayTime = date('H:i');
                     <div class="lpf-fr">
                         <span class="lpf-fl" style="visibility:hidden;">ลงชื่อ</span>
                         <span class="lpf-fl">(</span>
-                        <select class="lpf-sel" name="sender_name" id="lpf_sender_name" style="text-align:center;">
+                        <select class="lpf-sel" name="sender_name" id="lpf_sender_name" style="text-align:center;" data-ftn-skip>
                             <?= str_replace('-- เลือกผู้ตรวจ --', '-- เลือกผู้ส่งมอบ --', $lpfInspectorOptions) ?>
                         </select>
                         <span class="lpf-fl">)</span>

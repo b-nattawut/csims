@@ -457,6 +457,13 @@
 </div>
 
 <script>
+    fetch('api/session_status.php?action=check', { cache: 'no-store', credentials: 'same-origin' })
+        .then(function (r) { return r.json(); })
+        .then(function (d) {
+            if (d && d.active) window.location.replace('dashboard.php');
+        })
+        .catch(function () {});
+
     // รีเซ็ตฟอร์มเมื่อกด back กลับมา (bfcache)
     window.addEventListener('pageshow', function(event) {
         const btn = document.querySelector('.btn-login');
@@ -483,6 +490,7 @@
             // Step 1: ตรวจ email + password
             const loginRes = await fetch('api/login_otp.php', {
                 method: 'POST',
+                credentials: 'same-origin',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ email, password })
             });
@@ -500,6 +508,7 @@
 
             const otpRes = await fetch('api/send_otp.php', {
                 method: 'POST',
+                credentials: 'same-origin',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({
                     user_id: loginData.user_id,

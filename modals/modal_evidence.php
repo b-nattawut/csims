@@ -193,7 +193,7 @@ $todayTimeLife = date('H:i');
                                     <div class="row g-2 mb-3">
                                         <div class="col-12">
                                             <label class="form-label small text-muted">ชื่อ <span class="text-danger">*</span></label>
-                                            <select class="form-select user-select-box-evidence" id="receiver_name_evidence" name="receiver_name" data-pos-target="#receiver_position_evidence">
+                                            <select class="form-select user-select-box-evidence" id="receiver_name_evidence" name="receiver_name" data-pos-target="#receiver_position_evidence" data-ftn-skip>
                                                 <?php echo str_replace('-- เลือกผู้ตรวจ --', '-- เลือกผู้รับมอบ --', $inspectorOptionsLife); ?>
                                             </select>
                                         </div>

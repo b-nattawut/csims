@@ -1062,7 +1062,7 @@ $ppfTodayTime = date('H:i');
                     <div class="ppf-fr">
                         <span class="ppf-fl" style="visibility:hidden;">ลงชื่อ</span>
                         <span class="ppf-fl">(</span>
-                        <select class="ppf-sel" name="receiver_id" id="ppf_receiver_name" style="text-align:center;">
+                        <select class="ppf-sel" name="receiver_id" id="ppf_receiver_name" style="text-align:center;" data-ftn-skip>
                             <?= str_replace('-- เลือกผู้ตรวจ --', '-- เลือกผู้รับมอบ --', $ppfInspectorOptions) ?>
                         </select>
                         <span class="ppf-fl">)</span>
@@ -1088,7 +1088,7 @@ $ppfTodayTime = date('H:i');
                     <div class="ppf-fr">
                         <span class="ppf-fl" style="visibility:hidden;">ลงชื่อ</span>
                         <span class="ppf-fl">(</span>
-                        <select class="ppf-sel" name="deliverer_id" id="ppf_sender_name" style="text-align:center;">
+                        <select class="ppf-sel" name="deliverer_id" id="ppf_sender_name" style="text-align:center;" data-ftn-skip>
                             <?= str_replace('-- เลือกผู้ตรวจ --', '-- เลือกผู้ส่งมอบ --', $ppfInspectorOptions) ?>
                         </select>
                         <span class="ppf-fl">)</span>

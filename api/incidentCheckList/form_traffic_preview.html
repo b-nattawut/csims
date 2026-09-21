@@ -438,6 +438,42 @@
             color: #fff;
         }
 
+        /* ===== PHOTO GRID (5 cols × 7 rows = 35 per page) ===== */
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px 4px;
+            align-content: start;
+        }
+        .photo-cell-wrapper {
+            display: flex;
+            flex-direction: column;
+        }
+        .photo-cell {
+            border: 1.5px solid #333;
+            overflow: hidden;
+            background: #fff;
+        }
+        .photo-cell img {
+            width: 100%;
+            aspect-ratio: 4/3;
+            object-fit: cover;
+            display: block;
+        }
+        .photo-fname {
+            font-size: 7.5px;
+            font-weight: 500;
+            font-family: 'Sarabun', sans-serif;
+            text-align: center;
+            padding: 2px 2px 0;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            background: transparent;
+            color: #222;
+            line-height: 1.4;
+        }
+
         @page {
             margin: 0;
             size: A4 portrait;
@@ -466,6 +502,9 @@
             .page:last-child {
                 page-break-after: auto;
             }
+
+            .photo-grid { gap: 2px !important; }
+            .photo-cell { page-break-inside: avoid; }
         }
 
         /* ปรับส่วนหัวลำดับไม่ให้ขยับ */
@@ -1078,11 +1117,8 @@
             </div>
         </div>
 
-        <!-- ==================== PHOTO AREA ==================== -->
-        <div
-            style="flex:1; display:flex; flex-direction:column; align-items:center; justify-content:space-around; margin-bottom:6px;">
-            {{photo_images}}
-        </div>
+        <!-- ==================== PHOTO GRID ==================== -->
+        {{photo_images}}
 
         <!-- ==================== RECORDER ==================== -->
         <div style="margin-top:12px; display:flex; flex-direction:column; align-items:flex-end;">
@@ -1118,7 +1154,7 @@
     document.addEventListener('DOMContentLoaded', function() {
         var qrText = '{{qr_data}}';
         if (qrText && qrText !== '' && typeof QRCode !== 'undefined') {
-            for (var i = 1; i <= 3; i++) {
+            for (var i = 1; i <= 20; i++) {
                 var el = document.getElementById('qr_page' + i);
                 if (el) {
                     new QRCode(el, { text: qrText, width: 56, height: 56, colorDark: '#000000', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });

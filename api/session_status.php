@@ -5,19 +5,15 @@
  * - action=extend    : ต่ออายุ session (รีเซ็ต last_activity)
  * - action=heartbeat : ต่ออายุเมื่อผู้ใช้มีการใช้งานจริงในหน้าเว็บ
  *
- * หมายเหตุ: ใช้ session_start() โดยตรง (ไม่ผ่าน session_config.php)
- * เพื่อให้การ "เช็ก" ไม่ไปรีเซ็ตเวลาเอง
+ * หมายเหตุ: เริ่ม session ผ่าน session_boot.php (cookie อายุ 8 ชม.)
+ * ไม่ผ่าน session_config.php เพื่อให้ action=check ไม่รีเซ็ต last_activity
  */
 
 header('Content-Type: application/json; charset=utf-8');
 header('Cache-Control: no-store, no-cache, must-revalidate');
 
-// ใช้ค่า timeout ชุดเดียวกับ includes/session_config.php
-require_once __DIR__ . '/../includes/session_timeout.php';
-
-if (session_status() === PHP_SESSION_NONE) {
-    session_start();
-}
+// ใช้ cookie อายุเดียวกับหน้าเว็บ (อย่า session_start() เปล่า — จะกลายเป็น cookie ปิดแท็บแล้วหาย)
+require_once __DIR__ . '/../includes/session_boot.php';
 
 $timeout = CSIMS_SESSION_TIMEOUT;
 

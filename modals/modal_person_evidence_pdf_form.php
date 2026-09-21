@@ -1062,7 +1062,7 @@ $pepfTodayTime = date('H:i');
                         <div class="pepf-fr" style="margin-top:2px; margin-bottom:3px;">
                             <span class="pepf-fl" style="min-width:38px; visibility:hidden;">ลงชื่อ</span>
                             <span class="pepf-fl">(</span>
-                            <select class="pepf-sel pepf-user-select" name="pepf_receiver_id" id="pepf_receiver_id" style="text-align:center;" data-pos-target="#pepf_receiver_position">
+                            <select class="pepf-sel pepf-user-select" name="pepf_receiver_id" id="pepf_receiver_id" style="text-align:center;" data-pos-target="#pepf_receiver_position" data-ftn-skip>
                                 <?= str_replace('-- เลือก --', '-- เลือกผู้รับมอบ --', $pepfInspectorOptions) ?>
                             </select>
                             <span class="pepf-fl">)</span>
@@ -1089,7 +1089,7 @@ $pepfTodayTime = date('H:i');
                         <div class="pepf-fr" style="margin-top:2px; margin-bottom:3px;">
                             <span class="pepf-fl" style="min-width:38px; visibility:hidden;">ลงชื่อ</span>
                             <span class="pepf-fl">(</span>
-                            <select class="pepf-sel pepf-user-select" name="pepf_sender_id" id="pepf_sender_id" style="text-align:center;" data-pos-target="#pepf_sender_position">
+                            <select class="pepf-sel pepf-user-select" name="pepf_sender_id" id="pepf_sender_id" style="text-align:center;" data-pos-target="#pepf_sender_position" data-ftn-skip>
                                 <?= str_replace('-- เลือก --', '-- เลือกผู้ส่งมอบ --', $pepfInspectorOptions) ?>
                             </select>
                             <span class="pepf-fl">)</span>

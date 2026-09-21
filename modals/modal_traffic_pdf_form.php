@@ -973,7 +973,7 @@ $tpfTodayTime = date('H:i');
                     <div class="tpf-fr">
                         <span class="tpf-fl" style="visibility:hidden;">ลงชื่อ</span>
                         <span class="tpf-fl">(</span>
-                        <select class="tpf-sel tpf-user-select" name="receiver_name" id="tpf_receiver_name" style="text-align:center;" data-pos-target="#tpf_receiver_position">
+                        <select class="tpf-sel tpf-user-select" name="receiver_name" id="tpf_receiver_name" style="text-align:center;" data-pos-target="#tpf_receiver_position" data-ftn-skip>
                             <?= str_replace('-- เลือกผู้ตรวจ --', '-- เลือกผู้รับมอบ --', $tpfInspectorOptions) ?>
                         </select>
                         <span class="tpf-fl">)</span>
@@ -995,7 +995,7 @@ $tpfTodayTime = date('H:i');
                     <div class="tpf-fr">
                         <span class="tpf-fl" style="visibility:hidden;">ลงชื่อ</span>
                         <span class="tpf-fl">(</span>
-                        <select class="tpf-sel tpf-user-select" name="sender_name" id="tpf_sender_name" style="text-align:center;" data-pos-target="#tpf_sender_position">
+                        <select class="tpf-sel tpf-user-select" name="sender_name" id="tpf_sender_name" style="text-align:center;" data-pos-target="#tpf_sender_position" data-ftn-skip>
                             <?= str_replace('-- เลือกผู้ตรวจ --', '-- เลือกผู้ส่งมอบ --', $tpfInspectorOptions) ?>
                         </select>
                         <span class="tpf-fl">)</span>

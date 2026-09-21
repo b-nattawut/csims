@@ -1323,7 +1323,7 @@ $bpfTodayTime = date('H:i');
                     <div class="bpf-fr">
                         <span class="bpf-fl" style="visibility:hidden;">ลงชื่อ</span>
                         <span class="bpf-fl">(</span>
-                        <select class="bpf-sel" name="receiver_name" id="bpf_receiver_name" style="text-align:center;">
+                        <select class="bpf-sel" name="receiver_name" id="bpf_receiver_name" style="text-align:center;" data-ftn-skip>
                             <?= str_replace('-- เลือกผู้ตรวจ --', '-- เลือกผู้รับมอบ --', $bpfInspectorOptions) ?>
                         </select>
                         <span class="bpf-fl">)</span>
@@ -1348,7 +1348,7 @@ $bpfTodayTime = date('H:i');
                     <div class="bpf-fr">
                         <span class="bpf-fl" style="visibility:hidden;">ลงชื่อ</span>
                         <span class="bpf-fl">(</span>
-                        <select class="bpf-sel" name="sender_name" id="bpf_sender_name" style="text-align:center;">
+                        <select class="bpf-sel" name="sender_name" id="bpf_sender_name" style="text-align:center;" data-ftn-skip>
                             <?= str_replace('-- เลือกผู้ตรวจ --', '-- เลือกผู้ส่งมอบ --', $bpfInspectorOptions) ?>
                         </select>
                         <span class="bpf-fl">)</span>

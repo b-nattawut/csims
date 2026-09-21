@@ -153,19 +153,20 @@
         }
         .fpf-footer-right { text-align: right; white-space: nowrap; line-height: 1.3; }
 
-        /* ===== Photo page ===== */
-        .photo-slot {
-            width: 100%; height: 220px; border: 1px dashed #bbb; margin-bottom: 8px;
-            display: flex; align-items: center; justify-content: center;
-            position: relative; overflow: hidden; background: #fafafa;
+        /* ===== PHOTO GRID (5 cols × 7 rows = 35 per page) ===== */
+        .photo-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 6px 4px;
+            align-content: start;
         }
-        .photo-slot img {
-            max-width: 100%; max-height: 100%; object-fit: contain;
-        }
-        .photo-caption {
-            position: absolute; bottom: 0; left: 0; right: 0;
-            background: rgba(255,255,255,0.85); padding: 2px 6px;
-            font-size: 10px; text-align: center;
+        .photo-cell-wrapper { display: flex; flex-direction: column; }
+        .photo-cell { border: 1.5px solid #333; overflow: hidden; background: #fff; }
+        .photo-cell img { width: 100%; aspect-ratio: 4/3; object-fit: cover; display: block; }
+        .photo-fname {
+            font-size: 7.5px; font-weight: 500; font-family: 'Sarabun', sans-serif;
+            text-align: center; padding: 2px 2px 0; white-space: nowrap;
+            overflow: hidden; text-overflow: ellipsis; background: transparent; color: #222; line-height: 1.4;
         }
 
         @page { margin: 8mm 10mm; size: A4 portrait; }
@@ -180,6 +181,9 @@
                 overflow: visible !important;
             }
             .page:last-child { page-break-after: auto; }
+
+            .photo-grid { gap: 2px !important; }
+            .photo-cell { page-break-inside: avoid; }
 
             /* Borders */
             .fpf-form-body { border: 2px solid #000 !important; }
@@ -664,7 +668,7 @@
 document.addEventListener('DOMContentLoaded', function() {
     var qrText = '{{qr_data}}';
     if (qrText && qrText !== '' && typeof QRCode !== 'undefined') {
-        for (var i = 1; i <= 10; i++) {
+        for (var i = 1; i <= 20; i++) {
             var el = document.getElementById('qr_page' + i);
             if (el) {
                 new QRCode(el, { text: qrText, width: 56, height: 56, colorDark: '#000000', colorLight: '#ffffff', correctLevel: QRCode.CorrectLevel.M });

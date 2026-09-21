@@ -533,7 +533,7 @@ $todayTimeEV8 = date('H:i');
                                     <div class="row g-2 mb-3">
                                         <div class="col-12">
                                             <label class="form-label small text-muted">ลงชื่อ <span class="text-danger">*</span></label>
-                                            <select class="form-select ev8-user-select" id="ev8_receiver_id" name="ev8_receiver_id" data-pos-target="#ev8_receiver_position"><?= str_replace('-- เลือกผู้ตรวจ --', '-- เลือกผู้รับมอบ --', $inspectorOptionsEV8) ?></select>
+                                            <select class="form-select ev8-user-select" id="ev8_receiver_id" name="ev8_receiver_id" data-pos-target="#ev8_receiver_position" data-ftn-skip><?= str_replace('-- เลือกผู้ตรวจ --', '-- เลือกผู้รับมอบ --', $inspectorOptionsEV8) ?></select>
                                         </div>
                                         <div class="col-12">
                                             <label class="form-label small text-muted">ตำแหน่ง</label>
@@ -564,7 +564,7 @@ $todayTimeEV8 = date('H:i');
                                     <div class="row g-2 mb-3">
                                         <div class="col-12">
                                             <label class="form-label small text-muted">ลงชื่อ <span class="text-danger">*</span></label>
-                                            <select class="form-select ev8-user-select" id="ev8_sender_id" name="ev8_sender_id" data-pos-target="#ev8_sender_position"><?= str_replace('-- เลือกผู้ตรวจ --', '-- เลือกผู้ส่งมอบ --', $inspectorOptionsEV8) ?></select>
+                                            <select class="form-select ev8-user-select" id="ev8_sender_id" name="ev8_sender_id" data-pos-target="#ev8_sender_position" data-ftn-skip><?= str_replace('-- เลือกผู้ตรวจ --', '-- เลือกผู้ส่งมอบ --', $inspectorOptionsEV8) ?></select>
                                         </div>
                                         <div class="col-12">
                                             <label class="form-label small text-muted">ตำแหน่ง</label>

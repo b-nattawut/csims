@@ -943,7 +943,7 @@ if (isset($pdo)) {
                                     <div class="row g-2 mb-3">
                                         <div class="col-12">
                                             <label class="form-label small text-muted">ลงชื่อ (ผู้รับมอบ) <span class="text-danger">*</span></label>
-                                            <select class="form-select user-select-box" id="receiver_id" name="receiver_id" data-pos-target="#receiver_position">
+                                            <select class="form-select user-select-box" id="receiver_id" name="receiver_id" data-pos-target="#receiver_position" data-ftn-skip>
                                                 <?php echo $inspectorOptions; ?>
                                             </select>
                                         </div>
@@ -981,7 +981,7 @@ if (isset($pdo)) {
                                     <div class="row g-2 mb-3">
                                         <div class="col-12">
                                             <label class="form-label small text-muted">ลงชื่อ (ผู้ส่งมอบ) <span class="text-danger">*</span></label>
-                                            <select class="form-select user-select-box" id="deliverer_id" name="deliverer_id" data-pos-target="#deliverer_position">
+                                            <select class="form-select user-select-box" id="deliverer_id" name="deliverer_id" data-pos-target="#deliverer_position" data-ftn-skip>
                                                 <?php echo $inspectorOptions; ?>
                                             </select>
                                         </div>

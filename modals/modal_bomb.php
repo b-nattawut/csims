@@ -1831,7 +1831,7 @@ $todayTimeBomb = date('H:i');
                                             <div class="row g-2 mb-3">
                                                 <div class="col-12">
                                                     <label class="form-label small text-muted">ลงชื่อ (ผู้รับมอบ) <span class="text-danger">*</span></label>
-                                                    <select class="form-select user-select-box-bomb" id="receiver_name_bomb" name="receiver_name" data-pos-target="#receiver_position_bomb">
+                                                    <select class="form-select user-select-box-bomb" id="receiver_name_bomb" name="receiver_name" data-pos-target="#receiver_position_bomb" data-ftn-skip>
                                                         <?php echo str_replace('-- เลือกผู้ตรวจ --', '-- เลือกผู้รับมอบ --', $inspectorOptionsBomb); ?>
                                                     </select>
                                                 </div>
@@ -1869,7 +1869,7 @@ $todayTimeBomb = date('H:i');
                                             <div class="row g-2 mb-3">
                                                 <div class="col-12">
                                                     <label class="form-label small text-muted">ลงชื่อ (ผู้ส่งมอบ) <span class="text-danger">*</span></label>
-                                                    <select class="form-select user-select-box-bomb" id="sender_name_bomb" name="sender_name" data-pos-target="#sender_position_bomb">
+                                                    <select class="form-select user-select-box-bomb" id="sender_name_bomb" name="sender_name" data-pos-target="#sender_position_bomb" data-ftn-skip>
                                                         <?php echo str_replace('-- เลือกผู้ตรวจ --', '-- เลือกผู้ส่งมอบ --', $inspectorOptionsBomb); ?>
                                                     </select>
                                                 </div>
